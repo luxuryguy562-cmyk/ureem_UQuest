@@ -4,7 +4,7 @@
 
 - 최우선 기준은 `CHANGELOG_v1.1.md`다.
 - U-Quest는 4주 온보딩, 20일 커리큘럼 기반 서비스다.
-- 게임화는 나무/검/타격이 아니라 캐릭터, 배지, 티어, AX 로봇으로 표현한다.
+- 게임화는 캐릭터, 배지, 티어, AX 로봇으로 표현한다.
 
 ---
 
@@ -165,19 +165,7 @@ src/types/uquest.ts
 
 `uquest-app.tsx`가 최종 통합 화면의 주 진입점이다.
 
-아래 파일들은 이전 화면 단위 컴포넌트로 남아 있으나 현재 주 화면에서는 사용하지 않는다.
-
-```text
-home-screen.tsx
-profile-screen.tsx
-inventory-screen.tsx
-tree-screen.tsx
-sword-screen.tsx
-shop-screen.tsx
-admin-screen.tsx
-```
-
-후속 정리 시 삭제하거나 최종 컴포넌트로 분리한다.
+구버전 화면 단위 컴포넌트는 제거했다.
 
 ---
 
@@ -209,19 +197,15 @@ public/assets/uquest/generated/ax-robots/ax_robot_master.png
 
 ---
 
-## 폐기된 UX
+## 제외된 UX
 
 최종 기준에서 사용하지 않는다.
 
 ```text
-나무 타격
-검 강화
-타격권
-숨은 코인
-채굴
-룰렛
-슬롯
-전투형 RPG 구조
+온보딩 맥락과 약한 반복 보상 미니게임
+쿠폰 포인트와 혼동되는 별도 보상 재화
+전투력 중심 성장 구조
+사행성처럼 보일 수 있는 확률형 연출
 ```
 
 ---
@@ -233,4 +217,4 @@ public/assets/uquest/generated/ax-robots/ax_robot_master.png
 - 사용자 메뉴를 PRD 기준 8개 기능으로 정리했다.
 - 모바일 하단 탭은 홈/학습/퀴즈/AX/내정보 5개로 확정했다.
 - 점장/본사 권한별 화면 구조를 반영했다.
-- 구버전 나무/검/타격권 화면은 현재 주 화면에서 제거했다.
+- 구버전 보상 게임 화면은 저장소에서 제거했다.
