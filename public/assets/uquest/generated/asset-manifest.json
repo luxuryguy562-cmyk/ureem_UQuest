@@ -1,0 +1,48 @@
+{
+  "generatedAt": "2026-06-16T12:00:03.971Z",
+  "source": "AI-generated original sheets inspired by user-provided U-Quest references; reference images were not cropped or copied.",
+  "characters": [
+    "generated/characters/male_lv1.png",
+    "generated/characters/male_lv2.png",
+    "generated/characters/male_lv3.png",
+    "generated/characters/male_lv4.png",
+    "generated/characters/male_lv5.png",
+    "generated/characters/female_lv1.png",
+    "generated/characters/female_lv2.png",
+    "generated/characters/female_lv3.png",
+    "generated/characters/female_lv4.png",
+    "generated/characters/female_lv5.png"
+  ],
+  "tiers": [
+    "generated/tiers/tier_unranked.png",
+    "generated/tiers/tier_bronze.png",
+    "generated/tiers/tier_silver.png",
+    "generated/tiers/tier_gold.png",
+    "generated/tiers/tier_platinum.png",
+    "generated/tiers/tier_diamond.png"
+  ],
+  "badges": [
+    "generated/badges/attendance_1.png",
+    "generated/badges/attendance_5.png",
+    "generated/badges/attendance_10.png",
+    "generated/badges/attendance_15.png",
+    "generated/badges/attendance_20.png",
+    "generated/badges/quiz_1.png",
+    "generated/badges/quiz_10.png",
+    "generated/badges/quiz_30.png",
+    "generated/badges/quiz_50.png",
+    "generated/badges/quiz_60.png",
+    "generated/badges/tier_bronze.png",
+    "generated/badges/tier_silver.png",
+    "generated/badges/tier_gold.png",
+    "generated/badges/tier_platinum.png",
+    "generated/badges/tier_diamond.png",
+    "generated/badges/rare_attendance.png",
+    "generated/badges/rare_quiz.png",
+    "generated/badges/rare_all_public.png",
+    "generated/badges/rare_ax_master.png",
+    "generated/badges/rare_tier.png",
+    "generated/badges/rare_legend.png",
+    "generated/badges/badge_locked.png"
+  ]
+}

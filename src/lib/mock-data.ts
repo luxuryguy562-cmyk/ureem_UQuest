@@ -1,216 +1,368 @@
-import type { UQuestAppConfig } from "@/types/uquest";
+import type {
+  FinalAxCategory,
+  FinalBadge,
+  FinalCoupon,
+  FinalCurriculum,
+  FinalPointHistory,
+  FinalQuizQuestion,
+  FinalUQuestConfig
+} from "@/types/uquest";
 
-// Fallback seed mirrors the HTML mockup. In production these values are loaded
-// from Supabase tables/views controlled by the Admin screens.
-export const fallbackAppConfig: UQuestAppConfig = {
-  source: "fallback",
-  user: {
-    id: "kim-eunseong-demo",
-    displayName: "김은성",
-    branchName: "강남점",
-    onboardingDay: 1,
-    rankLabel: "첫 출근",
-    titleLabel: "새싹 신입",
-    level: 1,
-    levelLabel: "Lv.1",
-    sxp: 0,
-    nextLevelProgressPct: 0,
-    onboardingProgressPct: 0,
-    wallet: [
-      { id: "coin", label: "골드", icon: "🪙", amount: 0, tone: "gold" },
-      { id: "hidden_coin", label: "히든", icon: "💎", amount: 0, tone: "hidden" },
-      { id: "scroll", label: "주문서", icon: "📜", amount: 0, tone: "scroll" }
-    ],
-    profileMetrics: [
-      { id: "monthly_coin", label: "이번달", icon: "🪙", amount: 0, tone: "gold" },
-      { id: "total_hits", label: "누적 타격", icon: "🔥", amount: 0, tone: "hidden" },
-      { id: "completed_mission", label: "완료 미션", icon: "🎯", amount: 0, tone: "scroll" }
-    ]
+const today = "2026-06-16";
+
+const curriculums: FinalCurriculum[] = Array.from({ length: 20 }, (_, index) => {
+  const dayNumber = index + 1;
+  const titles = [
+    "첫 출근과 기본 규칙",
+    "매장 동선과 고객 맞이",
+    "요금제 기본 구조",
+    "U+ONE 핵심 사용법",
+    "스마트CS 응대 루틴",
+    "AI 헬프데스크 활용",
+    "요금 시뮬레이터 실습",
+    "생애주기 상담 이해",
+    "타사 확보 대화 흐름",
+    "자사 전환 체크포인트",
+    "멤버십과 부가서비스",
+    "개통 전 확인 항목",
+    "클레임 1차 대응",
+    "개인정보 보호",
+    "피크타임 운영",
+    "재고와 예약 관리",
+    "상담 품질 점검",
+    "AX/DX 실전 적용",
+    "수료 전 복습",
+    "온보딩 마무리"
+  ];
+
+  return {
+    id: `day-${dayNumber}`,
+    dayNumber,
+    title: titles[index] ?? `Day ${dayNumber}`,
+    description: `${dayNumber}일차에 필요한 현장 업무와 시스템 활용을 학습합니다.`,
+    learningRewardPoints: 300,
+    isPublished: true
+  };
+});
+
+const axCategories: FinalAxCategory[] = [
+  {
+    id: "ax-ai-helpdesk",
+    code: "AI_HELPDESK",
+    type: "AX",
+    title: "AI 헬프데스크",
+    description: "현장 질문을 AI 헬프데스크로 먼저 검색하고 답을 확인합니다.",
+    rewardPoints: 500,
+    isPublished: true,
+    sortOrder: 1
   },
-  attendanceWeek: [
-    { id: "mon", label: "월", state: "today" },
-    { id: "tue", label: "화", state: "idle" },
-    { id: "wed", label: "수", state: "idle" },
-    { id: "thu", label: "목", state: "idle" },
-    { id: "fri", label: "금", state: "idle" },
-    { id: "sat", label: "토", state: "idle" },
-    { id: "sun", label: "일", state: "idle" }
-  ],
-  calendarMonthLabel: "2026년 5월",
-  calendarDays: [
-    { id: "blank-1", label: "", earnedTicket: 0, maxTicket: 0, state: "empty" },
-    { id: "blank-2", label: "", earnedTicket: 0, maxTicket: 0, state: "empty" },
-    { id: "blank-3", label: "", earnedTicket: 0, maxTicket: 0, state: "empty" },
-    { id: "blank-4", label: "", earnedTicket: 0, maxTicket: 0, state: "empty" },
-    {
-      id: "today",
-      label: "오늘",
-      earnedTicket: 0,
-      maxTicket: 30,
-      state: "today",
-      detail: {
-        title: "첫 출근 상세",
-        earnedTicket: 0,
-        maxTicket: 30,
-        tasks: [
-          { label: "첫 출근 체크인", earnedTicket: 0, maxTicket: 10 },
-          { label: "매장 둘러보기", earnedTicket: 0, maxTicket: 10 },
-          { label: "온보딩 퀴즈", earnedTicket: 0, maxTicket: 10 }
-        ]
-      }
-    },
-    { id: "day-2", label: "2", earnedTicket: 0, maxTicket: 30, state: "future" },
-    { id: "day-3", label: "3", earnedTicket: 0, maxTicket: 30, state: "future" },
-    { id: "day-4", label: "4", earnedTicket: 0, maxTicket: 30, state: "future" },
-    { id: "day-5", label: "5", earnedTicket: 0, maxTicket: 30, state: "future" },
-    { id: "day-6", label: "6", earnedTicket: 0, maxTicket: 30, state: "future" },
-    { id: "day-7", label: "7", earnedTicket: 0, maxTicket: 30, state: "future" }
-  ],
-  missionGroups: [
-    {
-      id: "daily-routine",
-      icon: "✅",
-      title: "일일 루틴",
-      completedCount: 0,
-      totalCount: 3,
-      statusLabel: "0 / 3 ▲",
-      expanded: true,
-      tasks: [
-        { id: "first-checkin", icon: "👋", title: "첫 출근 체크인", completed: false, rewardTicket: 10, sortOrder: 1 },
-        { id: "store-tour", icon: "🏬", title: "매장 둘러보기", completed: false, rewardTicket: 10, sortOrder: 2 },
-        { id: "mentor-greeting", icon: "🤝", title: "멘토에게 인사하기", completed: false, rewardTicket: 10, sortOrder: 3 }
-      ]
-    },
-    {
-      id: "axdx",
-      icon: "⚡",
-      title: "AX/DX 미션",
-      completedCount: 0,
-      totalCount: 2,
-      statusLabel: "0 / 2 ▲",
-      expanded: true,
-      tasks: [
-        { id: "ai-helpdesk", icon: "🤖", title: "AI 헬프데스크 실행", completed: false, rewardTicket: 80, sortOrder: 1, sourceLabel: "자수 연동" },
-        { id: "ucrm", icon: "📊", title: "UCRM 실행", completed: false, rewardTicket: 80, sortOrder: 2, sourceLabel: "자수 연동" }
-      ]
-    },
-    {
-      id: "quiz",
-      icon: "🧠",
-      title: "일일 퀴즈",
-      completedCount: 0,
-      totalCount: 1,
-      statusLabel: "0 / 1 ▲",
-      expanded: true,
-      tasks: [
-        { id: "daily-quiz", icon: "❓", title: "오늘의 유림 퀴즈", completed: false, rewardTicket: 50, sortOrder: 1 }
-      ]
-    }
-  ],
-  activities: [
-    { id: "welcome", icon: "👋", title: "온보딩 시작", description: "김은성님의 첫 출근이 시작됐어요.", actionLabel: "보기" }
-  ],
-  inventory: [],
-  tree: {
-    remainingTicket: 0,
-    totalCoin: 0,
-    hiddenCoin: 0,
-    scroll: 0,
-    todayCoin: 0,
-    todayHiddenCoin: 0,
-    todayScroll: 0,
-    lastRewardLabel: "아직 타격 전",
-    swordLevelLabel: "Lv.1 검",
-    hiddenChancePct: 0.8,
-    rewardRule: {
-      coinMin: 4,
-      coinMax: 10,
-      hiddenDropChancePct: 0.8,
-      scrollDropChancePct: 0
-    }
+  {
+    id: "ax-smart-cs",
+    code: "SMART_CS",
+    type: "AX",
+    title: "스마트CS",
+    description: "고객 응대 전후로 스마트CS 기록을 정리합니다.",
+    rewardPoints: 500,
+    isPublished: true,
+    sortOrder: 2
   },
-  sword: {
-    current: { level: 1, label: "Lv.1", name: "나무검", coinCap: 10, hiddenChancePct: 0.8, extraCoinHit: 0 },
-    next: { level: 2, label: "Lv.2", name: "수습검", coinCap: 10, hiddenChancePct: 0.8, extraCoinHit: 0 },
-    maxLevel: 10,
-    requiredCoin: 50,
-    requiredScroll: 0,
-    requiredSxp: 20,
-    successRatePct: 100,
-    noFailLabel: "실패 없음"
+  {
+    id: "ax-uplus-one",
+    code: "UPLUS_ONE",
+    type: "AX",
+    title: "U+ONE",
+    description: "U+ONE에서 고객 상담에 필요한 기본 정보를 확인합니다.",
+    rewardPoints: 500,
+    isPublished: true,
+    sortOrder: 3
   },
-  shop: {
-    headline: "U-STORE",
-    description: "오늘의 특별 보상을 교환해보세요. 모은 코인으로 실제 보상을 획득할 수 있어요.",
-    featuredRewardId: "starbucks-set",
-    rewards: [
-      { id: "starbucks-set", icon: "☕", title: "스타벅스 세트", cost: 5000, currencyId: "coin", sortOrder: 1, actionLabel: "교환", featured: true },
-      { id: "burger-set", icon: "🍔", title: "버거 세트", cost: 8000, currencyId: "coin", sortOrder: 2, actionLabel: "교환하기" },
-      { id: "convenience", icon: "🏪", title: "편의점 쿠폰", cost: 5000, currencyId: "coin", sortOrder: 3, actionLabel: "교환하기" },
-      { id: "chicken", icon: "🍗", title: "치킨 기프티콘", cost: 18000, currencyId: "coin", sortOrder: 4, actionLabel: "교환하기" },
-      { id: "raffle", icon: "🎟️", title: "응모권", cost: 2000, currencyId: "coin", sortOrder: 5, actionLabel: "교환하기" }
-    ],
-    hiddenBox: {
-      title: "??? 히든 보상",
-      description: "희귀 보상 · 특별 응모권 · 조기퇴근권 등 랜덤 보상을 획득할 수 있어요.",
-      costHiddenCoin: 2,
-      candidates: [
-        { id: "hidden-coffee", icon: "☕", title: "스타벅스 쿠폰", rarity: "COMMON", probabilityWeight: 60 },
-        { id: "hidden-store", icon: "🏪", title: "편의점 5천원권", rarity: "RARE", probabilityWeight: 28 },
-        { id: "hidden-ticket", icon: "🎟️", title: "특별 응모권", rarity: "EPIC", probabilityWeight: 10 },
-        { id: "early-leave", icon: "🌈", title: "조기퇴근권", rarity: "LEGENDARY", probabilityWeight: 2 }
-      ]
-    }
+  {
+    id: "ax-rate-simulator",
+    code: "RATE_SIMULATOR",
+    type: "AX",
+    title: "요금시뮬레이터",
+    description: "요금제 비교와 예상 청구 금액을 시뮬레이션합니다.",
+    rewardPoints: 500,
+    isPublished: true,
+    sortOrder: 4
   },
-  admin: {
-    kpis: [
-      { id: "attendance", label: "오늘 출석률", value: "0%", description: "샘플 데이터" },
-      { id: "monthly-payout", label: "이번달 지급액", value: "₩0", description: "실지급 없음" },
-      { id: "risk-users", label: "관리 필요", value: "1명", description: "첫날 온보딩", tone: "warn" },
-      { id: "avg-sword", label: "평균 검 Lv", value: "1.0", description: "신입 기본" }
-    ],
-    employees: [
-      {
-        id: "kim-eunseong-demo",
-        name: "김은성",
-        branchName: "강남점",
-        onboardingDay: 1,
-        swordLevel: 1,
-        statusLabel: "첫 출근",
-        statusTone: "warn",
-        metrics: [
-          { label: "출석", value: "대기", tone: "warn" },
-          { label: "루틴", value: "0/3", tone: "warn" },
-          { label: "AXDX", value: "0/2", tone: "warn" },
-          { label: "퀴즈", value: "대기", tone: "warn" }
-        ],
-        footnote: "보유 코인 0 · 타격권 0"
-      }
-    ],
-    actionRows: [
-      { id: "approval", title: "김은성 가입 승인", description: "첫 출근 신입 계정 확인", actionLabel: "열기", tone: "primary" },
-      { id: "permissions", title: "점장 권한 관리", description: "강남점 접근 권한 설정", actionLabel: "열기", tone: "sub" }
-    ],
-    economy: {
-      activeEmployeeCount: 1,
-      participationRatePct: 0,
-      estimatedMonthlyHits: 0,
-      estimatedMonthlyPayoutKrw: 0,
-      budgetRisk: "stable",
-      settings: [
-        { id: "monthly-base", title: "1인 월 기본 보상 한도", value: 50000, min: 10000, max: 150000, unit: "krw", tone: "blue" },
-        { id: "monthly-max", title: "특별 포함 최대 한도", value: 100000, min: 30000, max: 300000, unit: "krw", tone: "purple" }
-      ],
-      results: [
-        { id: "coin-value", label: "코인 기준", description: "MVP 정산 기준", value: "1코인 = 1원" },
-        { id: "daily-ticket-cap", label: "오늘 최대 타격권", description: "출석+루틴+AX/DX+퀴즈 전체 완료", value: "250타" },
-        { id: "lv1-hit-coin", label: "Lv.1 1타격 코인", description: "나무검 기준", value: "4~10 / 평균 7" },
-        { id: "avg-coin", label: "1타 평균 코인", description: "아직 실제 타격 없음", value: "계산 대기" },
-        { id: "coin-cap", label: "1타 최대 코인", description: "검 레벨과 무관", value: "10" },
-        { id: "hidden-base", label: "히든 기본 확률", description: "샘플 기준", value: "0.8%" },
-        { id: "sword-factor", label: "검 경제 영향", description: "MVP 기준", value: "없음" },
-        { id: "event-factor", label: "이벤트 허용 배율", description: "이벤트 없음", value: "x1.0" }
-      ]
-    }
+  {
+    id: "dx-lifecycle",
+    code: "LIFECYCLE",
+    type: "DX",
+    title: "생애주기",
+    description: "고객의 이용 단계에 맞는 상담 흐름을 확인합니다.",
+    rewardPoints: 500,
+    isPublished: true,
+    sortOrder: 5
+  },
+  {
+    id: "dx-competitor-winback",
+    code: "COMPETITOR_WINBACK",
+    type: "DX",
+    title: "타사확보",
+    description: "타사 고객 확보 상담에서 필요한 핵심 질문을 점검합니다.",
+    rewardPoints: 500,
+    isPublished: true,
+    sortOrder: 6
+  },
+  {
+    id: "dx-own-conversion",
+    code: "OWN_CONVERSION",
+    type: "DX",
+    title: "자사전환",
+    description: "자사 전환 상담의 혜택과 유의사항을 확인합니다.",
+    rewardPoints: 500,
+    isPublished: true,
+    sortOrder: 7
   }
+];
+
+const badges: FinalBadge[] = [
+  { id: "attendance_1", category: "attendance", name: "첫 출근", description: "첫 출석을 완료했습니다.", conditionLabel: "출석 1일", rewardPoints: 500, imageKey: "attendance_1", isRare: false, isHidden: false, sortOrder: 1 },
+  { id: "attendance_5", category: "attendance", name: "성실 사원", description: "5일 출석을 완료했습니다.", conditionLabel: "출석 5일", rewardPoints: 1000, imageKey: "attendance_5", isRare: false, isHidden: false, sortOrder: 2 },
+  { id: "attendance_10", category: "attendance", name: "꾸준 사원", description: "10일 출석을 완료했습니다.", conditionLabel: "출석 10일", rewardPoints: 1500, imageKey: "attendance_10", isRare: false, isHidden: false, sortOrder: 3 },
+  { id: "attendance_15", category: "attendance", name: "모범 사원", description: "15일 출석을 완료했습니다.", conditionLabel: "출석 15일", rewardPoints: 2000, imageKey: "attendance_15", isRare: false, isHidden: false, sortOrder: 4 },
+  { id: "attendance_20", category: "attendance", name: "출근 마스터", description: "20일 출석을 완료했습니다.", conditionLabel: "출석 20일", rewardPoints: 3000, imageKey: "attendance_20", isRare: false, isHidden: false, sortOrder: 5 },
+  { id: "quiz_1", category: "quiz", name: "첫 도전", description: "첫 퀴즈를 제출했습니다.", conditionLabel: "퀴즈 1문제 풀이", rewardPoints: 500, imageKey: "quiz_1", isRare: false, isHidden: false, sortOrder: 11 },
+  { id: "quiz_10", category: "quiz", name: "학습가", description: "퀴즈 10문제를 풀이했습니다.", conditionLabel: "퀴즈 10문제 풀이", rewardPoints: 1000, imageKey: "quiz_10", isRare: false, isHidden: false, sortOrder: 12 },
+  { id: "quiz_30", category: "quiz", name: "탐구가", description: "퀴즈 30문제를 풀이했습니다.", conditionLabel: "퀴즈 30문제 풀이", rewardPoints: 1500, imageKey: "quiz_30", isRare: false, isHidden: false, sortOrder: 13 },
+  { id: "quiz_50", category: "quiz", name: "지식인", description: "퀴즈 50문제를 풀이했습니다.", conditionLabel: "퀴즈 50문제 풀이", rewardPoints: 2000, imageKey: "quiz_50", isRare: false, isHidden: false, sortOrder: 14 },
+  { id: "quiz_60", category: "quiz", name: "퀴즈 마스터", description: "퀴즈 60문제를 풀이했습니다.", conditionLabel: "퀴즈 60문제 풀이", rewardPoints: 3000, imageKey: "quiz_60", isRare: false, isHidden: false, sortOrder: 15 },
+  { id: "tier_bronze", category: "tier", name: "Bronze", description: "정답률 20% 이상을 달성했습니다.", conditionLabel: "정답률 20% 이상", rewardPoints: 500, imageKey: "tier_bronze", isRare: false, isHidden: false, sortOrder: 21 },
+  { id: "tier_silver", category: "tier", name: "Silver", description: "정답률 40% 이상을 달성했습니다.", conditionLabel: "정답률 40% 이상", rewardPoints: 1000, imageKey: "tier_silver", isRare: false, isHidden: false, sortOrder: 22 },
+  { id: "tier_gold", category: "tier", name: "Gold", description: "정답률 60% 이상을 달성했습니다.", conditionLabel: "정답률 60% 이상", rewardPoints: 2000, imageKey: "tier_gold", isRare: false, isHidden: false, sortOrder: 23 },
+  { id: "tier_platinum", category: "tier", name: "Platinum", description: "정답률 80% 이상을 달성했습니다.", conditionLabel: "정답률 80% 이상", rewardPoints: 3000, imageKey: "tier_platinum", isRare: false, isHidden: false, sortOrder: 24 },
+  { id: "tier_diamond", category: "tier", name: "Diamond", description: "정답률 95% 이상을 달성했습니다.", conditionLabel: "정답률 95% 이상", rewardPoints: 5000, imageKey: "tier_diamond", isRare: false, isHidden: false, sortOrder: 25 },
+  { id: "rare_attendance", category: "rare", name: "성실의 증명", description: "모든 출석 배지를 획득했습니다.", conditionLabel: "획득 전에는 조건 숨김", rewardPoints: 3000, imageKey: "rare_attendance", isRare: true, isHidden: true, sortOrder: 31 },
+  { id: "rare_quiz", category: "rare", name: "지식의 증명", description: "모든 퀴즈 배지를 획득했습니다.", conditionLabel: "획득 전에는 조건 숨김", rewardPoints: 3000, imageKey: "rare_quiz", isRare: true, isHidden: true, sortOrder: 32 },
+  { id: "rare_tier", category: "rare", name: "실력의 증명", description: "Diamond 티어를 달성했습니다.", conditionLabel: "획득 전에는 조건 숨김", rewardPoints: 5000, imageKey: "rare_tier", isRare: true, isHidden: true, sortOrder: 33 },
+  { id: "rare_ax_master", category: "rare", name: "혁신의 증명", description: "AX Master에 도달했습니다.", conditionLabel: "획득 전에는 조건 숨김", rewardPoints: 5000, imageKey: "rare_ax_master", isRare: true, isHidden: true, sortOrder: 34 },
+  { id: "rare_all_public", category: "rare", name: "성장의 정점", description: "모든 공개 배지를 획득했습니다.", conditionLabel: "획득 전에는 조건 숨김", rewardPoints: 10000, imageKey: "rare_all_public", isRare: true, isHidden: true, sortOrder: 35 },
+  { id: "rare_legend", category: "rare", name: "U-Quest Legend", description: "모든 희귀 배지를 획득했습니다.", conditionLabel: "획득 전에는 조건 숨김", rewardPoints: 15000, imageKey: "rare_legend", isRare: true, isHidden: true, sortOrder: 36 }
+];
+
+const coupons: FinalCoupon[] = [
+  { id: "coupon-starbucks", name: "스타벅스 모바일 쿠폰", description: "재고 제한 없이 신청 가능한 기본 쿠폰입니다.", actualPrice: 5000, requiredPoints: 5000, stockQuantity: null, isPublished: true },
+  { id: "coupon-giftcard", name: "편의점 모바일 상품권 1만원권", description: "본사 발송 완료 전까지 취소할 수 있습니다.", actualPrice: 10000, requiredPoints: 10000, stockQuantity: 100, isPublished: true },
+  { id: "coupon-chicken", name: "치킨 세트 기프티콘", description: "재고가 없을 때의 예외 처리를 확인하는 상품입니다.", actualPrice: 22000, requiredPoints: 22000, stockQuantity: 0, isPublished: true },
+  { id: "coupon-long-name", name: "긴 이름 테스트용 프리미엄 온보딩 축하 패키지 쿠폰", description: "긴 쿠폰명에서도 카드가 깨지지 않는지 확인합니다.", actualPrice: 15000, requiredPoints: 15000, stockQuantity: 8, isPublished: true }
+];
+
+const pointHistories: FinalPointHistory[] = [
+  history("pt-att-1", "rookie-001", 300, 300, "attendance", "2026-06-02 출석 보상", "2026-06-02T09:05:00+09:00"),
+  history("pt-att-2", "rookie-001", 300, 600, "attendance", "2026-06-03 출석 보상", "2026-06-03T09:02:00+09:00"),
+  history("pt-att-3", "rookie-001", 300, 900, "attendance", "2026-06-04 출석 보상", "2026-06-04T09:08:00+09:00"),
+  history("pt-att-4", "rookie-001", 300, 1200, "attendance", "2026-06-05 출석 보상", "2026-06-05T09:01:00+09:00"),
+  history("pt-learn-1", "rookie-001", 300, 1500, "learning", "Day 1 학습 완료", "2026-06-02T10:20:00+09:00"),
+  history("pt-learn-2", "rookie-001", 300, 1800, "learning", "Day 2 학습 완료", "2026-06-03T10:10:00+09:00"),
+  history("pt-quiz-1", "rookie-001", 600, 2400, "quiz", "Day 1 퀴즈 2문제 제출", "2026-06-02T11:40:00+09:00"),
+  history("pt-ax-1", "rookie-001", 500, 2900, "ax", "AI 헬프데스크 인증", "2026-06-04T15:10:00+09:00"),
+  history("pt-ax-2", "rookie-001", 500, 3400, "ax", "스마트CS 인증", "2026-06-05T15:12:00+09:00"),
+  history("pt-ax-3", "rookie-001", 500, 3900, "ax", "U+ONE 인증", "2026-06-06T15:10:00+09:00"),
+  history("pt-ax-4", "rookie-001", 500, 4400, "ax", "생애주기 인증", "2026-06-07T15:12:00+09:00"),
+  history("pt-badge-a1", "rookie-001", 500, 4900, "badge", "첫 출근 배지 보상", "2026-06-02T09:05:10+09:00"),
+  history("pt-badge-q1", "rookie-001", 500, 5400, "badge", "첫 도전 배지 보상", "2026-06-02T11:40:10+09:00"),
+  history("pt-completed", "rookie-003", 100000, 100000, "manual_add", "수료자 샘플 잔액", "2026-06-15T18:00:00+09:00")
+];
+
+export const finalFallbackAppConfig: FinalUQuestConfig = {
+  source: "fallback",
+  today,
+  activeUserId: "rookie-001",
+  managerUserId: "manager-001",
+  adminUserId: "admin-001",
+  stores: [
+    { id: "store-gangnam", name: "강남점", code: "GN", isActive: true },
+    { id: "store-jamsil", name: "잠실점", code: "JS", isActive: true }
+  ],
+  users: [
+    {
+      id: "rookie-001",
+      role: "rookie",
+      name: "김은성",
+      avatarGender: "male",
+      phone: "010-1111-2222",
+      loginId: "rookie.kim",
+      storeId: "store-gangnam",
+      hireDate: "2026-06-02",
+      status: "active",
+      approvedAt: "2026-06-01T16:00:00+09:00",
+      exp: 64,
+      badgeIds: ["attendance_1", "quiz_1"]
+    },
+    {
+      id: "rookie-002",
+      role: "rookie",
+      name: "승인대기신입_긴이름_테스트",
+      avatarGender: "female",
+      phone: "010-2222-3333",
+      loginId: "pending.long",
+      storeId: "store-gangnam",
+      hireDate: "2026-06-17",
+      status: "pending",
+      exp: 0,
+      badgeIds: []
+    },
+    {
+      id: "rookie-003",
+      role: "rookie",
+      name: "박수료",
+      avatarGender: "male",
+      phone: "010-3333-4444",
+      loginId: "completed.park",
+      storeId: "store-gangnam",
+      hireDate: "2026-05-13",
+      status: "completed",
+      approvedAt: "2026-05-12T17:00:00+09:00",
+      completedAt: "2026-06-10T00:00:00+09:00",
+      exp: 420,
+      badgeIds: ["attendance_1", "attendance_5", "attendance_10", "quiz_1", "quiz_10", "tier_gold"]
+    },
+    {
+      id: "rookie-004",
+      role: "rookie",
+      name: "이반려",
+      phone: "010-4444-5555",
+      loginId: "reject.lee",
+      storeId: "store-jamsil",
+      hireDate: "2026-06-14",
+      status: "rejected",
+      rejectReason: "휴대폰번호 확인 필요",
+      exp: 0,
+      badgeIds: []
+    },
+    {
+      id: "rookie-005",
+      role: "rookie",
+      name: "최퇴사",
+      phone: "010-5555-6666",
+      loginId: "inactive.choi",
+      storeId: "store-gangnam",
+      hireDate: "2026-05-20",
+      status: "inactive",
+      inactiveAt: "2026-06-14T10:00:00+09:00",
+      exp: 30,
+      badgeIds: []
+    },
+    {
+      id: "manager-001",
+      role: "manager",
+      name: "강남점장",
+      phone: "010-7777-8888",
+      loginId: "manager.gn",
+      storeId: "store-gangnam",
+      hireDate: null,
+      status: "active",
+      exp: 0,
+      badgeIds: []
+    },
+    {
+      id: "admin-001",
+      role: "admin",
+      name: "본사관리자",
+      phone: "010-9999-0000",
+      loginId: "admin.hq",
+      storeId: null,
+      hireDate: null,
+      status: "active",
+      exp: 0,
+      badgeIds: []
+    }
+  ],
+  curriculums,
+  quizzes: createQuizzes(curriculums),
+  attendances: [
+    { id: "att-1", userId: "rookie-001", attendanceDate: "2026-06-02", rewardPoints: 300 },
+    { id: "att-2", userId: "rookie-001", attendanceDate: "2026-06-03", rewardPoints: 300 },
+    { id: "att-3", userId: "rookie-001", attendanceDate: "2026-06-04", rewardPoints: 300 },
+    { id: "att-4", userId: "rookie-001", attendanceDate: "2026-06-05", rewardPoints: 300 }
+  ],
+  learningCompletions: [
+    { id: "learn-1", userId: "rookie-001", curriculumId: "day-1", rewardPoints: 300, createdAt: "2026-06-02T10:20:00+09:00" },
+    { id: "learn-2", userId: "rookie-001", curriculumId: "day-2", rewardPoints: 300, createdAt: "2026-06-03T10:10:00+09:00" }
+  ],
+  quizSubmissions: [
+    {
+      id: "quiz-sub-1",
+      userId: "rookie-001",
+      curriculumId: "day-1",
+      totalCount: 2,
+      correctCount: 1,
+      earnedPoints: 600,
+      submittedAt: "2026-06-02T11:40:00+09:00",
+      answers: [
+        { questionId: "quiz-day-1-1", selectedOption: 0, correctOption: 0, isCorrect: true, rewardPoints: 300 },
+        { questionId: "quiz-day-1-2", selectedOption: 1, correctOption: 2, isCorrect: false, rewardPoints: 300 }
+      ]
+    }
+  ],
+  axCategories,
+  axSubmissions: [
+    { id: "ax-sub-1", userId: "rookie-001", categoryId: "ax-ai-helpdesk", imageUrl: "/mock/ax-1.png", rewardPoints: 500, createdAt: "2026-06-04T15:10:00+09:00" },
+    { id: "ax-sub-2", userId: "rookie-001", categoryId: "ax-smart-cs", imageUrl: "/mock/ax-2.png", rewardPoints: 500, createdAt: "2026-06-05T15:12:00+09:00" },
+    { id: "ax-sub-3", userId: "rookie-001", categoryId: "ax-uplus-one", imageUrl: "/mock/ax-3.png", rewardPoints: 500, createdAt: "2026-06-06T15:10:00+09:00" },
+    { id: "ax-sub-4", userId: "rookie-001", categoryId: "dx-lifecycle", imageUrl: "/mock/ax-4.png", rewardPoints: 500, createdAt: "2026-06-07T15:12:00+09:00" }
+  ],
+  badges,
+  pointHistories,
+  coupons,
+  couponRequests: [
+    {
+      id: "coupon-req-1",
+      userId: "rookie-003",
+      couponId: "coupon-starbucks",
+      requiredPoints: 5000,
+      status: "requested",
+      requestedAt: "2026-06-15T18:30:00+09:00"
+    }
+  ],
+  notifications: [
+    { id: "noti-1", targetRole: "admin", type: "signup_pending", title: "가입 승인 요청", message: "승인대기신입_긴이름_테스트 계정 승인이 필요합니다.", isRead: false, createdAt: "2026-06-16T09:20:00+09:00" },
+    { id: "noti-2", targetRole: "admin", type: "coupon_requested", title: "쿠폰 교환 요청", message: "박수료님이 스타벅스 모바일 쿠폰을 요청했습니다.", isRead: false, createdAt: "2026-06-15T18:30:00+09:00" }
+  ],
+  adminAuditLogs: [
+    { id: "audit-1", actorId: "admin-001", action: "approve_user", targetType: "user", targetId: "rookie-001", reason: "입사 정보 확인", createdAt: "2026-06-01T16:00:00+09:00" }
+  ]
 };
+
+function createQuizzes(items: FinalCurriculum[]): FinalQuizQuestion[] {
+  const counts = [2, 5, 3, 4, 2, 4, 3, 5, 2, 4, 3, 3, 2, 4, 5, 2, 3, 4, 2, 5];
+
+  return items.flatMap((curriculum, curriculumIndex) =>
+    Array.from({ length: counts[curriculumIndex] ?? 3 }, (_, questionIndex) => {
+      const number = questionIndex + 1;
+      const correctOption = (questionIndex + curriculumIndex) % 4;
+
+      return {
+        id: `quiz-day-${curriculum.dayNumber}-${number}`,
+        curriculumId: curriculum.id,
+        question: `${curriculum.title}에서 가장 먼저 확인해야 할 항목은 무엇인가요? (${number})`,
+        options: ["고객 상황 확인", "임의 요금제 추천", "기록 없이 종료", "동료 계정 사용"],
+        correctOption,
+        explanation: "현장 온보딩에서는 먼저 고객 상황과 시스템 기록을 확인한 뒤 다음 행동을 결정합니다.",
+        rewardPoints: 300
+      };
+    })
+  );
+}
+
+function history(
+  id: string,
+  userId: string,
+  amount: number,
+  balanceAfter: number,
+  type: FinalPointHistory["type"],
+  reason: string,
+  createdAt: string
+): FinalPointHistory {
+  return {
+    id,
+    userId,
+    amount,
+    balanceAfter,
+    type,
+    reason,
+    createdAt
+  };
+}

@@ -1,5 +1,4 @@
 import { CircleButton, CurrencyGrid, SectionTitle, TopBar } from "@/components/uquest/common";
-import { HeroAvatar } from "@/components/uquest/pixel-art";
 import { formatNumber } from "@/lib/format";
 import type { AttendanceDay, MissionGroup, ScreenKey, SwordUpgradeConfig, UserProfile } from "@/types/uquest";
 
@@ -24,13 +23,14 @@ export function HomeScreen({
   onMissionTask: (groupId: string, taskId: string) => void;
   onMissionGroupToggle: (groupId: string) => void;
 }) {
-  const currentSword = sword?.current ?? { label: user.levelLabel, name: "검" };
-  const maxSwordLevel = sword?.maxLevel ?? 10;
+  const currentSword = sword?.current ?? { label: user.levelLabel, name: "성장 단계" };
+  const pointWallet = user.wallet.filter((currency) => currency.id === "coin");
+  const pointAmount = user.profileMetrics.find((metric) => metric.id === "monthly_coin")?.amount ?? 0;
 
   return (
     <main className={`screen${active ? " active" : ""}`} id="homeScreen">
       <TopBar
-        eyebrow="오늘 검 상태"
+        eyebrow="오늘 온보딩"
         title={user.displayName}
         tone="#64748b"
         actions={
@@ -42,34 +42,34 @@ export function HomeScreen({
         }
       />
 
-      <section className="card">
-        <div className="hero-box">
-          <div className="sword-label">내 검 {currentSword.label}</div>
-          <HeroAvatar />
-        </div>
-        <div className="growth-row" style={{ marginTop: 12 }}>
-          <div>
-            <div className="growth-title">내 검 성장</div>
-            <div className="small-text">
-              {currentSword.label} {currentSword.name} · 최대 Lv.{maxSwordLevel}
-            </div>
-            <div className="small-text">사람 성장 · {user.sxp} SXP · 진행 {user.nextLevelProgressPct}%</div>
-            <div className="small-text">
-              온보딩 진행 · D+{user.onboardingDay} · 코인 {formatNumber(user.profileMetrics[0]?.amount)}
-            </div>
+      <section className="quest-hero-card">
+        <div className="quest-avatar-stage">
+          <img alt="" className="quest-avatar-img" src="/assets/onboarding-avatar-sprite.png" />
+          <div className="quest-level-orb">
+            <span>Lv</span>
+            <strong>{currentSword.level}</strong>
           </div>
-          <button className="enhance-btn" onClick={() => onGo("sword")} style={{ width: 78, height: 58 }} type="button">
-            ⚒
-            <br />
-            강화
-          </button>
         </div>
-        <div className="xp-bar" style={{ marginTop: 12 }}>
-          <div style={{ width: `${user.nextLevelProgressPct}%` }} />
+        <div className="quest-status">
+          <div className="quest-status-head">
+            <div>
+              <div className="quest-kicker">TODAY QUEST</div>
+              <h2>{currentSword.name}</h2>
+            </div>
+            <button className="quest-map-btn" aria-label="성장 화면" onClick={() => onGo("sword")} type="button">
+              ↗
+            </button>
+          </div>
+          <div className="quest-meter" aria-label={`다음 레벨까지 ${user.nextLevelProgressPct}%`}>
+            <span style={{ width: `${user.nextLevelProgressPct}%` }} />
+          </div>
+          <div className="quest-readout">
+            D+{user.onboardingDay} · {formatNumber(user.sxp)} XP · {formatNumber(pointAmount)}P
+          </div>
         </div>
       </section>
 
-      <CurrencyGrid currencies={user.wallet} />
+      <CurrencyGrid currencies={pointWallet} />
 
       <section className="card">
         <div className="title-row">

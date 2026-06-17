@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import type { HiddenRewardCandidate, SwordLevelPreview } from "@/types/uquest";
+import type { HiddenRewardCandidate } from "@/types/uquest";
 
 export function AdminModal({
   title,
@@ -18,53 +18,6 @@ export function AdminModal({
         <p>{body ?? "실제 서비스에서는 이 영역에서 상세 데이터 조회, 수정, 승인, 드래그 정렬, API 재전송 기능이 연결됩니다."}</p>
         <button className="modal-close" onClick={onClose} type="button">
           닫기
-        </button>
-      </div>
-    </div>
-  );
-}
-
-export function SuccessOverlay({
-  current,
-  next,
-  onClose
-}: {
-  current: SwordLevelPreview | null;
-  next: SwordLevelPreview | null;
-  onClose: () => void;
-}) {
-  return (
-    <div className={`success-overlay${current && next ? " show" : ""}`} id="successOverlay">
-      <div className="success-card">
-        <div className="success-icon">⚔️</div>
-        <h2>강화 성공!</h2>
-        {current && next ? (
-          <>
-            <p>
-              {next.name}으로 성장했어요.
-              <br />
-              코인 경제에는 영향을 주지 않아요.
-            </p>
-            <div className="success-result">
-              <div>
-                <label>레벨</label>
-                <strong>
-                  {current.label} → {next.label}
-                </strong>
-              </div>
-              <div>
-                <label>외형</label>
-                <strong>{next.name}</strong>
-              </div>
-              <div>
-                <label>경제 영향</label>
-                <strong>없음</strong>
-              </div>
-            </div>
-          </>
-        ) : null}
-        <button className="success-btn" onClick={onClose} type="button">
-          확인
         </button>
       </div>
     </div>
@@ -153,7 +106,7 @@ export function MissionItemModal({
     <div className={`modal${open ? " show" : ""}`}>
       <div className="modal-card">
         <h2>{groupTitle} 항목 추가</h2>
-        <p>로컬 테스트용 미션을 추가합니다. 저장하면 홈 온보딩과 관리자 미션 목록에 바로 반영됩니다.</p>
+        <p>미션을 저장하면 홈 온보딩과 관리자 미션 목록에 바로 반영되고 새로고침 후에도 유지됩니다.</p>
         <div style={{ display: "grid", gap: 10, marginTop: 14, textAlign: "left" }}>
           <label className="small-text" htmlFor="missionIcon">
             아이콘
@@ -175,7 +128,7 @@ export function MissionItemModal({
             value={title}
           />
           <label className="small-text" htmlFor="missionReward">
-            지급 타격권
+            지급 리워드 기회
           </label>
           <input
             id="missionReward"
@@ -232,7 +185,7 @@ export function MissionGroupModal({
     <div className={`modal${open ? " show" : ""}`}>
       <div className="modal-card">
         <h2>미션 묶음 추가</h2>
-        <p>홈 온보딩에 새 미션 묶음을 추가합니다. 정식 저장은 추후 Supabase 관리자 저장 기능으로 연결됩니다.</p>
+        <p>홈 온보딩에 새 미션 묶음을 저장합니다. 저장 후 이 묶음 안에 세부 미션을 추가할 수 있습니다.</p>
         <div style={{ display: "grid", gap: 10, marginTop: 14, textAlign: "left" }}>
           <label className="small-text" htmlFor="groupIcon">
             아이콘

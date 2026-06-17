@@ -1,4 +1,7 @@
+import { useState } from "react";
+
 import { CircleButton, CurrencyGrid, ProductRow, SectionTitle, TopBar } from "@/components/uquest/common";
+import { formatNumber } from "@/lib/format";
 import type { ActivityRecord, CalendarDay, InventoryItem, MissionDayDetail, ScreenKey, SwordUpgradeConfig, UserProfile } from "@/types/uquest";
 
 export function ProfileScreen({
@@ -21,7 +24,8 @@ export function ProfileScreen({
   onGo: (screen: ScreenKey) => void;
 }) {
   const defaultDetail = calendarDays.find((day) => day.state === "today")?.detail;
-  const currentSword = sword?.current ?? { label: user.levelLabel, name: "검" };
+  const currentSword = sword?.current ?? { label: user.levelLabel, name: "성장 단계" };
+  const [selectedActivity, setSelectedActivity] = useState<ActivityRecord | null>(null);
 
   return (
     <main className={`screen${active ? " active" : ""}`} id="profileScreen">
@@ -31,43 +35,42 @@ export function ProfileScreen({
         actions={<CircleButton label="🎁" variant="light" onClick={() => onGo("inventory")} />}
       />
 
-      <section className="card">
-        <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-          <div
-            style={{
-              width: 68,
-              height: 68,
-              borderRadius: 22,
-              background: "linear-gradient(135deg,#dbeafe,#dcfce7)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: 34
-            }}
-          >
-            ⚔️
+      <section className="player-card">
+        <div className="player-portrait">
+          <img alt="" src="/assets/onboarding-avatar-sprite.png" />
+          <div className="player-level-mark">
+            <span>Lv</span>
+            <strong>{currentSword.level}</strong>
           </div>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 22, fontWeight: 1000 }}>{user.displayName}</div>
-            <div className="small-text">
-              {user.branchName} · 입사 D+{user.onboardingDay} · {currentSword.label} {currentSword.name}
+        </div>
+        <div className="player-info">
+          <div className="player-title-row">
+            <div>
+              <strong>{user.displayName}</strong>
+              <span>{currentSword.name}</span>
             </div>
-            <div className="small-text">SXP {user.sxp} · 온보딩 진행률 {user.onboardingProgressPct}%</div>
+            <em>{user.rankLabel}</em>
           </div>
-          <div className="pill">{user.rankLabel}</div>
+          <div className="player-meter">
+            <span style={{ width: `${user.onboardingProgressPct}%` }} />
+          </div>
+          <div className="player-readout">
+            {user.branchName} · D+{user.onboardingDay} 온보딩 중
+          </div>
         </div>
       </section>
 
       <CurrencyGrid currencies={user.profileMetrics} />
 
       <section className="card">
-        <SectionTitle title="검 성장 기록" badge="최근 활동" />
+        <SectionTitle title="온보딩 활동 기록" badge="최근 활동" />
         {activities.map((activity) => (
           <ProductRow
             actionLabel={activity.actionLabel}
             description={activity.description}
             icon={activity.icon}
             key={activity.id}
+            onClick={() => setSelectedActivity(activity)}
             title={activity.title}
           />
         ))}
@@ -81,7 +84,7 @@ export function ProfileScreen({
         <div className="xp-bar">
           <div style={{ width: `${user.onboardingProgressPct}%` }} />
         </div>
-        <AttendanceCalendar days={calendarDays} defaultDetail={defaultDetail} monthLabel={monthLabel} />
+        <AttendanceCalendar defaultDetail={defaultDetail} user={user} />
       </section>
 
       <section className="card">
@@ -96,31 +99,56 @@ export function ProfileScreen({
           />
         ))}
       </section>
+      <div className={`modal${selectedActivity ? " show" : ""}`}>
+        <div className="modal-card">
+          <h2>{selectedActivity?.title ?? "활동 상세"}</h2>
+          <p>{selectedActivity?.description ?? ""}</p>
+          <button className="modal-close" onClick={() => setSelectedActivity(null)} type="button">
+            닫기
+          </button>
+        </div>
+      </div>
     </main>
   );
 }
 
 function AttendanceCalendar({
-  days,
   defaultDetail,
-  monthLabel
+  user
 }: {
-  days: CalendarDay[];
   defaultDetail?: MissionDayDetail;
-  monthLabel: string;
+  user: UserProfile;
 }) {
-  const activeDetail = defaultDetail ?? {
-    title: "상세",
-    earnedTicket: 0,
-    maxTicket: 0,
-    tasks: []
-  };
+  const today = getDateOnly(new Date());
+  const planStart = addDays(today, -(user.onboardingDay - 1));
+  const planEnd = addDays(planStart, 59);
+  const [visibleMonth, setVisibleMonth] = useState(() => startOfMonth(today));
+  const [selectedDate, setSelectedDate] = useState(today);
+  const cells = buildMonthCells(visibleMonth);
+  const canPrev = monthKey(addMonths(visibleMonth, -1)) >= monthKey(startOfMonth(planStart));
+  const canNext = monthKey(addMonths(visibleMonth, 1)) <= monthKey(startOfMonth(planEnd));
+  const selectedDay = getPlanDay(selectedDate, planStart);
+  const selectedInPlan = selectedDay >= 1 && selectedDay <= 60;
+  const selectedIsToday = isSameDay(selectedDate, today);
+  const activeDetail = selectedIsToday && defaultDetail
+    ? defaultDetail
+    : createDayDetail(selectedDay, selectedInPlan, selectedDate < today);
 
   return (
     <div className="onboarding-calendar">
       <div className="calendar-head">
-        <strong>{monthLabel}</strong>
-        <span className="small-text">날짜를 누르면 상세 확인</span>
+        <button className="month-nav" disabled={!canPrev} onClick={() => setVisibleMonth(addMonths(visibleMonth, -1))} type="button">
+          ‹
+        </button>
+        <strong>{formatMonthLabel(visibleMonth)}</strong>
+        <button className="month-nav" disabled={!canNext} onClick={() => setVisibleMonth(addMonths(visibleMonth, 1))} type="button">
+          ›
+        </button>
+      </div>
+      <div className="calendar-runway">
+        <span>D+1</span>
+        <div><i style={{ width: `${Math.min(100, Math.round((user.onboardingDay / 60) * 100))}%` }} /></div>
+        <span>D+60</span>
       </div>
       <div className="calendar-weekdays">
         <div>일</div>
@@ -132,26 +160,29 @@ function AttendanceCalendar({
         <div>토</div>
       </div>
       <div className="calendar-grid">
-        {days.map((day) => (
-          <div className={`cal-day ${day.state}`} key={day.id}>
-            <span className="cal-date">{day.label}</span>
-            {day.state !== "empty" ? (
+        {cells.map((day, index) => {
+          if (!day) return <div className="cal-day empty" key={`blank-${visibleMonth.toISOString()}-${index}`} />;
+
+          const planDay = getPlanDay(day, planStart);
+          const inPlan = planDay >= 1 && planDay <= 60;
+          const state = !inPlan ? "outside" : isSameDay(day, today) ? "today" : day < today ? "full" : "future";
+
+          return (
+            <button className={`cal-day ${state}${isSameDay(day, selectedDate) ? " selected" : ""}`} disabled={!inPlan} key={day.toISOString()} onClick={() => setSelectedDate(day)} type="button">
+              <span className="cal-date">{day.getDate()}</span>
+              {inPlan ? (
               <>
                 <strong className="ticket-score">
-                  {day.state === "future" ? "예정" : `${day.earnedTicket}/${day.maxTicket}`}
+                  {state === "future" ? `D+${planDay}` : state === "today" ? "오늘" : "완료"}
                 </strong>
                 <div className="ticket-bar">
-                  <span style={{ width: `${day.maxTicket ? (day.earnedTicket / day.maxTicket) * 100 : 0}%` }} />
+                  <span style={{ width: state === "full" ? "100%" : state === "today" ? `${user.onboardingProgressPct}%` : "0%" }} />
                 </div>
               </>
             ) : null}
-          </div>
-        ))}
-      </div>
-      <div className="calendar-legend">
-        <span style={{ color: "#16a34a" }}>초록 = 전부 획득</span>
-        <span style={{ color: "#f97316" }}>주황 = 일부 획득</span>
-        <span style={{ color: "#dc2626" }}>빨강 = 0개</span>
+            </button>
+          );
+        })}
       </div>
       <div className="day-detail" id="dayDetail">
         <div className="day-detail-title">
@@ -171,4 +202,68 @@ function AttendanceCalendar({
       </div>
     </div>
   );
+}
+
+function createDayDetail(planDay: number, inPlan: boolean, past: boolean): MissionDayDetail {
+  if (!inPlan) {
+    return {
+      title: "온보딩 기간 밖",
+      earnedTicket: 0,
+      maxTicket: 0,
+      tasks: []
+    };
+  }
+
+  return {
+    title: `D+${planDay} 온보딩`,
+    earnedTicket: past ? 30 : 0,
+    maxTicket: 30,
+    tasks: [
+      { label: "출석 체크", earnedTicket: past ? 10 : 0, maxTicket: 10 },
+      { label: "오늘 미션", earnedTicket: past ? 10 : 0, maxTicket: 10 },
+      { label: "포인트 적립", earnedTicket: past ? 10 : 0, maxTicket: 10 }
+    ]
+  };
+}
+
+function buildMonthCells(month: Date) {
+  const first = startOfMonth(month);
+  const blanks = Array.from<null>({ length: first.getDay() }).fill(null);
+  const days = Array.from({ length: new Date(first.getFullYear(), first.getMonth() + 1, 0).getDate() }, (_, index) => new Date(first.getFullYear(), first.getMonth(), index + 1));
+
+  return [...blanks, ...days];
+}
+
+function getPlanDay(date: Date, start: Date) {
+  return Math.floor((getDateOnly(date).getTime() - getDateOnly(start).getTime()) / 86400000) + 1;
+}
+
+function addDays(date: Date, days: number) {
+  const next = new Date(date);
+  next.setDate(next.getDate() + days);
+  return getDateOnly(next);
+}
+
+function addMonths(date: Date, months: number) {
+  return new Date(date.getFullYear(), date.getMonth() + months, 1);
+}
+
+function startOfMonth(date: Date) {
+  return new Date(date.getFullYear(), date.getMonth(), 1);
+}
+
+function getDateOnly(date: Date) {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
+function isSameDay(left: Date, right: Date) {
+  return left.getFullYear() === right.getFullYear() && left.getMonth() === right.getMonth() && left.getDate() === right.getDate();
+}
+
+function monthKey(date: Date) {
+  return date.getFullYear() * 12 + date.getMonth();
+}
+
+function formatMonthLabel(date: Date) {
+  return `${date.getFullYear()}년 ${date.getMonth() + 1}월`;
 }

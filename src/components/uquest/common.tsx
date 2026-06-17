@@ -55,7 +55,7 @@ export function SectionTitle({ title, badge }: { title: string; badge?: string }
 export function Wallet({ currencies }: { currencies: CurrencySnapshot[] }) {
   return (
     <section className="wallet">
-      <div className="wallet-title">보유 재화</div>
+      <div className="wallet-title">보유 포인트</div>
       <div className="wallet-items">
         {currencies.map((currency) => (
           <span key={currency.id}>
@@ -69,7 +69,7 @@ export function Wallet({ currencies }: { currencies: CurrencySnapshot[] }) {
 
 export function CurrencyGrid({ currencies }: { currencies: CurrencySnapshot[] }) {
   return (
-    <section className="currency-grid">
+    <section className={`currency-grid${currencies.length <= 2 ? " compact" : ""}`}>
       {currencies.map((currency) => (
         <div className="currency" key={currency.id}>
           <div className={`coin-icon ${currency.tone}`}>{currency.icon}</div>
@@ -126,9 +126,9 @@ export function BottomNavigation({
   const items: Array<{ screen: ScreenKey; icon: string; label: string; tree?: boolean }> = [
     { screen: "home", icon: "⌂", label: "홈" },
     { screen: "profile", icon: "👤", label: "내현황" },
-    { screen: "tree", icon: "🌲", label: "나무", tree: true },
-    { screen: "sword", icon: "⚔", label: "검 성장" },
-    { screen: "shop", icon: "▤", label: "상점" }
+    { screen: "tree", icon: "P", label: "적립", tree: true },
+    { screen: "sword", icon: "↗", label: "성장" },
+    { screen: "shop", icon: "▤", label: "보상" }
   ];
 
   return (

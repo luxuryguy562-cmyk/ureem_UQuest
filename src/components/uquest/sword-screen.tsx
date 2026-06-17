@@ -1,38 +1,37 @@
 import { useState } from "react";
 
-import { PixelSword } from "@/components/uquest/pixel-art";
 import { formatNumber } from "@/lib/format";
 import type { SwordUpgradeConfig, UserProfile } from "@/types/uquest";
+
+const growthRoadmap = [
+  { level: 1, name: "입장 완료", week: "1일차", sxp: 0 },
+  { level: 2, name: "명찰 장착", week: "1주차", sxp: 20 },
+  { level: 3, name: "루틴 러너", week: "2주차", sxp: 45 },
+  { level: 4, name: "매장 탐험가", week: "3주차", sxp: 80 },
+  { level: 5, name: "응대 견습", week: "4주차", sxp: 130 },
+  { level: 6, name: "AX/DX 파일럿", week: "5주차", sxp: 200 },
+  { level: 7, name: "피크타임 생존자", week: "6주차", sxp: 300 },
+  { level: 8, name: "세일즈 메이커", week: "7주차", sxp: 420 },
+  { level: 9, name: "실전 에이스", week: "8주차", sxp: 560 },
+  { level: 10, name: "온보딩 클리어", week: "2개월", sxp: 720 }
+];
 
 export function SwordScreen({
   active,
   sword,
-  user,
-  onUpgrade
+  user
 }: {
   active: boolean;
   sword: SwordUpgradeConfig;
   user: UserProfile;
-  onUpgrade: () => void;
 }) {
-  const [upgrading, setUpgrading] = useState(false);
+  const [roadmapOpen, setRoadmapOpen] = useState(false);
   const current = sword.current;
   const next = sword.next;
-  const coin = user.wallet.find((currency) => currency.id === "coin")?.amount ?? 0;
   const isMaxLevel = current.level >= sword.maxLevel;
-  const hasMaterials = coin >= sword.requiredCoin;
-  const hasSxp = user.sxp >= sword.requiredSxp;
-  const canUpgrade = !isMaxLevel && hasMaterials && hasSxp;
-
-  function upgrade() {
-    if (!canUpgrade) return;
-
-    setUpgrading(true);
-    window.setTimeout(() => {
-      setUpgrading(false);
-      onUpgrade();
-    }, 900);
-  }
+  const requiredSxp = Math.max(1, sword.requiredSxp);
+  const progressPct = isMaxLevel ? 100 : Math.min(100, Math.round((user.sxp / requiredSxp) * 100));
+  const remainingSxp = Math.max(0, sword.requiredSxp - user.sxp);
 
   return (
     <main className={`screen${active ? " active" : ""}`} id="swordScreen">
@@ -40,86 +39,56 @@ export function SwordScreen({
         <div>
           <div className="top-sub">
             <span className="dot" />
-            외형 성장
+            온보딩 성장
           </div>
-          <h1>검 성장</h1>
+          <h1>성장 단계</h1>
         </div>
         <div className="setting">⚙️</div>
       </div>
 
-      <section className="wallet">
-        <div className="wallet-title">보유 재화</div>
-        <div className="wallet-items">
-          {user.wallet.map((currency) => (
-            <span key={currency.id}>
-              {currency.icon} <b>{formatNumber(currency.amount)}</b>
-            </span>
-          ))}
+      <section className="growth-card">
+        <div className="growth-compact">
+          <div className="growth-rank">
+            <span>Lv.</span>
+            <strong>{current.level}</strong>
+          </div>
+          <div className="growth-summary">
+            <label>{current.name}</label>
+            <strong>{isMaxLevel ? "온보딩 클리어" : `${formatNumber(remainingSxp)} XP to ${next.name}`}</strong>
+          </div>
+          <button className="roadmap-button" onClick={() => setRoadmapOpen((open) => !open)} type="button">
+            {roadmapOpen ? "접기" : "로드맵"}
+          </button>
         </div>
-      </section>
+        <div className="growth-meter">
+          <span style={{ width: `${progressPct}%` }} />
+        </div>
+        <div className="growth-meta-row">
+          <span>{formatNumber(user.sxp)} / {formatNumber(sword.requiredSxp)} XP</span>
+          <span>2개월 플랜</span>
+          <span>자동 성장</span>
+        </div>
+        {roadmapOpen ? (
+          <div className="roadmap-list">
+            {growthRoadmap.map((stage) => {
+              const reached = user.sxp >= stage.sxp;
+              const currentStage = current.level === stage.level;
 
-      <section className="stage">
-        <div className="level-panel">
-          <div className="level-card before">
-            <label>현재</label>
-            <strong>{current.label}</strong>
+              return (
+                <div className={`roadmap-item${reached ? " reached" : ""}${currentStage ? " current" : ""}`} key={stage.level}>
+                  <div className="roadmap-level">Lv.{stage.level}</div>
+                  <div className="roadmap-info">
+                    <strong>{stage.name}</strong>
+                    <span>
+                      {stage.week} · {formatNumber(stage.sxp)} XP
+                    </span>
+                  </div>
+                  <div className="roadmap-state">{currentStage ? "NOW" : reached ? "OK" : "LOCK"}</div>
+                </div>
+              );
+            })}
           </div>
-          <div className="arrow">→</div>
-          <div className="level-card after">
-            <label>강화 후</label>
-            <strong>{next.label}</strong>
-          </div>
-        </div>
-        <div className="sword-zone">
-          <div className="glow" />
-          <PixelSword upgrading={upgrading} />
-        </div>
-            <div className="sword-name">
-          <h2>{current.name}</h2>
-          <p>검은 보상 경제와 분리된 외형 성장입니다</p>
-        </div>
-        <div className="effect-grid">
-          <div className="effect-main">
-            <label>✨ 외형 변화</label>
-            <strong>
-              {current.name} → {next.name}
-            </strong>
-          </div>
-          <div className="effect-sub-row">
-            <div className="effect-sub">
-              <label>⚡ 타격 연출</label>
-              <strong>강화</strong>
-            </div>
-            <div className="effect-sub">
-              <label>🪙 코인 영향</label>
-              <strong>없음</strong>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="upgrade-card">
-        <div className="upgrade-head">
-          <h2>강화 준비</h2>
-          <div className="safe-badge">{sword.noFailLabel}</div>
-        </div>
-        <div className="cost-row">
-          <div className="cost">
-            <label>필요 골드</label>
-            <strong>🪙 {formatNumber(sword.requiredCoin)}</strong>
-          </div>
-          <div className="cost">
-            <label>필요 SXP</label>
-            <strong>{formatNumber(sword.requiredSxp)}</strong>
-          </div>
-          <div className="cost">
-            <label>성공률</label>
-            <strong>{sword.successRatePct}%</strong>
-          </div>
-        </div>
-        <button className="upgrade-btn" disabled={upgrading || !canUpgrade} onClick={upgrade} type="button">
-          {isMaxLevel ? "최대 레벨" : upgrading ? "강화 중..." : canUpgrade ? "⚔️ 강화하기" : hasMaterials ? "SXP 부족" : "재료 부족"}
-        </button>
+        ) : null}
       </section>
     </main>
   );

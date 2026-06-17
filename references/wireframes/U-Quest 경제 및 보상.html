@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>U-Quest 경제/성장 구조 설명</title>
+<style>
+  :root{--bg:#f6f7fb;--card:#fff;--ink:#1f2937;--muted:#6b7280;--blue:#2563eb;--green:#16a34a;--purple:#7c3aed;--orange:#f97316;--line:#e5e7eb;--soft:#eef2ff}
+  body{margin:0;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;color:var(--ink)}
+  .wrap{max-width:1120px;margin:0 auto;padding:36px 24px 64px}
+  h1{font-size:30px;margin:0 0 10px} h2{font-size:21px;margin:0 0 16px} h3{font-size:17px;margin:22px 0 10px}
+  p{color:var(--muted);line-height:1.6;margin:6px 0}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:22px 0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 6px 18px rgba(15,23,42,.05)}
+  .pill{display:inline-block;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;margin-bottom:10px;background:var(--soft);color:var(--blue)}
+  .flow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px}
+  .step{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px;font-weight:700}
+  .arrow{color:#9ca3af;font-weight:900}
+  table{width:100%;border-collapse:collapse;background:#fff;border-radius:14px;overflow:hidden;border:1px solid var(--line);margin:12px 0 26px}
+  th{background:#111827;color:#fff;text-align:left;padding:12px;font-size:14px}
+  td{border-top:1px solid var(--line);padding:12px;font-size:14px}
+  td.num{text-align:right;font-variant-numeric:tabular-nums}
+  .section{margin-top:28px}.blue{color:var(--blue)}.green{color:var(--green)}.purple{color:var(--purple)}.orange{color:var(--orange)}
+  .note{background:#fff7ed;border:1px solid #fed7aa;border-radius:16px;padding:16px;margin:18px 0;color:#7c2d12}
+  .summary{font-size:18px;font-weight:800;background:#ecfdf5;border:1px solid #bbf7d0;border-radius:16px;padding:18px;margin:20px 0}
+  @media(max-width:900px){.grid{grid-template-columns:1fr}.wrap{padding:24px 14px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>U-Quest 성장/보상 구조 정리</h1>
+  <div class="summary">
+    신입은 20일 동안 <span class="blue">출석</span>, <span class="green">학습</span>, <span class="purple">퀴즈</span>, <span class="orange">AX 인증</span>을 하고,
+    그 결과로 캐릭터·배지·티어·AX로봇이 성장하며 포인트와 쿠폰을 받는다.
+  </div>
+
+  <div class="section">
+    <h2>1. 전체 구조</h2>
+    <div class="grid">
+      <div class="card"><span class="pill">성실성</span><h2>캐릭터 성장</h2><p>출석 + 학습 완료로 성장.</p><p><b>의미:</b> 꾸준히 참여했는가</p></div>
+      <div class="card"><span class="pill">학습량/실력</span><h2>퀴즈 배지 + 티어</h2><p>많이 풀면 배지, 많이 맞히면 티어.</p><p><b>의미:</b> 공부량과 이해도</p></div>
+      <div class="card"><span class="pill">AX 활용</span><h2>AX 로봇</h2><p>AX 미션 인증 횟수로 성장.</p><p><b>의미:</b> AX 사용 습관</p></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>2. 하루에 하는 일</h2>
+    <div class="flow">
+      <div class="step">출석</div><div class="arrow">→</div>
+      <div class="step">오늘의 학습</div><div class="arrow">→</div>
+      <div class="step">퀴즈</div><div class="arrow">→</div>
+      <div class="step">AX 인증</div><div class="arrow">→</div>
+      <div class="step">포인트 적립</div>
+    </div>
+    <p>순서 강제는 아님. 가능한 것부터 수행.</p>
+  </div>
+
+  <div class="section">
+    <h2>3. 보상 철학</h2>
+    <table>
+      <tr><th>보상 종류</th><th>역할</th><th>예시</th></tr>
+      <tr><td>일일 행동 보상</td><td>매일 조금씩 받는 보상</td><td>출석, 학습, 퀴즈, AX</td></tr>
+      <tr><td>성장 보상</td><td>캐릭터/AX 로봇 성장 보상</td><td>Lv2~Lv5</td></tr>
+      <tr><td>배지 보상</td><td>성취 보상</td><td>출석 10회, 퀴즈 30문제 풀이</td></tr>
+      <tr><td>티어 보상</td><td>퀴즈 정답 보상</td><td>Silver~Diamond</td></tr>
+      <tr><td>희귀 배지</td><td>도파민/자랑용 대형 보상</td><td>4주 완주, 올클리어</td></tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>4. 일일 행동 보상</h2>
+    <p>하루에 전부 하면 1,000P, 20일 풀참여 시 20,000P.</p>
+    <table>
+      <tr><th>행동</th><th>1회 보상</th><th>20일 기준</th></tr>
+      <tr><td>출석</td><td class="num">200P</td><td class="num">4,000P</td></tr>
+      <tr><td>학습 완료</td><td class="num">200P</td><td class="num">4,000P</td></tr>
+      <tr><td>퀴즈 완료</td><td class="num">300P</td><td class="num">6,000P</td></tr>
+      <tr><td>AX 인증</td><td class="num">300P</td><td class="num">6,000P</td></tr>
+      <tr><td><b>합계</b></td><td class="num"><b>1,000P/일</b></td><td class="num"><b>20,000P</b></td></tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>5. 캐릭터 성장</h2>
+    <table>
+      <tr><th>단계</th><th>이름</th><th>보상</th></tr>
+      <tr><td>Lv1</td><td>새내기</td><td class="num">-</td></tr>
+      <tr><td>Lv2</td><td>적응중</td><td class="num">1,000P</td></tr>
+      <tr><td>Lv3</td><td>숙련자</td><td class="num">2,000P</td></tr>
+      <tr><td>Lv4</td><td>전문가</td><td class="num">3,000P</td></tr>
+      <tr><td>Lv5</td><td>마스터</td><td class="num">5,000P</td></tr>
+      <tr><td colspan="2"><b>합계</b></td><td class="num"><b>11,000P</b></td></tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>6. 퀴즈 구조</h2>
+    <table>
+      <tr><th>구분</th><th>기준</th><th>의미</th><th>보상 강도</th></tr>
+      <tr><td>퀴즈 배지</td><td>풀이 수</td><td>학습량</td><td>낮음~중간</td></tr>
+      <tr><td>티어</td><td>누적 정답 수</td><td>실력</td><td>높음</td></tr>
+    </table>
+
+    <h3>퀴즈 배지: 많이 풀었는가</h3>
+    <table>
+      <tr><th>배지</th><th>조건</th><th>보상</th></tr>
+      <tr><td>첫 도전</td><td>1문제 풀이</td><td class="num">500P</td></tr>
+      <tr><td>퀴즈러</td><td>10문제 풀이</td><td class="num">1,000P</td></tr>
+      <tr><td>상품 탐험가</td><td>30문제 풀이</td><td class="num">1,500P</td></tr>
+      <tr><td>꾸준한 학습자</td><td>50문제 풀이</td><td class="num">2,000P</td></tr>
+      <tr><td>지식 수집가</td><td>60문제 풀이</td><td class="num">3,000P</td></tr>
+      <tr><td colspan="2"><b>합계</b></td><td class="num"><b>8,000P</b></td></tr>
+    </table>
+
+    <h3>티어: 얼마나 맞혔는가</h3>
+    <table>
+      <tr><th>티어</th><th>조건</th><th>보상</th></tr>
+      <tr><td>Silver</td><td>누적 정답 15개</td><td class="num">1,000P</td></tr>
+      <tr><td>Gold</td><td>누적 정답 30개</td><td class="num">2,000P</td></tr>
+      <tr><td>Platinum</td><td>누적 정답 45개</td><td class="num">3,000P</td></tr>
+      <tr><td>Diamond</td><td>누적 정답 60개</td><td class="num">4,000P</td></tr>
+      <tr><td colspan="2"><b>합계</b></td><td class="num"><b>10,000P</b></td></tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>7. 출석 배지</h2>
+    <table>
+      <tr><th>배지</th><th>조건</th><th>보상</th></tr>
+      <tr><td>첫 출근</td><td>출석 1회</td><td class="num">500P</td></tr>
+      <tr><td>성실왕</td><td>출석 5회</td><td class="num">1,000P</td></tr>
+      <tr><td>꾸준왕</td><td>출석 10회</td><td class="num">1,500P</td></tr>
+      <tr><td>출석 마스터</td><td>출석 15회</td><td class="num">2,000P</td></tr>
+      <tr><td>전설의 신입</td><td>출석 20회</td><td class="num">3,000P</td></tr>
+      <tr><td colspan="2"><b>합계</b></td><td class="num"><b>8,000P</b></td></tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>8. AX 로봇/배지</h2>
+    <table>
+      <tr><th>단계</th><th>조건</th><th>보상</th></tr>
+      <tr><td>Explorer</td><td>AX 인증 5회</td><td class="num">500P</td></tr>
+      <tr><td>User</td><td>AX 인증 10회</td><td class="num">1,000P</td></tr>
+      <tr><td>Expert</td><td>AX 인증 15회</td><td class="num">1,500P</td></tr>
+      <tr><td>Master</td><td>AX 인증 20회</td><td class="num">2,000P</td></tr>
+      <tr><td colspan="2"><b>합계</b></td><td class="num"><b>5,000P</b></td></tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>9. 희귀 배지</h2>
+    <p>도감에는 ??? 로 표시하고 조건은 숨김.</p>
+    <table>
+      <tr><th>노출</th><th>내부 조건 예시</th><th>보상</th></tr>
+      <tr><td>???</td><td>4주 완주</td><td class="num">5,000P</td></tr>
+      <tr><td>???</td><td>모든 공개 배지 획득</td><td class="num">10,000P</td></tr>
+      <tr><td>???</td><td>AX 올클리어</td><td class="num">5,000P</td></tr>
+      <tr><td>???</td><td>U-Quest Legend</td><td class="num">15,000P</td></tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>10. 예상 보상</h2>
+    <table>
+      <tr><th>참여 유형</th><th>설명</th><th>예상 보상</th></tr>
+      <tr><td>대충 참여</td><td>출석/학습 일부만 수행</td><td class="num">30,000~50,000P</td></tr>
+      <tr><td>성실 완주</td><td>출석 + 학습 + 퀴즈 대부분 수행</td><td class="num">70,000~80,000P</td></tr>
+      <tr><td>실력 우수</td><td>성실 완주 + 높은 정답 수</td><td class="num">90,000~110,000P</td></tr>
+      <tr><td>올클리어</td><td>모든 활동 + 희귀 배지</td><td class="num">약 150,000P</td></tr>
+    </table>
+  </div>
+
+  <div class="note">
+    <b>핵심:</b> 퀴즈 배지는 “많이 풀었다”, 티어는 “많이 맞혔다”.
+    대충 풀어도 티어 보상은 못 받고, 열심히 푼 노력은 퀴즈 배지로 인정.
+  </div>
+</div>
+</body>
+</html>

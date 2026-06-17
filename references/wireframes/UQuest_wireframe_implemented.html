@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>U-Quest Implemented Wireframe</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #eef2f7; color: #0f172a; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    main { max-width: 1080px; margin: 0 auto; padding: 28px; }
+    h1 { margin: 0 0 6px; font-size: 28px; }
+    p { margin: 0 0 18px; color: #64748b; font-weight: 700; }
+    .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+    .phone { width: 320px; min-height: 640px; background: #f8fafc; border: 1px solid #dbe3ef; border-radius: 26px; overflow: hidden; box-shadow: 0 18px 46px rgba(15, 23, 42, .13); }
+    .head { height: 60px; background: white; border-bottom: 1px solid #e2e8f0; padding: 12px; display: flex; justify-content: space-between; align-items: center; }
+    .head b { display: block; font-size: 16px; }
+    .role { border-radius: 999px; background: #0f172a; color: white; padding: 7px 10px; font-size: 12px; font-weight: 900; }
+    .body { padding: 12px; display: grid; gap: 10px; }
+    .hero { border-radius: 20px; background: linear-gradient(135deg, #0f172a, #2563eb, #0f766e); color: white; padding: 16px; min-height: 132px; }
+    .hero h2 { margin: 4px 0 12px; font-size: 24px; }
+    .bar { height: 10px; border-radius: 999px; background: rgba(255,255,255,.26); overflow: hidden; }
+    .bar i { display: block; width: 34%; height: 100%; background: linear-gradient(90deg, #fbbf24, #22c55e); }
+    .card { border: 1px solid #e2e8f0; background: white; border-radius: 16px; padding: 12px; }
+    .card h3 { margin: 0 0 10px; font-size: 16px; }
+    .row { height: 42px; border: 1px solid #e2e8f0; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; padding: 0 10px; margin-top: 8px; font-weight: 800; font-size: 13px; }
+    .nav { margin-top: auto; height: 66px; background: white; border-top: 1px solid #e2e8f0; display: grid; grid-template-columns: repeat(5, 1fr); }
+    .nav span { display: flex; align-items: center; justify-content: center; color: #64748b; font-size: 11px; font-weight: 900; }
+    .pill { display: inline-block; border-radius: 999px; background: #eff6ff; color: #2563eb; padding: 6px 9px; font-size: 11px; font-weight: 900; }
+    .twocol { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .tile { min-height: 70px; border-radius: 14px; background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; font-weight: 900; }
+    @media (max-width: 980px) { .grid { grid-template-columns: 1fr; } .phone { width: min(100%, 390px); } }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>U-Quest 구현 기준 와이어프레임</h1>
+    <p>CHANGELOG_v1.1.md 우선 기준으로 정리한 신입, 점장, 본사 화면 구조입니다.</p>
+    <section class="grid">
+      <article class="phone">
+        <div class="head"><b>김은성</b><span class="role">신입</span></div>
+        <div class="body">
+          <div class="hero"><span>4주 온보딩 · D+15</span><h2>오늘의 온보딩</h2><div class="bar"><i></i></div></div>
+          <div class="card"><h3>오늘 수행 항목</h3><div class="row">출석 <span>출석하기</span></div><div class="row">학습 <span>학습하기</span></div><div class="row">퀴즈 <span>학습 필요</span></div><div class="row">AX/DX <span>인증하기</span></div></div>
+          <div class="card"><h3>메뉴</h3><div class="twocol"><div class="tile">학습<br><small>20일 커리큘럼</small></div><div class="tile">퀴즈<br><small>재도전 없음</small></div><div class="tile">AX<br><small>7개 고정</small></div><div class="tile">상점<br><small>수료 후 오픈</small></div></div></div>
+        </div>
+        <div class="nav"><span>홈</span><span>학습</span><span>퀴즈</span><span>AX</span><span>내정보</span></div>
+      </article>
+      <article class="phone">
+        <div class="head"><b>강남점 신입</b><span class="role">점장</span></div>
+        <div class="body">
+          <span class="pill">조회 전용</span>
+          <div class="card"><h3>담당 매장 신입</h3><div class="row">김은성 <span>Silver · Explorer</span></div><div class="row">박수료 <span>Gold · User</span></div><div class="row">승인대기신입 <span>승인대기</span></div></div>
+          <div class="card"><h3>권한</h3><div class="row">진행률 조회 <span>가능</span></div><div class="row">배지 조회 <span>가능</span></div><div class="row">수정/승인/포인트 <span>불가</span></div></div>
+        </div>
+      </article>
+      <article class="phone">
+        <div class="head"><b>운영 대시보드</b><span class="role">본사</span></div>
+        <div class="body">
+          <div class="twocol"><div class="tile">전체 신입<br>5명</div><div class="tile">승인 대기<br>1건</div><div class="tile">수료자<br>1명</div><div class="tile">쿠폰 요청<br>1건</div></div>
+          <div class="card"><h3>관리 탭</h3><div class="twocol"><div class="tile">회원</div><div class="tile">커리큘럼</div><div class="tile">AX</div><div class="tile">쿠폰</div><div class="tile">검증</div></div></div>
+          <div class="card"><h3>검증</h3><div class="row">AX/DX 7개 고정 <span>PASS</span></div><div class="row">퀴즈 문제 수 가변 <span>PASS</span></div><div class="row">점장 조회 전용 <span>PASS</span></div></div>
+        </div>
+      </article>
+    </section>
+  </main>
+</body>
+</html>

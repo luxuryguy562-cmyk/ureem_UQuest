@@ -155,7 +155,7 @@ function MissionsPanel({
                   <div className="reward-admin-info">
                     <strong>{task.title}</strong>
                     <span>
-                      {task.sourceLabel ? `${task.sourceLabel} · ` : ""}타격권 +{task.rewardTicket} · sort_order {task.sortOrder}
+                      {task.sourceLabel ? `${task.sourceLabel} · ` : ""}리워드 기회 +{task.rewardTicket} · 정렬 {task.sortOrder}
                     </span>
                   </div>
                   <div className="status-pill good">활성</div>
@@ -193,7 +193,7 @@ function RewardsPanel({ rewards, onModal }: { rewards: RewardProduct[]; onModal:
               <div className="reward-admin-info">
                 <strong>{reward.title}</strong>
                 <span>
-                  {formatNumber(reward.cost)} 코인 · sort_order {reward.sortOrder}
+                  {formatNumber(reward.cost)} 포인트 · 정렬 {reward.sortOrder}
                 </span>
               </div>
               <div className="status-pill good">활성</div>
@@ -261,7 +261,7 @@ function EconomyPanel({ admin }: { admin: AdminConfig }) {
                 <strong>{economy.participationRatePct}%</strong>
               </div>
               <div className="metric-box done">
-                <label>예상타격</label>
+                <label>예상 이용</label>
                 <strong>{formatNumber(economy.estimatedMonthlyHits)}</strong>
               </div>
               <div className="metric-box warn">
@@ -273,7 +273,7 @@ function EconomyPanel({ admin }: { admin: AdminConfig }) {
                 <strong>{riskLabel}</strong>
               </div>
             </div>
-            <div className="small-text">직원 수 증가 시 코인 기대값/히든확률이 자동 조정됩니다.</div>
+            <div className="small-text">직원 수 증가 시 포인트 기대값과 이벤트 보상 확률이 자동 조정됩니다.</div>
           </div>
         </div>
       </section>

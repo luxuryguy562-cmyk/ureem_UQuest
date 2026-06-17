@@ -25,18 +25,18 @@ export function ShopScreen({
         <div>
           <div className="top-sub" style={{ color: "#f59e0b" }}>
             <span className="dot" style={{ background: "#f59e0b" }} />
-            보상 교환 가능
+            포인트 사용
           </div>
-          <h1>교환 상점</h1>
+          <h1>보상 교환</h1>
         </div>
         <div className="setting">🏪</div>
       </div>
 
       <section className="wallet">
-        <div className="wallet-title">보유 재화</div>
+        <div className="wallet-title">보유 포인트</div>
         <div className="wallet-items">
           {user.wallet
-            .filter((currency) => currency.id !== "scroll")
+            .filter((currency) => currency.id === "coin")
             .map((currency) => (
               <span key={currency.id}>
                 {currency.icon} <b>{formatNumber(currency.amount)}</b>
@@ -62,7 +62,7 @@ export function ShopScreen({
             <div className="shop-item" key={reward.id}>
               <div className="shop-item-icon">{reward.icon}</div>
               <strong>{reward.title}</strong>
-              <span>{formatNumber(reward.cost)} 코인</span>
+              <span>{formatNumber(reward.cost)} 포인트</span>
               <button className="shop-buy" onClick={() => onRedeem(reward)} type="button">
                 {reward.actionLabel}
               </button>
@@ -73,8 +73,8 @@ export function ShopScreen({
 
       <section className="secret-zone">
         <div className="secret-top">
-          <h3>SECRET BOX</h3>
-          <span>히든코인 전용</span>
+          <h3>스페셜 보상</h3>
+          <span>이벤트 전용</span>
         </div>
         <div className="secret-box-card">
           <div className="secret-box-icon">🎁</div>
@@ -84,7 +84,7 @@ export function ShopScreen({
           </div>
         </div>
         <button className="secret-open-btn" onClick={onOpenHiddenBox} type="button">
-          💎 {shop.hiddenBox.costHiddenCoin}개로 박스 열기
+          ★ {shop.hiddenBox.costHiddenCoin}개로 열기
         </button>
       </section>
     </main>
@@ -98,7 +98,7 @@ function FeaturedReward({ reward, onRedeem }: { reward: RewardProduct; onRedeem:
       <div className="featured-info">
         <label>오늘 인기 보상</label>
         <strong>{reward.title}</strong>
-        <span>{formatNumber(reward.cost)} 코인</span>
+        <span>{formatNumber(reward.cost)} 포인트</span>
       </div>
       <button className="featured-btn" onClick={() => onRedeem(reward)} type="button">
         {reward.actionLabel}

@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { MiniAvatar, TreeArt } from "@/components/uquest/pixel-art";
+import { MiniAvatar, RewardBoardArt } from "@/components/uquest/pixel-art";
 import { formatNumber } from "@/lib/format";
 import type { TreeStateConfig } from "@/types/uquest";
 
@@ -23,6 +23,7 @@ export function TreeScreen({
   onHit: () => TreeHitResult;
 }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const lastRewardLabel = tree.lastRewardLabel === "아직 이용 전" ? "없음" : tree.lastRewardLabel;
   const [runtime, setRuntime] = useState<TreeRuntime>({
     hitKey: 0,
     history: []
@@ -48,9 +49,9 @@ export function TreeScreen({
 
     const hitKey = runtime.hitKey + 1;
 
-    let history = addHistory("🪙", "코인", `+${result.coin}`, hitKey);
-    if (result.hiddenDropped) history = [{ id: `hidden-${hitKey}`, icon: "💎", title: "히든", amountLabel: "+1" }, ...history];
-    if (result.scrollDropped) history = [{ id: `scroll-${hitKey}`, icon: "📜", title: "주문서", amountLabel: "+1" }, ...history];
+    let history = addHistory("P", "포인트", `+${result.coin}`, hitKey);
+    if (result.hiddenDropped) history = [{ id: `hidden-${hitKey}`, icon: "★", title: "스페셜", amountLabel: "+1" }, ...history];
+    if (result.scrollDropped) history = [{ id: `scroll-${hitKey}`, icon: "↗", title: "성장권", amountLabel: "+1" }, ...history];
 
     setRuntime({
       hitKey,
@@ -64,9 +65,9 @@ export function TreeScreen({
         <div>
           <div className="top-sub" style={{ color: "#10b981" }}>
             <span className="dot" style={{ background: "#10b981" }} />
-            보상 연타 가능
+            리워드 기회 사용
           </div>
-          <h1>나무 때리기</h1>
+          <h1>포인트 적립</h1>
         </div>
         <div className="setting">⚙️</div>
       </div>
@@ -76,20 +77,14 @@ export function TreeScreen({
           <MiniAvatar />
           <div>
             <div className="weapon-line">
-              <strong>{tree.swordLevelLabel}</strong>
-              <div className="hidden-badge">히든확률 {tree.hiddenChancePct}%</div>
+              <strong>보유 포인트</strong>
+              <div className="hidden-badge">랜덤 적립</div>
             </div>
             <div className="wallet-line">
-              <div className="wallet-title-small">보유 재화</div>
+              <div className="wallet-title-small">현재 교환 가능 포인트</div>
               <div className="wallet-items-line">
                 <span>
-                  🪙 <b>{formatNumber(tree.totalCoin)}</b>
-                </span>
-                <span>
-                  💎 <b>{tree.hiddenCoin}</b>
-                </span>
-                <span>
-                  📜 <b>{tree.scroll}</b>
+                  P <b>{formatNumber(tree.totalCoin)}</b>
                 </span>
               </div>
             </div>
@@ -100,46 +95,38 @@ export function TreeScreen({
       <section className="tree-card">
         <div className="tree-card-head">
           <div className="ticket-pill">
-            <label>타격권</label>
-            <strong>{tree.remainingTicket}</strong>
+            <label>남은 기회</label>
+            <strong>{tree.remainingTicket}회</strong>
           </div>
           <div className="today-inline">
-            <strong>오늘 획득</strong>
+            <strong>오늘 포인트</strong>
             <div className="today-inline-right">
               <div className="today-chip">
-                <label>🪙</label>
+                <label>P</label>
                 <strong>+{formatNumber(tree.todayCoin)}</strong>
-              </div>
-              <div className="today-chip">
-                <label>💎</label>
-                <strong>{tree.todayHiddenCoin}</strong>
-              </div>
-              <div className="today-chip">
-                <label>📜</label>
-                <strong>{tree.todayScroll}</strong>
               </div>
             </div>
           </div>
           <div className="last-inline" onClick={() => setDrawerOpen((current) => !current)} role="button" tabIndex={0}>
-            <span>방금 획득</span>
-            <strong>{tree.lastRewardLabel}</strong>
+            <span>마지막 적립</span>
+            <strong>{lastRewardLabel}</strong>
           </div>
         </div>
         <div className="tree-stage">
           <div className={`coin-pop c1${runtime.hitKey % 3 === 1 ? " show" : ""}`} key={`coin1-${runtime.hitKey}`}>
-            🪙
+            P
           </div>
           <div className={`coin-pop c2${runtime.hitKey % 3 === 2 ? " show" : ""}`} key={`coin2-${runtime.hitKey}`}>
-            🪙
+            P
           </div>
           <div className={`coin-pop c3${runtime.hitKey % 3 === 0 ? " show" : ""}`} key={`coin3-${runtime.hitKey}`}>
-            🪙
+            P
           </div>
           <div className={`floating-reward${runtime.hitKey ? " show" : ""}`} key={`reward-${runtime.hitKey}`}>
-            {tree.lastRewardLabel}
+            {lastRewardLabel}
           </div>
           <div className={`sword-swipe${runtime.hitKey ? " show" : ""}`} key={`swipe-${runtime.hitKey}`} />
-          <TreeArt hitKey={runtime.hitKey} />
+          <RewardBoardArt hitKey={runtime.hitKey} />
           <div className="ground-tree" />
         </div>
         <div className="tree-card-bottom">
@@ -151,7 +138,7 @@ export function TreeScreen({
             ))}
           </div>
           <button className="tap-btn" disabled={tree.remainingTicket <= 0} onClick={hitTree} type="button">
-            {tree.remainingTicket <= 0 ? "타격권 없음" : "🌲 TAP! TAP! TAP!"}
+            {tree.remainingTicket <= 0 ? "남은 기회 없음" : "기회 1회 사용"}
           </button>
         </div>
       </section>
