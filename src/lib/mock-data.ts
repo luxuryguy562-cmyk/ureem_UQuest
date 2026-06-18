@@ -132,6 +132,13 @@ export const finalFallbackAppConfig: FinalUQuestConfig = {
   activeUserId: "rookie-001",
   managerUserId: "manager-001",
   adminUserId: "admin-001",
+  rewardConfig: {
+    attendancePoints: 100,
+    learningPoints: 0,
+    quizCorrectPoints: 300,
+    quizWrongPoints: 30,
+    axPoints: 200
+  },
   stores: [
     { id: "store-gangnam", name: "강남점", code: "GN", isActive: true },
     { id: "store-jamsil", name: "잠실점", code: "JS", isActive: true }

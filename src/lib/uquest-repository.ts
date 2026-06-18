@@ -16,6 +16,7 @@ import type {
   FinalPointHistory,
   FinalQuizQuestion,
   FinalQuizSubmission,
+  FinalRewardConfig,
   FinalStore,
   FinalUQuestConfig,
   FinalUser
@@ -144,6 +145,10 @@ async function assembleConfigFromDb(supabase: Supabase, today: string): Promise<
     supabase.from("notifications").select("*"),
     supabase.from("admin_audit_logs").select("*")
   ]);
+
+  // 보상 단위 설정은 단일 스냅샷(app_config_snapshots)에 저장한다.
+  const snapshotRes = await supabase.from("app_config_snapshots").select("payload").eq("id", "current").maybeSingle();
+  const rewardConfig = ((snapshotRes.data?.payload ?? null) as { rewardConfig?: FinalRewardConfig } | null)?.rewardConfig;
 
   const badgeCodesByUser = new Map<string, string[]>();
   for (const row of (userBadgesRes.data ?? []) as Row[]) {
@@ -337,6 +342,7 @@ async function assembleConfigFromDb(supabase: Supabase, today: string): Promise<
     activeUserId: users.find((u) => u.role === "rookie" && u.status === "active")?.id ?? "",
     managerUserId: users.find((u) => u.role === "manager")?.id ?? "",
     adminUserId: users.find((u) => u.role === "admin")?.id ?? "",
+    rewardConfig,
     stores,
     users,
     curriculums,
@@ -589,6 +595,18 @@ async function persistDeltas(supabase: Supabase, before: FinalUQuestConfig, next
     reason: a.reason,
     created_at: a.createdAt
   }));
+
+  // 보상 단위 설정 변경 시 단일 스냅샷에 저장.
+  if (next.rewardConfig && JSON.stringify(before.rewardConfig ?? null) !== JSON.stringify(next.rewardConfig)) {
+    await throwOnError(
+      supabase.from("app_config_snapshots").upsert({
+        id: "current",
+        payload: { rewardConfig: next.rewardConfig },
+        updated_at: new Date().toISOString()
+      }),
+      "app_config_snapshots upsert"
+    );
+  }
 }
 
 async function persistUserBadges(supabase: Supabase, before: FinalUQuestConfig, next: FinalUQuestConfig) {

@@ -153,6 +153,14 @@ type CurriculumDraft = {
   quizzes: CurriculumQuizDraft[];
 };
 
+type RewardConfigDraft = {
+  attendancePoints: number;
+  learningPoints: number;
+  quizCorrectPoints: number;
+  quizWrongPoints: number;
+  axPoints: number;
+};
+
 export function UQuestApp({ config }: { config: FinalUQuestConfig }) {
   const [data, setData] = useState<FinalUQuestConfig>(() => normalizeConfig(config));
   const [role, setRole] = useState<FinalRole>("rookie");
@@ -412,6 +420,15 @@ export function UQuestApp({ config }: { config: FinalUQuestConfig }) {
     );
   }
 
+  async function updateRewardConfig(values: RewardConfigDraft) {
+    await runApiMutation(
+      "/api/admin/reward-config",
+      values,
+      { title: "보상 설정 적용", body: "종목별 단위 포인트를 실제 보상에 적용했습니다.", tone: "good" },
+      currentUser.id
+    );
+  }
+
   const visibleScreen = role === "rookie" ? screen : role;
 
   if (!authChecked) {
@@ -483,6 +500,7 @@ export function UQuestApp({ config }: { config: FinalUQuestConfig }) {
           onApprove={approveUser}
           onCancelCoupon={cancelCouponRequest}
           onUpdateCurriculum={updateCurriculumSettings}
+          onUpdateRewardConfig={updateRewardConfig}
           onReject={rejectUser}
           onSendCoupon={sendCouponRequest}
         />
@@ -1446,7 +1464,8 @@ function AdminView({
   onReject,
   onSendCoupon,
   onCancelCoupon,
-  onUpdateCurriculum
+  onUpdateCurriculum,
+  onUpdateRewardConfig
 }: {
   data: FinalUQuestConfig;
   onApprove: (userId: string) => void;
@@ -1454,8 +1473,9 @@ function AdminView({
   onSendCoupon: (requestId: string) => void;
   onCancelCoupon: (requestId: string, reason: string) => void;
   onUpdateCurriculum: (curriculumId: string, draft: CurriculumDraft) => void;
+  onUpdateRewardConfig: (values: RewardConfigDraft) => void;
 }) {
-  const [tab, setTab] = useState<"dashboard" | "members" | "curriculum" | "ax" | "coupons" | "validation">("dashboard");
+  const [tab, setTab] = useState<"dashboard" | "members" | "curriculum" | "ax" | "coupons" | "rewards" | "validation">("dashboard");
   const rookies = data.users.filter((user) => user.role === "rookie");
   const pending = rookies.filter((user) => user.status === "pending").length;
   const completed = rookies.filter((user) => user.status === "completed").length;
@@ -1481,6 +1501,7 @@ function AdminView({
           ["curriculum", "커리큘럼"],
           ["ax", "AX"],
           ["coupons", "쿠폰"],
+          ["rewards", "보상"],
           ["validation", "검증"]
         ].map(([id, label]) => (
           <button className={tab === id ? "active" : ""} key={id} onClick={() => setTab(id as typeof tab)} type="button">
@@ -1527,11 +1548,84 @@ function AdminView({
 
       {tab === "curriculum" ? <AdminCurriculumPanel curriculums={data.curriculums} onSave={onUpdateCurriculum} quizzes={data.quizzes} /> : null}
       {tab === "ax" ? <AdminAxPanel categories={data.axCategories} /> : null}
+      {tab === "rewards" ? <AdminRewardSimulatorPanel data={data} onSave={onUpdateRewardConfig} /> : null}
       {tab === "coupons" ? (
         <AdminCouponPanel coupons={data.coupons} requests={data.couponRequests} users={data.users} onCancel={onCancelCoupon} onSend={onSendCoupon} />
       ) : null}
       {tab === "validation" ? <ValidationPanel data={data} /> : null}
     </main>
+  );
+}
+
+function AdminRewardSimulatorPanel({ data, onSave }: { data: FinalUQuestConfig; onSave: (values: RewardConfigDraft) => void }) {
+  const [draft, setDraft] = useState<RewardConfigDraft>({
+    attendancePoints: data.rewardConfig?.attendancePoints ?? 100,
+    learningPoints: data.rewardConfig?.learningPoints ?? 0,
+    quizCorrectPoints: data.rewardConfig?.quizCorrectPoints ?? 300,
+    quizWrongPoints: data.rewardConfig?.quizWrongPoints ?? 30,
+    axPoints: data.rewardConfig?.axPoints ?? 200
+  });
+
+  const ONBOARDING_DAYS = 30;
+  const attendanceCount = ONBOARDING_DAYS;
+  const learningCount = data.curriculums.length;
+  const quizCount = data.quizzes.filter((question) => question.rewardPoints >= 0).length;
+  const axCount = data.axCategories.length * ONBOARDING_DAYS;
+  const growBadges = data.badges.filter((badge) => !badge.isRare);
+  const rareBadges = data.badges.filter((badge) => badge.isRare);
+  const growBadgeTotal = growBadges.reduce((sum, badge) => sum + badge.rewardPoints, 0);
+  const rareBadgeTotal = rareBadges.reduce((sum, badge) => sum + badge.rewardPoints, 0);
+
+  const rows = [
+    { key: "att", label: "출석", unit: draft.attendancePoints as number | null, count: attendanceCount, total: draft.attendancePoints * attendanceCount },
+    { key: "learn", label: "학습", unit: draft.learningPoints as number | null, count: learningCount, total: draft.learningPoints * learningCount },
+    { key: "quiz", label: "퀴즈(정답)", unit: draft.quizCorrectPoints as number | null, count: quizCount, total: draft.quizCorrectPoints * quizCount },
+    { key: "ax", label: "AX", unit: draft.axPoints as number | null, count: axCount, total: draft.axPoints * axCount },
+    { key: "grow", label: "성장배지", unit: null, count: growBadges.length, total: growBadgeTotal },
+    { key: "rare", label: "🟣 희귀배지", unit: null, count: rareBadges.length, total: rareBadgeTotal }
+  ];
+  const grandTotal = rows.reduce((sum, row) => sum + row.total, 0);
+
+  function setField(field: keyof RewardConfigDraft, value: string) {
+    setDraft((prev) => ({ ...prev, [field]: Math.max(0, Math.floor(Number(value) || 0)) }));
+  }
+
+  return (
+    <section className="u-card reward-sim">
+      <h3>보상 경제 시뮬레이터</h3>
+      <p className="reward-sim-help">종목별 단위 포인트를 입력하면 합계·비중이 실시간 계산됩니다. <b>적용</b>하면 실제 출석·학습·퀴즈·AX 보상에 바로 반영돼요. (배지 금액은 배지 관리에서 · 만점 합계는 전정답 기준이라 오답값은 미포함)</p>
+
+      <div className="reward-sim-inputs">
+        <label>출석 / 회<input inputMode="numeric" onChange={(event) => setField("attendancePoints", event.target.value)} value={draft.attendancePoints} /></label>
+        <label>학습 / 개<input inputMode="numeric" onChange={(event) => setField("learningPoints", event.target.value)} value={draft.learningPoints} /></label>
+        <label>퀴즈 정답 / 문항<input inputMode="numeric" onChange={(event) => setField("quizCorrectPoints", event.target.value)} value={draft.quizCorrectPoints} /></label>
+        <label>퀴즈 오답 / 문항<input inputMode="numeric" onChange={(event) => setField("quizWrongPoints", event.target.value)} value={draft.quizWrongPoints} /></label>
+        <label>AX / 건<input inputMode="numeric" onChange={(event) => setField("axPoints", event.target.value)} value={draft.axPoints} /></label>
+      </div>
+
+      <table className="reward-sim-table">
+        <thead><tr><th>종목</th><th>단위</th><th>개수</th><th>합계</th><th>비중</th></tr></thead>
+        <tbody>
+          {rows.map((row) => {
+            const pct = grandTotal ? Math.round((row.total / grandTotal) * 100) : 0;
+            return (
+              <tr key={row.key}>
+                <td>{row.label}</td>
+                <td>{row.unit === null ? "—" : `${formatNumber(row.unit)}P`}</td>
+                <td>{row.count}</td>
+                <td>{formatNumber(row.total)}P</td>
+                <td><div className="reward-bar"><i style={{ width: `${pct}%` }} /></div><span>{pct}%</span></td>
+              </tr>
+            );
+          })}
+        </tbody>
+        <tfoot>
+          <tr><td><b>만점자 총액</b></td><td /><td /><td><b>{formatNumber(grandTotal)}P</b></td><td><b>100%</b></td></tr>
+        </tfoot>
+      </table>
+
+      <button className="reward-apply" onClick={() => onSave(draft)} type="button">적용 — 실제 보상에 반영</button>
+    </section>
   );
 }
 
@@ -1925,8 +2019,10 @@ function deriveRookieSummary(data: FinalUQuestConfig, user: FinalUser): RookieSu
   const storeName = data.stores.find((store) => store.id === user.storeId)?.name ?? "본사";
   const hireDate = user.hireDate ?? data.today;
   const currentDay = Math.max(1, diffDays(hireDate, data.today) + 1);
-  const curriculumDay = Math.min(20, Math.max(1, currentDay));
-  const endDate = addDays(hireDate, 27);
+  // 진도 기반: 오늘 진행할 Day = 완료한 학습 수 + 1 (도메인과 동일).
+  const curriculumDay = Math.min(20, data.learningCompletions.filter((completion) => completion.userId === user.id).length + 1);
+  const startDate = data.attendances.filter((attendance) => attendance.userId === user.id).map((attendance) => attendance.attendanceDate).sort()[0];
+  const endDate = addDays(startDate ?? hireDate, 30);
   const userPointHistories = data.pointHistories.filter((history) => history.userId === user.id);
   const pointBalance = userPointHistories.reduce((sum, history) => sum + history.amount, 0);
   const totalEarnedPoints = userPointHistories.filter((history) => history.amount > 0).reduce((sum, history) => sum + history.amount, 0);
@@ -1940,7 +2036,9 @@ function deriveRookieSummary(data: FinalUQuestConfig, user: FinalUser): RookieSu
   const quizTier = getQuizTier(quizAccuracyRate, quizSolvedCount);
   const axSubmissionCount = data.axSubmissions.filter((submission) => submission.userId === user.id).length;
   const axLevel = getAxLevel(axSubmissionCount);
-  const progressRate = Math.min(100, Math.round(((attendanceCount + learningCount + submissions.length + Math.min(axSubmissionCount, 20)) / 80) * 100));
+  // 캐릭터 레벨 = 성실성(출석·학습·퀴즈풀이) 3축 평균, 정답 무관·AX 제외 (도메인과 동일).
+  const totalQuizQuestions = data.quizzes.filter((question) => question.rewardPoints >= 0).length || 1;
+  const progressRate = Math.min(100, Math.round((((Math.min(1, attendanceCount / 20)) + (Math.min(1, learningCount / 20)) + (Math.min(1, quizSolvedCount / totalQuizQuestions))) / 3) * 100));
   const characterLevel = Math.min(5, Math.max(1, Math.floor(progressRate / 25) + 1));
   const pointExpireDate = user.completedAt ? addMonths(user.completedAt.slice(0, 10), 3) : null;
   const pointExpired = Boolean(pointExpireDate && data.today > pointExpireDate);

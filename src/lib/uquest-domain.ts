@@ -8,6 +8,7 @@ import type {
   FinalCurriculum,
   FinalPointHistory,
   FinalQuizQuestion,
+  FinalRewardConfig,
   FinalRole,
   FinalUQuestConfig,
   FinalUser,
@@ -97,6 +98,19 @@ function applyAutoCompletion(config: FinalUQuestConfig): FinalUQuestConfig {
 export function normalizeConfig(config: FinalUQuestConfig): FinalUQuestConfig {
   const cloned = JSON.parse(JSON.stringify(config)) as FinalUQuestConfig;
   return applyAutoCompletion(cloned);
+}
+
+// 보상 경제: 종목별 단위 포인트(관리자 시뮬레이터에서 설정). 미설정 시 기본값.
+export const DEFAULT_REWARD_CONFIG: FinalRewardConfig = {
+  attendancePoints: 100,
+  learningPoints: 0,
+  quizCorrectPoints: 300,
+  quizWrongPoints: 30,
+  axPoints: 200
+};
+
+export function getRewardConfig(data: FinalUQuestConfig): FinalRewardConfig {
+  return { ...DEFAULT_REWARD_CONFIG, ...(data.rewardConfig ?? {}) };
 }
 
 export function getUser(data: FinalUQuestConfig, userId: string): FinalUser {
@@ -206,6 +220,7 @@ export function claimAttendance(config: FinalUQuestConfig, userId: string) {
     throw new UQuestDomainError("DUPLICATE_ATTENDANCE", "오늘 출석은 이미 완료했습니다.");
   }
 
+  const attendancePoints = getRewardConfig(data).attendancePoints;
   data = addPoint(
     {
       ...data,
@@ -215,13 +230,13 @@ export function claimAttendance(config: FinalUQuestConfig, userId: string) {
           id: createId("att"),
           userId,
           attendanceDate: data.today,
-          rewardPoints: 300
+          rewardPoints: attendancePoints
         }
       ],
       users: updateUser(data.users, userId, { exp: user.exp + 5 })
     },
     userId,
-    300,
+    attendancePoints,
     "attendance",
     `${formatDate(data.today)} 출석 보상`
   );
@@ -253,6 +268,7 @@ export function completeLearning(config: FinalUQuestConfig, userId: string, curr
     throw new UQuestDomainError("DAILY_LEARNING_LIMIT", "학습 완료는 하루 1개만 가능합니다. 다음 근무일에 이어서 진행하세요.");
   }
 
+  const learningPoints = getRewardConfig(data).learningPoints;
   data = addPoint(
     {
       ...data,
@@ -262,14 +278,14 @@ export function completeLearning(config: FinalUQuestConfig, userId: string, curr
           id: createId("learn"),
           userId,
           curriculumId,
-          rewardPoints: curriculum.learningRewardPoints,
+          rewardPoints: learningPoints,
           createdAt: nowIso(data.today)
         }
       ],
       users: updateUser(data.users, userId, { exp: user.exp + 10 })
     },
     userId,
-    curriculum.learningRewardPoints,
+    learningPoints,
     "learning",
     `Day ${curriculum.dayNumber} 학습 완료`
   );
@@ -298,6 +314,7 @@ export function submitQuiz(config: FinalUQuestConfig, userId: string, curriculum
   const unanswered = questions.filter((question) => answerMap[question.id] === undefined);
   if (unanswered.length > 0) throw new UQuestDomainError("QUIZ_INCOMPLETE", "모든 문제를 선택해야 제출할 수 있습니다.");
 
+  const reward = getRewardConfig(data);
   const answers = questions.map((question) => {
     const selectedOption = answerMap[question.id] ?? -1;
     const isCorrect = selectedOption === question.correctOption;
@@ -306,8 +323,8 @@ export function submitQuiz(config: FinalUQuestConfig, userId: string, curriculum
       selectedOption,
       correctOption: question.correctOption,
       isCorrect,
-      // 성실 비례: 정답은 만점, 오답은 시도 인정으로 소액(50P)만. 찍기와 학습이 구분된다.
-      rewardPoints: isCorrect ? question.rewardPoints : 50
+      // 성실 비례: 정답은 만점, 오답은 시도 인정으로 소액만. 찍기와 학습이 구분된다.
+      rewardPoints: isCorrect ? reward.quizCorrectPoints : reward.quizWrongPoints
     };
   });
   const correctCount = answers.filter((answer) => answer.isCorrect).length;
@@ -345,17 +362,16 @@ export function certifyAx(config: FinalUQuestConfig, userId: string, categoryId:
   const user = getUser(data, userId);
   requireActiveRookie(user);
   const category = getAxCategory(data, categoryId);
-  // AX는 하루 1개만, 매일 초기화.
-  if (data.axSubmissions.some((item) => item.userId === userId && item.createdAt.startsWith(data.today))) {
-    throw new UQuestDomainError("AX_DAILY_LIMIT", "AX 인증은 하루 1개만 가능합니다. 내일 다시 도전하세요.");
+  // AX는 항목당 하루 1건, 매일 초기화(항목 3개 × 30일 = 최대 90건).
+  if (data.axSubmissions.some((item) => item.userId === userId && item.categoryId === categoryId && item.createdAt.startsWith(data.today))) {
+    throw new UQuestDomainError("AX_DAILY_LIMIT", "이 항목은 오늘 이미 인증했습니다. 내일 다시 도전하세요.");
   }
   if (!evidenceName.trim()) {
     throw new UQuestDomainError("AX_EVIDENCE_REQUIRED", "사진 업로드 또는 촬영이 필요합니다.");
   }
   const imageUrl = evidenceName.startsWith("/") || evidenceName.startsWith("http") ? evidenceName : `/mock/ax-evidence/${encodeURIComponent(evidenceName)}`;
 
-  const before = deriveRookieSummary(data, user).axSubmissionCount;
-  const after = before + 1;
+  const axPoints = getRewardConfig(data).axPoints;
   data = addPoint(
     {
       ...data,
@@ -366,19 +382,19 @@ export function certifyAx(config: FinalUQuestConfig, userId: string, categoryId:
           userId,
           categoryId,
           imageUrl,
-          rewardPoints: category.rewardPoints,
+          rewardPoints: axPoints,
           createdAt: nowIso(data.today)
         }
       ],
       users: updateUser(data.users, userId, { exp: user.exp + 8 })
     },
     userId,
-    category.rewardPoints,
+    axPoints,
     "ax",
     `${category.title} 인증`
   );
 
-  data = awardAxStageReward(data, userId, before, after);
+  // AX는 실행당 포인트만(쉬운 활동). 큰 단계 보너스는 제거. 로봇 단계는 표시용으로 유지.
   return awardBadges(data, userId);
 }
 
@@ -603,6 +619,44 @@ export function updateCurriculumSettings(config: FinalUQuestConfig, adminId: str
         targetType: "curriculum",
         targetId: curriculumId,
         reason: `Day ${curriculum.dayNumber} 커리큘럼/퀴즈 수정`,
+        createdAt: nowIso(data.today)
+      }
+    ]
+  };
+}
+
+export type RewardConfigInput = Partial<FinalRewardConfig>;
+
+export function updateRewardConfig(config: FinalUQuestConfig, adminId: string, input: RewardConfigInput): FinalUQuestConfig {
+  const data = normalizeConfig(config);
+  const admin = getUser(data, adminId);
+  requireRole(admin, ["admin"]);
+  const current = getRewardConfig(data);
+  const sanitize = (value: number | undefined, fallback: number) => {
+    const parsed = Math.floor(Number(value));
+    return Number.isFinite(parsed) && parsed >= 0 ? parsed : fallback;
+  };
+
+  const rewardConfig: FinalRewardConfig = {
+    attendancePoints: sanitize(input.attendancePoints, current.attendancePoints),
+    learningPoints: sanitize(input.learningPoints, current.learningPoints),
+    quizCorrectPoints: sanitize(input.quizCorrectPoints, current.quizCorrectPoints),
+    quizWrongPoints: sanitize(input.quizWrongPoints, current.quizWrongPoints),
+    axPoints: sanitize(input.axPoints, current.axPoints)
+  };
+
+  return {
+    ...data,
+    rewardConfig,
+    adminAuditLogs: [
+      ...data.adminAuditLogs,
+      {
+        id: createId("audit"),
+        actorId: adminId,
+        action: "update_reward_config",
+        targetType: "reward_config",
+        targetId: "current",
+        reason: "보상 단위 포인트 설정 변경",
         createdAt: nowIso(data.today)
       }
     ]

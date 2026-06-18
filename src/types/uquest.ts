@@ -176,12 +176,21 @@ export interface FinalAdminAuditLog {
   createdAt: string;
 }
 
+export interface FinalRewardConfig {
+  attendancePoints: number;
+  learningPoints: number;
+  quizCorrectPoints: number;
+  quizWrongPoints: number;
+  axPoints: number;
+}
+
 export interface FinalUQuestConfig {
   source: "supabase" | "fallback";
   today: string;
   activeUserId: string;
   managerUserId: string;
   adminUserId: string;
+  rewardConfig?: FinalRewardConfig;
   stores: FinalStore[];
   users: FinalUser[];
   curriculums: FinalCurriculum[];
