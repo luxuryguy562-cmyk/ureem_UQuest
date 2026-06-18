@@ -1,4 +1,4 @@
-import { createHash, randomBytes } from "crypto";
+import { createHash, randomBytes, randomUUID } from "crypto";
 
 import type { FinalUQuestConfig, FinalUser } from "@/types/uquest";
 
@@ -36,7 +36,7 @@ export function createSignupUser(
   if (data.users.some((user) => user.loginId === input.loginId.trim())) throw new Error("LOGIN_ID_DUPLICATED");
 
   const user: FinalUser = {
-    id: `rookie-${Date.now()}-${Math.random().toString(16).slice(2, 8)}`,
+    id: randomUUID(),
     role: "rookie",
     name: input.name.trim(),
     avatarGender: input.avatarGender ?? "male",
@@ -56,7 +56,7 @@ export function createSignupUser(
     notifications: [
       ...data.notifications,
       {
-        id: `noti-${Date.now()}-${Math.random().toString(16).slice(2, 8)}`,
+        id: randomUUID(),
         targetRole: "admin" as const,
         type: "signup_pending",
         title: "가입 승인 요청",

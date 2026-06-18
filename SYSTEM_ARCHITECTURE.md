@@ -170,7 +170,17 @@ U-Quest는 관리자 설정값을 기반으로 사용자 화면을 구성한다.
 - 직원은 본인 데이터만 조회한다.
 - 관리자 수정은 권한 확인 후 서버를 통해 처리한다.
 - 포인트 차감과 쿠폰 발급은 트랜잭션으로 처리한다.
-- `app_config_snapshots.current.payload`는 화면 렌더링용 읽기 모델이다.
+
+### 저장 모델 (정규화 테이블)
+
+- 데이터는 `supabase/schema.sql` 의 정규화 테이블(users, attendances, learning_completions, quiz_submissions, quiz_answers, ax_submissions, point_histories, user_badges, coupon_requests 등)에 행 단위로 저장한다.
+- `src/lib/uquest-repository.ts` 가 어댑터 역할을 한다.
+  - 읽기: 여러 테이블에서 조회해 화면용 `FinalUQuestConfig` 로 조립한다.
+  - 쓰기: 저장 직전 DB 상태(before)와 도메인 결과(next)를 비교해 **바뀐 행만** insert/update 한다. 사용자별 활동은 각자의 행에 기록되어 동시 사용 시에도 서로 덮어쓰지 않는다.
+- 중복 방지(중복 출석/학습/퀴즈/쿠폰 요청)는 테이블의 `unique` 제약으로 DB가 강제한다.
+- `app_config_snapshots` 테이블은 더 이상 읽기/쓰기 경로에서 사용하지 않는다(과거 단일 JSON 스냅샷 방식의 잔재).
+- 운영 기초 데이터(매장/커리큘럼/퀴즈/배지/쿠폰/AX, 관리자·점장 계정)는 `supabase/seed.sql` 로 시드한다.
+- DB 미연결 또는 시드 전이면 `src/lib/mock-data.ts` 의 폴백 목업으로 동작한다.
 
 ---
 
@@ -221,3 +231,4 @@ U-Quest는 관리자 설정값을 기반으로 사용자 화면을 구성한다.
 ### 2026-06-18
 
 - U-Quest 환경 격리 헌법을 추가했다. 이 환경은 `luxuryguy562-cmyk/ureem_UQuest` 레포와 `uquest`(`ofeqiqauhvcovtzjangm`) 프로젝트만 사용하며, `Cashflow`/`pongdang`/`ureem` 등 다른 환경의 레포·프로젝트로 넘어가지 않는다. Supabase 연결은 코드(`assertUQuestProject`)에서 fail-closed로 차단한다.
+- 저장 모델을 단일 JSON 스냅샷에서 정규화 테이블로 전환했다. `uquest-repository.ts` 가 조립 읽기 + 변경분 기록(diff) 방식으로 동작하고, 식별자를 uuid로 통일했다(배지는 code 유지). `supabase/seed.sql` 로 운영 기초 데이터를 시드한다.

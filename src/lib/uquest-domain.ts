@@ -1,3 +1,5 @@
+import { randomUUID } from "crypto";
+
 import type {
   AxLevel,
   CouponRequestStatus,
@@ -715,7 +717,10 @@ function getAxLevel(count: number): AxLevel {
 }
 
 function createId(prefix: string) {
-  return `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2, 8)}`;
+  // 정규화 테이블의 PK(uuid)와 그대로 맞물리도록 uuid를 사용한다.
+  // prefix 는 디버깅 가독성 용도로만 두되, 식별자 자체는 uuid 여야 한다.
+  void prefix;
+  return randomUUID();
 }
 
 function nowIso(today: string) {
