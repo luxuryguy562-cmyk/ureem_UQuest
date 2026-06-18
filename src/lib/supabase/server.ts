@@ -1,18 +1,20 @@
 import { createClient } from "@supabase/supabase-js";
 
 // =============================================================================
-// U-Quest 프로젝트 격리 헌법 (절대 규칙)
+// U-Quest 환경 격리 헌법 (절대 규칙)
 // -----------------------------------------------------------------------------
-// 이 앱은 오직 U-Quest 프로젝트에만 연결한다.
-// Cashflow 등 다른 Supabase 프로젝트로의 연결은 어떤 경우에도 허용하지 않는다.
+// 이것은 uquest 환경이다. 이 앱은 오직 U-Quest Supabase 프로젝트에만 연결한다.
+// Cashflow / pongdang / ureem 등 다른 환경의 프로젝트로의 연결은 절대 허용하지 않는다.
 // 자격 증명이 잘못 주입되면 조용히 붙지 않고 즉시 throw 한다 (fail-closed).
-// 헌법 전문: SYSTEM_ARCHITECTURE.md "Supabase 프로젝트 격리 헌법" 참조.
+// 헌법 전문: SYSTEM_ARCHITECTURE.md "U-Quest 환경 격리 헌법" 참조.
 // =============================================================================
 const UQUEST_PROJECT_REF = "ofeqiqauhvcovtzjangm";
 
-// 절대 연결 금지 프로젝트 (혼동/충돌 방지). ref -> 사람이 읽는 이름.
+// 절대 연결 금지 프로젝트 (다른 환경 — 혼동/충돌 방지). ref -> 사람이 읽는 이름.
 const FORBIDDEN_PROJECT_REFS: Record<string, string> = {
-  ecfjkfqlnqfxovlwhdtx: "Cashflow"
+  ecfjkfqlnqfxovlwhdtx: "Cashflow",
+  ruytgygjwnbtzmtofopg: "pongdang",
+  wowodgsiogxnqcfujbgc: "ureem"
 };
 
 function projectRefFromUrl(url: string): string | null {

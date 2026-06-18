@@ -174,21 +174,36 @@ U-Quest는 관리자 설정값을 기반으로 사용자 화면을 구성한다.
 
 ---
 
-## Supabase 프로젝트 격리 헌법 (절대 규칙)
+## U-Quest 환경 격리 헌법 (절대 규칙)
 
 > 이 절은 타협 불가 규칙이다. 코드 리뷰/배포/AI 작업 어디서든 위반을 발견하면 즉시 차단한다.
 
-- **U-Quest는 오직 `uquest` 프로젝트(`ofeqiqauhvcovtzjangm`)에만 연결한다.**
-- **`Cashflow` 프로젝트(`ecfjkfqlnqfxovlwhdtx`)에는 절대 연결하지 않는다.** 같은 조직(`urvmldcrfrxfbqddzlzk`) 안의 다른 프로젝트(`ureem`, `pongdang` 등)도 마찬가지로 연결 금지다.
-- `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` 세 값은 **모두 같은 `ofeqiqauhvcovtzjangm` 프로젝트**를 가리켜야 한다. 하나라도 다른 프로젝트면 자격 증명이 섞인 것이며 사용 금지다.
-- 자격 증명이 잘못 주입되면 **조용히 다른 DB에 붙지 않고 즉시 연결을 거부한다 (fail-closed).** 강제 장치는 `src/lib/supabase/server.ts`의 `assertUQuestProject()`이며, URL과 키의 프로젝트 `ref`를 검증하고 금지 프로젝트면 `throw` 한다.
-- 새로운 Supabase 클라이언트(브라우저/엣지/서버 무엇이든)를 추가할 때도 동일하게 이 가드를 통과시켜야 한다. 가드를 우회하는 직접 `createClient` 호출은 금지한다.
+**핵심 원칙: 이것은 `uquest` 환경이다. 여기서는 U-Quest의 레포와 U-Quest의 DB만 사용한다.**
+`Cashflow`, `pongdang`, `ureem` 등 다른 환경의 GitHub 레포나 Supabase 프로젝트로 **절대 넘어가지 않는다.** 환경끼리 레포·DB가 섞이거나 충돌하는 일이 없어야 한다.
 
-| 구분 | 프로젝트 ref | 연결 |
+이 환경에 묶인 자원은 아래 하나의 세트뿐이다. 이 세트 밖의 어떤 레포·프로젝트도 읽거나 쓰지 않는다.
+
+| 자원 | U-Quest (이 환경) |
+|---|---|
+| GitHub 레포 | `luxuryguy562-cmyk/ureem_UQuest` |
+| Supabase 프로젝트 | `uquest` (`ofeqiqauhvcovtzjangm`) |
+| 조직 | `urvmldcrfrxfbqddzlzk` |
+
+### 금지 (다른 환경 — 손대지 않는다)
+
+| 환경 | GitHub 레포 | Supabase 프로젝트 ref |
 |---|---|---|
-| uquest (이 앱) | `ofeqiqauhvcovtzjangm` | ✅ 허용 |
-| Cashflow | `ecfjkfqlnqfxovlwhdtx` | ❌ 금지 |
-| ureem / pongdang 등 기타 | 그 외 전부 | ❌ 금지 |
+| Cashflow | Cashflow 레포 | `ecfjkfqlnqfxovlwhdtx` |
+| pongdang | pongdang 레포 | `ruytgygjwnbtzmtofopg` |
+| ureem | ureem 레포 | `wowodgsiogxnqcfujbgc` |
+| 그 외 전부 | — | — |
+
+### 강제 규칙
+
+- **GitHub:** 이 세션/작업은 `luxuryguy562-cmyk/ureem_UQuest` 레포에서만 커밋·푸시·PR 한다. 다른 레포로 푸시하거나 다른 레포의 코드를 가져오지 않는다.
+- **Supabase 연결:** `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` 세 값은 **모두 같은 `ofeqiqauhvcovtzjangm` 프로젝트**를 가리켜야 한다. 하나라도 다른 프로젝트면 자격 증명이 섞인 것이며 사용 금지다.
+- **Fail-closed:** 자격 증명이 잘못 주입되면 조용히 다른 DB에 붙지 않고 즉시 연결을 거부한다. 강제 장치는 `src/lib/supabase/server.ts`의 `assertUQuestProject()`이며, URL과 키의 프로젝트 `ref`를 검증하고 U-Quest가 아니면 `throw` 한다.
+- 새로운 Supabase 클라이언트(브라우저/엣지/서버 무엇이든)를 추가할 때도 동일하게 이 가드를 통과시켜야 한다. 가드를 우회하는 직접 `createClient` 호출은 금지한다.
 
 ---
 
@@ -205,4 +220,4 @@ U-Quest는 관리자 설정값을 기반으로 사용자 화면을 구성한다.
 
 ### 2026-06-18
 
-- Supabase 프로젝트 격리 헌법을 추가했다. U-Quest는 `ofeqiqauhvcovtzjangm`에만 연결하며 `Cashflow`(`ecfjkfqlnqfxovlwhdtx`) 등 타 프로젝트 연결을 코드(`assertUQuestProject`)와 문서 양쪽에서 차단한다.
+- U-Quest 환경 격리 헌법을 추가했다. 이 환경은 `luxuryguy562-cmyk/ureem_UQuest` 레포와 `uquest`(`ofeqiqauhvcovtzjangm`) 프로젝트만 사용하며, `Cashflow`/`pongdang`/`ureem` 등 다른 환경의 레포·프로젝트로 넘어가지 않는다. Supabase 연결은 코드(`assertUQuestProject`)에서 fail-closed로 차단한다.
