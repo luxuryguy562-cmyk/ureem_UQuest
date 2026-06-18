@@ -445,6 +445,7 @@ export function UQuestApp({ config }: { config: FinalUQuestConfig }) {
               completions={data.learningCompletions}
               curriculums={data.curriculums}
               onComplete={completeLearning}
+              onGo={go}
               onSelect={setSelectedCurriculumId}
               rookie={rookie}
               selectedId={selectedCurriculum.id}
@@ -782,10 +783,10 @@ function LearningView({
   rookie,
   curriculums,
   completions,
-  selectedId,
   today,
   onSelect,
-  onComplete
+  onComplete,
+  onGo
 }: {
   rookie: RookieSummary;
   curriculums: FinalCurriculum[];
@@ -794,58 +795,69 @@ function LearningView({
   today: string;
   onSelect: (id: string) => void;
   onComplete: (curriculum: FinalCurriculum) => void;
+  onGo: (screen: FinalScreenKey) => void;
 }) {
-  const selected = curriculums.find((item) => item.id === selectedId) ?? curriculums[0];
-  const completed = completions.some((item) => item.userId === rookie.user.id && item.curriculumId === selected.id);
-  const completedToday = completions.some((item) => item.userId === rookie.user.id && item.createdAt.startsWith(today));
-  const selectedIsCurrent = selected.dayNumber === rookie.curriculumDay;
-  const canComplete = selectedIsCurrent && !completed && !completedToday && rookie.user.status === "active";
-  const actionLabel = completed
-    ? "학습 완료됨"
-    : !selectedIsCurrent
-      ? selected.dayNumber > rookie.curriculumDay
-        ? "오픈 예정"
-        : "오늘 학습 아님"
-      : completedToday
-        ? "오늘 학습 완료"
-        : "오늘 학습 완료";
+  void today;
+  const todayCur = curriculums.find((item) => item.dayNumber === rookie.curriculumDay) ?? curriculums[0];
+  const learnedToday = completions.some((item) => item.userId === rookie.user.id && item.curriculumId === todayCur.id);
+  const canLearn = !learnedToday && rookie.user.status === "active";
+  const progress = Math.min(100, Math.round((rookie.learningCount / 20) * 100));
 
   return (
-    <section className="u-card full-card">
-      <ScreenTitle eyebrow="20일 커리큘럼" title="학습" meta={`${rookie.learningCount}/20 완료`} />
-      <div className="curriculum-layout">
-        <div className="day-list">
-          {curriculums.map((item) => {
-            const isDone = completions.some((completion) => completion.userId === rookie.user.id && completion.curriculumId === item.id);
-            const isCurrent = item.dayNumber === rookie.curriculumDay;
-            const isLocked = item.dayNumber > rookie.curriculumDay;
-            const isPast = item.dayNumber < rookie.curriculumDay && !isDone;
-
-            return (
-              <button className={`${selected.id === item.id ? "selected" : ""} ${isDone ? "done" : ""} ${isLocked ? "locked" : ""} ${isPast ? "past" : ""}`} key={item.id} onClick={() => onSelect(item.id)} type="button">
-                <span>D{item.dayNumber}</span>
-                <strong>{item.title}</strong>
-                <em>{isDone ? "완료" : isCurrent ? "오늘" : isLocked ? "잠김" : "기간 지남"}</em>
-              </button>
-            );
-          })}
+    <div className="e5-screen e5-learn">
+      <div className="e5-st">
+        <h1>학습</h1>
+        <div className="e5-st-sub">
+          <span>20일 커리큘럼 · 하루 1개</span>
+          <b>{rookie.learningCount} / 20 완료</b>
         </div>
-        <div className="detail-panel">
-          <span className="eyebrow">DAY {selected.dayNumber}</span>
-          <h2>{selected.title}</h2>
-          <p>{selected.description}</p>
-          <div className="policy-box">
-            <b>정책</b>
-            <span>20일 커리큘럼은 하루 1개씩 열립니다.</span>
-            <span>오늘은 Day {rookie.curriculumDay}만 완료할 수 있고, 완료 후 해당 Day 퀴즈가 열립니다.</span>
-          </div>
-          {!selectedIsCurrent ? <LockPanel title="오늘 학습 아님" body={`오늘 완료 가능한 커리큘럼은 Day ${rookie.curriculumDay}입니다. 하루에 여러 Day를 완료할 수 없습니다.`} /> : null}
-          <button className="primary-action" disabled={!canComplete} onClick={() => onComplete(selected)} type="button">
-            {actionLabel}
-          </button>
+        <div className="e5-topbar">
+          <i style={{ width: `${progress}%` }} />
         </div>
       </div>
-    </section>
+
+      <section className="e5-tcard">
+        <span className="eb">📘 오늘의 학습 · DAY {todayCur.dayNumber}</span>
+        <h2>{todayCur.title}</h2>
+        <p>{todayCur.description}</p>
+        <div className="e5-tsteps">
+          <button className="learn" disabled={!canLearn} onClick={() => onComplete(todayCur)} type="button">
+            {learnedToday ? "오늘 학습 완료 ✓" : "학습하기"}
+          </button>
+          <button
+            className={`quiz ${learnedToday ? "" : "lock"}`}
+            disabled={!learnedToday}
+            onClick={() => {
+              onSelect(todayCur.id);
+              onGo("quiz");
+            }}
+            type="button"
+          >
+            {learnedToday ? "퀴즈 풀기 →" : "학습 후 퀴즈 🔒"}
+          </button>
+        </div>
+      </section>
+
+      <div className="e5-sec">전체 커리큘럼</div>
+      {curriculums.map((item) => {
+        const isDone = completions.some((completion) => completion.userId === rookie.user.id && completion.curriculumId === item.id);
+        const isCurrent = item.dayNumber === rookie.curriculumDay;
+        const isLocked = item.dayNumber > rookie.curriculumDay;
+        const state = isDone ? "done" : isCurrent ? "today" : isLocked ? "lock" : "past";
+        const stateLabel = isDone ? "학습 완료" : isCurrent ? `오늘 · +${todayCur.learningRewardPoints}P` : isLocked ? "오픈 예정" : "기간 지남";
+
+        return (
+          <button className={`e5-day ${state}`} key={item.id} onClick={() => onSelect(item.id)} type="button">
+            <span className="dn">D{item.dayNumber}</span>
+            <span className="info">
+              <span className="t">{item.title}</span>
+              <span className="s">{stateLabel}</span>
+            </span>
+            <span className="chev">›</span>
+          </button>
+        );
+      })}
+    </div>
   );
 }
 
@@ -875,38 +887,40 @@ function QuizView({
   onSubmit: (curriculum: FinalCurriculum) => void;
 }) {
   return (
-    <section className="u-card full-card">
-      <ScreenTitle eyebrow="재도전 불가" title="퀴즈" meta={`${rookie.quizAccuracyRate}% · ${rookie.quizTier}`} />
-      <div className="readonly-note">퀴즈 포인트는 정오답과 무관한 제출 보상입니다. 문제당 300P가 지급되고, 퀴즈 티어는 정답률 기준으로 계산됩니다.</div>
-      <div className="horizontal-days">
+    <div className="e5-screen e5-quiz">
+      <div className="e5-st">
+        <h1>퀴즈</h1>
+        <div className="e5-st-sub">
+          <span>제출 보상 · 재도전 불가</span>
+          <b>{rookie.quizAccuracyRate}% · {rookie.quizTier}</b>
+        </div>
+      </div>
+
+      <div className="e5-qdays">
         {curriculums.map((item) => {
           const done = submissions.some((submissionItem) => submissionItem.userId === rookie.user.id && submissionItem.curriculumId === item.id);
 
           return (
-            <button className={selected.id === item.id ? "selected" : ""} key={item.id} onClick={() => onSelect(item.id)} type="button">
-              D{item.dayNumber}
+            <button className={`e5-qday ${selected.id === item.id ? "on" : ""} ${done ? "done" : ""}`} key={item.id} onClick={() => onSelect(item.id)} type="button">
+              <b>D{item.dayNumber}</b>
               <span>{done ? "제출" : "대기"}</span>
             </button>
           );
         })}
       </div>
 
-      {!learning ? (
-        <LockPanel title="퀴즈 잠김" body="학습 완료 후 퀴즈를 풀 수 있습니다. 퀴즈는 제출 후 재도전할 수 없습니다." />
-      ) : null}
+      {!learning ? <div className="e5-qlock">🔒 학습을 먼저 완료해야 퀴즈가 열려요. 퀴즈는 제출 후 재도전할 수 없습니다.</div> : null}
 
       {learning ? (
-        <div className="quiz-stack">
+        <>
           {questions.map((question, index) => {
             const answer = submission?.answers.find((item) => item.questionId === question.id);
 
             return (
-              <div className="question-card" key={question.id}>
-                <div className="question-head">
-                  <span>Q{index + 1}</span>
-                  <strong>{question.question}</strong>
-                </div>
-                <div className="option-list">
+              <section className="e5-qcard" key={question.id}>
+                <div className="e5-qn">Q{index + 1}</div>
+                <h2>{question.question}</h2>
+                <div className="e5-opts">
                   {question.options.map((option, optionIndex) => {
                     const checked = submission ? answer?.selectedOption === optionIndex : draft[question.id] === optionIndex;
                     const isCorrect = submission && question.correctOption === optionIndex;
@@ -914,28 +928,28 @@ function QuizView({
 
                     return (
                       <button
-                        className={`${checked ? "selected" : ""} ${isCorrect ? "correct" : ""} ${isWrong ? "wrong" : ""}`}
+                        className={`e5-opt ${checked ? "sel" : ""} ${isCorrect ? "correct" : ""} ${isWrong ? "wrong" : ""}`}
                         disabled={Boolean(submission)}
                         key={option}
                         onClick={() => onDraft({ ...draft, [question.id]: optionIndex })}
                         type="button"
                       >
-                        <span>{optionIndex + 1}</span>
-                        {option}
+                        <span className="k">{String.fromCharCode(65 + optionIndex)}</span>
+                        <span className="ot">{option}</span>
                       </button>
                     );
                   })}
                 </div>
-                {submission ? <p className="explain">{question.explanation}</p> : null}
-              </div>
+                {submission ? <p className="e5-explain">💡 {question.explanation}</p> : null}
+              </section>
             );
           })}
-          <button className="primary-action" disabled={Boolean(submission) || rookie.user.status !== "active"} onClick={() => onSubmit(selected)} type="button">
-            {submission ? "제출 완료 · 오답노트 조회중" : `${questions.length}문제 제출`}
+          <button className="e5-qsubmit" disabled={Boolean(submission) || rookie.user.status !== "active"} onClick={() => onSubmit(selected)} type="button">
+            {submission ? "제출 완료 · 결과 확인 중" : `${questions.length}문제 제출하기`}
           </button>
-        </div>
+        </>
       ) : null}
-    </section>
+    </div>
   );
 }
 
@@ -955,54 +969,67 @@ function AxView({
     onCertify(category, file);
   }
 
+  const axProgress = Math.min(100, Math.round((rookie.axSubmissionCount / 20) * 100));
+
   return (
-    <section className="u-card full-card">
-      <ScreenTitle eyebrow="AX/DX 7개 고정" title="AX 성장" meta={`${rookie.axSubmissionCount}회 · ${rookie.axLevel}`} />
-      <div className="ax-hero">
-        <img alt={`${rookie.axLevel} 로봇`} src={axRobotAssets[rookie.axLevel]} />
-        <div>
-          <span className="eyebrow">{rookie.axLevel}</span>
-          <h2>{axLevelKorean(rookie.axLevel)}</h2>
-          <p>AX/DX 전체 인증 횟수 기준으로 성장합니다. 사진을 올리거나 촬영해야 인증이 완료됩니다.</p>
-          <div className="progress-track">
-            <i style={{ width: `${Math.min(100, (rookie.axSubmissionCount / 20) * 100)}%` }} />
-          </div>
-        </div>
+    <div className="e5-screen e5-ax">
+      <div className="e5-st">
+        <h1>AX · DX 인증</h1>
+        <p className="e5-st-p">현장에서 AI 도구를 쓰고 인증하면 로봇이 성장해요</p>
       </div>
 
-      <div className="ax-grid">
+      <section className="e5-axhero">
+        <img alt={`${rookie.axLevel} 로봇`} src={axRobotAssets[rookie.axLevel]} />
+        <div className="info">
+          <span className="lv">AX 파트너</span>
+          <h2>{rookie.axLevel}</h2>
+          <div className="sm">{axLevelKorean(rookie.axLevel)} · 사진 인증으로 성장</div>
+          <div className="axbar">
+            <i style={{ width: `${axProgress}%` }} />
+          </div>
+          <div className="axbar-l">
+            <span>인증 {rookie.axSubmissionCount} / 20</span>
+            <span>{axProgress}%</span>
+          </div>
+        </div>
+      </section>
+
+      <div className="e5-sec e5-sec-row">
+        <h3>AX · DX 항목</h3>
+        <span className="e5-tag-ax">항목당 +{formatNumber(categories[0]?.rewardPoints ?? 500)}P</span>
+      </div>
+      <div className="e5-axgrid">
         {categories.map((category) => {
           const count = submissions.filter((submission) => submission.userId === rookie.user.id && submission.categoryId === category.id).length;
+          const disabled = rookie.user.status !== "active";
 
           return (
-            <div className="ax-card" key={category.id}>
-              <span>{category.type}</span>
-              <strong>{category.title}</strong>
-              <p>{category.description}</p>
-              <div className="card-footer">
-                <em>{count}회 인증</em>
-                <div className="upload-actions">
-                  <label className={rookie.user.status !== "active" ? "disabled" : ""}>
-                    사진 올리기
-                    <input accept="image/*" disabled={rookie.user.status !== "active"} onChange={(event) => {
-                      handleEvidence(category, event.currentTarget.files?.[0]);
-                      event.currentTarget.value = "";
-                    }} type="file" />
-                  </label>
-                  <label className={rookie.user.status !== "active" ? "disabled" : ""}>
-                    사진 찍기
-                    <input accept="image/*" capture="environment" disabled={rookie.user.status !== "active"} onChange={(event) => {
-                      handleEvidence(category, event.currentTarget.files?.[0]);
-                      event.currentTarget.value = "";
-                    }} type="file" />
-                  </label>
-                </div>
+            <div className="e5-axcard" key={category.id}>
+              <div className="ty">{category.type}</div>
+              <div className="nm">{category.title}</div>
+              <div className="rew">+{formatNumber(category.rewardPoints)}P</div>
+              <div className="cnt">{count}회 인증</div>
+              <div className="up">
+                <label className={disabled ? "disabled" : ""}>
+                  📷 올리기
+                  <input accept="image/*" disabled={disabled} onChange={(event) => {
+                    handleEvidence(category, event.currentTarget.files?.[0]);
+                    event.currentTarget.value = "";
+                  }} type="file" />
+                </label>
+                <label className={disabled ? "disabled" : ""}>
+                  촬영
+                  <input accept="image/*" capture="environment" disabled={disabled} onChange={(event) => {
+                    handleEvidence(category, event.currentTarget.files?.[0]);
+                    event.currentTarget.value = "";
+                  }} type="file" />
+                </label>
               </div>
             </div>
           );
         })}
       </div>
-    </section>
+    </div>
   );
 }
 
@@ -1048,31 +1075,63 @@ function ProfileView({
   rookie: RookieSummary;
   onGo: (screen: FinalScreenKey) => void;
 }) {
+  const previewBadges = data.badges.slice().sort((left, right) => left.sortOrder - right.sortOrder).slice(0, 8);
+
   return (
-    <>
-      <section className="profile-page-head">
-        <div>
-          <h1>프로필</h1>
-          <p>U-Quest에서의 성장을 확인해보세요!</p>
-        </div>
-        <div className="profile-actions" aria-hidden="true">
-          <span>!</span>
-          <span>⚙</span>
-        </div>
-      </section>
-
-      <ProfileStageCard rookie={rookie} />
-
-      <section className="u-card">
-        <div className="profile-stat-row">
-          <Metric label="보유 포인트" value={`${formatNumber(rookie.pointBalance)}P`} />
-          <Metric label="출석" value={`${rookie.attendanceCount}일`} />
-          <Metric label="전체 진행률" value={`${rookie.progressRate}%`} />
+    <div className="e5-screen e5-my">
+      <section className="e5-phero">
+        <CharacterImage level={rookie.characterLevel} size="stage" user={rookie.user} />
+        <div className="info">
+          <div className="nm">{rookie.user.name}</div>
+          <div className="role">{rookie.storeName} · 신입사원 · D+{rookie.currentDay}</div>
+          <span className="tier">
+            <img alt="" src={tierAssets[rookie.quizTier]} />
+            {rookie.quizTier} · 정답률 {rookie.quizAccuracyRate}%
+          </span>
+          <div className="pts">보유 포인트 <b>{formatNumber(rookie.pointBalance)}P</b></div>
         </div>
       </section>
 
-      <RecentBadgesCard badges={data.badges} onGo={onGo} rookie={rookie} />
-    </>
+      <div className="e5-g3">
+        <div className="s">
+          <CharacterImage level={rookie.characterLevel} size="mini" user={rookie.user} />
+          <div><div className="l">캐릭터</div><div className="v p">Lv.{rookie.characterLevel}</div></div>
+        </div>
+        <div className="s">
+          <img alt="" src={tierAssets[rookie.quizTier]} />
+          <div><div className="l">퀴즈 티어</div><div className="v">{rookie.quizTier}</div></div>
+        </div>
+        <div className="s">
+          <img alt="" src={axRobotAssets[rookie.axLevel]} />
+          <div><div className="l">AX 단계</div><div className="v">{rookie.axLevel}</div></div>
+        </div>
+      </div>
+
+      <div className="e5-sec e5-sec-row">
+        <h3>배지 도감</h3>
+        <button className="e5-more" onClick={() => onGo("badges")} type="button">{rookie.acquiredBadges.length} / {data.badges.length} · 전체 ›</button>
+      </div>
+      <div className="e5-badges">
+        {previewBadges.map((badge) => {
+          const got = rookie.user.badgeIds.includes(badge.id);
+          const hidden = badge.isRare && !got;
+
+          return (
+            <div className={`e5-bg ${got ? "got" : "locked"}`} key={badge.id}>
+              <img alt="" src={hidden ? badgeAssets.locked : badgeAssets[badge.id] ?? badgeAssets.locked} />
+              <span>{hidden ? "???" : badge.name}</span>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="e5-sec">내 활동</div>
+      <div className="e5-menu">
+        <button onClick={() => onGo("points")} type="button"><span className="mi">🧾</span><span className="mt">포인트 이력</span><span className="chev">›</span></button>
+        <button onClick={() => onGo("shop")} type="button"><span className="mi">🎟️</span><span className="mt">쿠폰 · 상점</span><span className="chev">›</span></button>
+        <button onClick={() => onGo("badges")} type="button"><span className="mi">🏅</span><span className="mt">배지 도감</span><span className="chev">›</span></button>
+      </div>
+    </div>
   );
 }
 
@@ -1227,41 +1286,59 @@ function ShopView({
   const userRequests = requests.filter((request) => request.userId === rookie.user.id);
 
   return (
-    <section className="u-card full-card">
-      <ScreenTitle eyebrow="수료 후 오픈" title="상점" meta={`${formatNumber(rookie.pointBalance)}P`} />
-      {!rookie.shopOpened ? <LockPanel title="상점 잠김" body="4주 수료 후 포인트로 쿠폰을 교환할 수 있습니다." /> : null}
-      {rookie.pointExpired ? <LockPanel title="포인트 만료" body="수료 후 3개월이 지나 포인트 사용 기간이 종료됐습니다." danger /> : null}
-      <div className="coupon-grid">
-        {coupons.map((coupon) => {
-          const outOfStock = coupon.stockQuantity === 0;
-          const pointShortage = rookie.pointBalance < coupon.requiredPoints;
-          const canRedeem = rookie.shopOpened && !rookie.pointExpired && !outOfStock && !pointShortage;
-          const actionLabel = !rookie.shopOpened ? "수료 후" : rookie.pointExpired ? "만료" : outOfStock ? "품절" : pointShortage ? "포인트 부족" : "교환";
+    <div className="e5-screen e5-shop">
+      <section className="e5-balance">
+        <div className="l">내 포인트</div>
+        <div className="amt">{formatNumber(rookie.pointBalance)}<span>P</span></div>
+        <div className="exp">수료 후 3개월간 사용 가능</div>
+      </section>
 
-          return (
-            <div className="coupon-card" key={coupon.id}>
-              <span>{coupon.stockQuantity === null ? "무제한" : coupon.stockQuantity > 0 ? `재고 ${coupon.stockQuantity}` : "재고 없음"}</span>
-              <strong>{coupon.name}</strong>
-              <p>{coupon.description}</p>
-              <div className="card-footer">
-                <em>{formatNumber(coupon.requiredPoints)}P</em>
-                <button disabled={!canRedeem} onClick={() => onRedeem(coupon)} type="button">
-                  {actionLabel}
-                </button>
+      {!rookie.shopOpened ? (
+        <div className="e5-locknote">
+          <span className="i">🔒</span>
+          <span className="t">상점은 4주 온보딩 수료 후 열려요. 지금은 미리보기만 가능해요.</span>
+        </div>
+      ) : null}
+      {rookie.pointExpired ? (
+        <div className="e5-locknote danger">
+          <span className="i">⏰</span>
+          <span className="t">수료 후 3개월이 지나 포인트 사용 기간이 종료됐습니다.</span>
+        </div>
+      ) : null}
+
+      <div className="e5-sec">교환 가능한 쿠폰</div>
+      {coupons.map((coupon) => {
+        const outOfStock = coupon.stockQuantity === 0;
+        const pointShortage = rookie.pointBalance < coupon.requiredPoints;
+        const canRedeem = rookie.shopOpened && !rookie.pointExpired && !outOfStock && !pointShortage;
+        const actionLabel = !rookie.shopOpened ? "수료 후" : rookie.pointExpired ? "만료" : outOfStock ? "품절" : pointShortage ? "부족" : "교환";
+
+        return (
+          <div className={`e5-coupon ${canRedeem ? "" : "off"}`} key={coupon.id}>
+            <div className="thumb">🎟️</div>
+            <div className="body">
+              <div className="nm">
+                {coupon.name}
+                {coupon.stockQuantity !== null ? <span className="stock">{coupon.stockQuantity > 0 ? `${coupon.stockQuantity}개` : "품절"}</span> : null}
+              </div>
+              <div className="meta">{coupon.description}</div>
+              <div className="price">
+                <b>{formatNumber(coupon.requiredPoints)}P</b>
               </div>
             </div>
-          );
-        })}
-      </div>
+            <button className="buy" disabled={!canRedeem} onClick={() => onRedeem(coupon)} type="button">
+              {actionLabel}
+            </button>
+          </div>
+        );
+      })}
 
-      <div className="request-list">
-        <h3>내 쿠폰 요청</h3>
-        {userRequests.length === 0 ? <EmptyState text="아직 쿠폰 요청이 없습니다." /> : null}
-        {userRequests.map((request) => (
-          <RequestRow key={request.id} coupon={coupons.find((coupon) => coupon.id === request.couponId)} request={request} today={today} onCancel={onCancel} />
-        ))}
-      </div>
-    </section>
+      <div className="e5-sec">내 쿠폰 요청</div>
+      {userRequests.length === 0 ? <EmptyState text="아직 쿠폰 요청이 없습니다." /> : null}
+      {userRequests.map((request) => (
+        <RequestRow key={request.id} coupon={coupons.find((coupon) => coupon.id === request.couponId)} request={request} today={today} onCancel={onCancel} />
+      ))}
+    </div>
   );
 }
 
