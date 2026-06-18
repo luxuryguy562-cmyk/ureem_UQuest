@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from "react";
 
 import { formatKrw, formatNumber } from "@/lib/format";
 import type {
@@ -77,24 +77,33 @@ const badgeAssets: Record<string, string> = {
   locked: "/assets/uquest/generated/badges/badge_locked.png"
 };
 
-const rookieNav: Array<{ screen: FinalScreenKey; label: string; short: string }> = [
-  { screen: "home", label: "홈", short: "⌂" },
-  { screen: "learn", label: "학습", short: "L" },
-  { screen: "quiz", label: "퀴즈", short: "Q" },
-  { screen: "ax", label: "AX", short: "AX" },
-  { screen: "shop", label: "상점", short: "S" },
-  { screen: "profile", label: "내정보", short: "P" }
+type NavIconKey = "home" | "learn" | "ax" | "shop" | "my";
+
+const rookieNav: Array<{ screen: FinalScreenKey; label: string; icon: NavIconKey }> = [
+  { screen: "home", label: "홈", icon: "home" },
+  { screen: "learn", label: "학습", icon: "learn" },
+  { screen: "ax", label: "AX", icon: "ax" },
+  { screen: "shop", label: "상점", icon: "shop" },
+  { screen: "profile", label: "MY", icon: "my" }
 ];
 
-const quickMenus: Array<{ screen: FinalScreenKey; label: string; description: string }> = [
-  { screen: "learn", label: "학습", description: "20일 커리큘럼" },
-  { screen: "quiz", label: "퀴즈", description: "재도전 없음" },
-  { screen: "ax", label: "AX", description: "7개 고정 항목" },
-  { screen: "badges", label: "배지도감", description: "배지/티어/희귀" },
-  { screen: "profile", label: "프로필", description: "캐릭터와 성장" },
-  { screen: "shop", label: "상점", description: "수료 후 오픈" },
-  { screen: "points", label: "포인트 이력", description: "3개월 유효" }
-];
+const navIcons: Record<NavIconKey, ReactNode> = {
+  home: (
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8" /><path d="M5 10v10h14V10" /></svg>
+  ),
+  learn: (
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4z" /><path d="M8 9h8M8 13h5" /></svg>
+  ),
+  ax: (
+    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="7" width="16" height="12" rx="3" /><path d="M9 7V5h6v2M9 13h.01M15 13h.01" /></svg>
+  ),
+  shop: (
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 11H6z" /><path d="M9 8a3 3 0 0 1 6 0" /></svg>
+  ),
+  my: (
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" /><path d="M4 20c0-4 4-6 8-6s8 2 8 6" /></svg>
+  )
+};
 
 type Toast = {
   title: string;
@@ -653,41 +662,119 @@ function HomeView({
   const axToday = data.axSubmissions.some((item) => item.userId === rookie.user.id && item.createdAt.startsWith(data.today));
 
   return (
-    <>
+    <div className="e5-home">
       <StatusBanner rookie={rookie} />
-      <ProfileStageCard rookie={rookie} />
 
-      <section className="u-card today-card">
-        <div className="card-title-row">
-          <div>
-            <span className="eyebrow">TODAY</span>
-            <h2>오늘 수행 항목</h2>
+      <div className="e5-hello">
+        <div className="e5-hello-text">
+          <h1>
+            <em>{rookie.user.name}</em>님, 오늘도 파이팅 👋
+          </h1>
+          <p>
+            {rookie.storeName} · 온보딩 Day {rookie.curriculumDay} / 20
+          </p>
+        </div>
+        <span className="e5-points">◆ {formatNumber(rookie.pointBalance)}P</span>
+      </div>
+
+      <section className="e5-hero">
+        <div className="e5-head">
+          <span className="e5-ptag">✨ 나의 성장 파트너</span>
+          <img alt={`${rookie.quizTier} 티어`} className="e5-tier-top" src={tierAssets[rookie.quizTier]} />
+        </div>
+        <div className="e5-scene">
+          <div className="e5-floor" />
+          <div className="e5-cast">
+            <div className="e5-char">
+              <CharacterImage level={rookie.characterLevel} size="stage" user={rookie.user} />
+            </div>
+            <div className="e5-robot">
+              <img alt={`${rookie.axLevel} AX 로봇`} src={axRobotAssets[rookie.axLevel]} />
+            </div>
           </div>
-          <span className="status-chip">{todayDone && learnedToday && quizDoneToday ? "완료" : "진행중"}</span>
         </div>
-        <div className="task-stack">
-          <TaskLine action="출석하기" done={todayDone} label="출석" onClick={onAttendance} />
-          <TaskLine action="학습하기" done={learnedToday} label={todayCurriculum.title} onClick={() => onGo("learn")} />
-          <TaskLine action={learnedToday ? "퀴즈 풀기" : "학습 필요"} done={quizDoneToday} label="오늘 퀴즈" onClick={() => onGo("quiz")} />
-          <TaskLine action="인증하기" done={axToday} label="AX/DX 인증" onClick={() => onGo("ax")} />
+        <div className="e5-exp">
+          <div className="e5-exp-lab">
+            <span>캐릭터 성장</span>
+            <span>
+              Lv.{rookie.characterLevel} · {rookie.progressRate}%
+            </span>
+          </div>
+          <div className="e5-exp-bar">
+            <i style={{ width: `${rookie.progressRate}%` }} />
+          </div>
+        </div>
+        <div className="e5-stats">
+          <div className="e5-stat">
+            <CharacterImage level={rookie.characterLevel} size="mini" user={rookie.user} />
+            <div className="e5-stat-tx">
+              <span className="l">캐릭터</span>
+              <span className="v p">Lv.{rookie.characterLevel}</span>
+            </div>
+          </div>
+          <div className="e5-stat">
+            <img alt="" src={tierAssets[rookie.quizTier]} />
+            <div className="e5-stat-tx">
+              <span className="l">퀴즈 티어</span>
+              <span className="v">{rookie.quizTier}</span>
+            </div>
+          </div>
+          <div className="e5-stat">
+            <img alt="" src={axRobotAssets[rookie.axLevel]} />
+            <div className="e5-stat-tx">
+              <span className="l">AX 단계</span>
+              <span className="v">{rookie.axLevel}</span>
+            </div>
+          </div>
         </div>
       </section>
 
-      <section className="u-card">
-        <div className="card-title-row">
-          <h2>메뉴</h2>
-          <span className="status-chip">8개 기능</span>
+      <section className="e5-today">
+        <div className="e5-sec-h">
+          <h3>오늘의 미션</h3>
+          <span className="e5-cnt">{[todayDone, learnedToday, quizDoneToday, axToday].filter(Boolean).length} / 4 완료</span>
         </div>
-        <div className="quick-grid">
-          {quickMenus.map((item) => (
-            <button key={item.screen} onClick={() => onGo(item.screen)} type="button">
-              <strong>{item.label}</strong>
-              <span>{item.description}</span>
-            </button>
-          ))}
-        </div>
+        <E5Mission action="출석하기" done={todayDone} icon="📅" onClick={onAttendance} reward="+300P" title="출석 체크" />
+        <E5Mission action="학습하기" done={learnedToday} icon="📘" onClick={() => onGo("learn")} reward="+300P" title={`${todayCurriculum.title} 학습`} />
+        <E5Mission action={learnedToday ? "퀴즈 풀기" : "학습 후 가능"} done={quizDoneToday} ghost={!learnedToday} icon="✏️" onClick={() => onGo("quiz")} reward="+300P / 문항" title="오늘의 퀴즈" />
+        <E5Mission action="인증하기" done={axToday} icon="📸" onClick={() => onGo("ax")} reward="+500P" title="AX 인증하기" />
       </section>
-    </>
+    </div>
+  );
+}
+
+function E5Mission({
+  icon,
+  title,
+  reward,
+  done,
+  action,
+  ghost,
+  onClick
+}: {
+  icon: string;
+  title: string;
+  reward: string;
+  done: boolean;
+  action: string;
+  ghost?: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <div className={`e5-mission ${done ? "done" : ""}`}>
+      <div className="e5-mic">{icon}</div>
+      <div className="e5-mbody">
+        <div className="e5-mt">{title}</div>
+        <div className={`e5-mr ${done ? "done" : ""}`}>{done ? "✓ 지급 완료" : reward}</div>
+      </div>
+      {done ? (
+        <div className="e5-mdone">✓</div>
+      ) : (
+        <button className={`e5-go ${ghost ? "ghost" : ""}`} onClick={onClick} type="button">
+          {action}
+        </button>
+      )}
+    </div>
   );
 }
 
@@ -1601,7 +1688,7 @@ function BottomNav({ active, onGo }: { active: FinalScreenKey; onGo: (screen: Fi
     <nav className="bottom-nav final-bottom-nav">
       {rookieNav.map((item) => (
         <button className={active === item.screen ? "active" : ""} key={item.screen} onClick={() => onGo(item.screen)} type="button">
-          <span>{item.short}</span>
+          <span className="nav-ic">{navIcons[item.icon]}</span>
           <small>{item.label}</small>
         </button>
       ))}
