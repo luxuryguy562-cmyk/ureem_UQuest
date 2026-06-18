@@ -11,3 +11,6 @@ pnpm-debug.log*
 *.tsbuildinfo
 uquest-dev*.log
 uquest-next-home.png
+
+# 미리보기용 base64 자체포함 파일(이미지 중복, 트래킹 제외)
+mockups/home-E-real-inline.html

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>U-Quest 홈 — E안 (실제 자산 적용)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+  :root{
+    --uplus:#e6007e; --uplus-br:#ff3aa1; --uplus-deep:#7a0043; --ink:#241019; --sub:#9a8a92;
+    --pink-bg:#fbeef5; --pink-soft:#ffe3f1; --gold:#ffb01f; --line:#f1e3eb;
+    --shadow:0 12px 30px rgba(190,20,110,.12);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  body{font-family:'Pretendard',system-ui,sans-serif;background:#e7dbe2;display:flex;justify-content:center;padding:24px;color:var(--ink)}
+  .phone{width:390px;min-height:800px;background:var(--pink-bg);border-radius:38px;overflow:hidden;position:relative;box-shadow:0 30px 70px rgba(60,10,40,.35);padding-bottom:94px}
+  .scroll{height:100%;overflow:auto;padding:0 18px}
+
+  .top{display:flex;align-items:center;justify-content:space-between;padding:20px 4px 12px}
+  .brand{display:flex;align-items:center;gap:9px}
+  .brand .logo{height:30px;padding:0 10px;border-radius:9px;background:var(--uplus);color:#fff;font-weight:800;font-size:17px;display:grid;place-items:center;letter-spacing:-.5px;box-shadow:0 6px 14px rgba(230,0,126,.35)}
+  .brand b{font-size:17px;color:var(--uplus-deep)}
+  .points{display:flex;align-items:center;gap:6px;background:#fff;padding:8px 13px;border-radius:30px;box-shadow:var(--shadow);font-weight:800;font-size:14px}
+  .points i{color:var(--uplus);font-style:normal}
+
+  .hello{padding:6px 6px 14px}
+  .hello h1{font-size:21px;letter-spacing:-.5px}
+  .hello h1 em{font-style:normal;color:var(--uplus)}
+  .hello p{color:var(--sub);font-size:13px;margin-top:5px;font-weight:600}
+
+  .hero{position:relative;border-radius:28px;overflow:hidden;padding:18px;color:#fff;
+        background:linear-gradient(160deg,#ff4da9 0%,var(--uplus) 48%,#b80468 100%);
+        box-shadow:0 20px 40px rgba(230,0,126,.34)}
+  .hero::before{content:"";position:absolute;width:260px;height:260px;right:-80px;top:-90px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.25),transparent 65%)}
+  .hero .head{display:flex;align-items:center;justify-content:space-between;position:relative;z-index:3}
+  .ptag{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.22);padding:6px 12px;border-radius:18px;font-weight:800;font-size:12px;backdrop-filter:blur(4px)}
+  .lv-pill{background:#fff;color:var(--uplus);font-weight:800;font-size:12px;padding:6px 12px;border-radius:18px}
+
+  .scene{position:relative;height:200px;z-index:2}
+  .floor{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);width:300px;height:56px;border-radius:50%;
+         background:radial-gradient(50% 60% at 50% 50%, rgba(255,255,255,.28), transparent 70%)}
+  .floor::after{content:"";position:absolute;left:50%;bottom:6px;transform:translateX(-50%);width:240px;height:14px;border-radius:50%;background:rgba(80,0,44,.3);filter:blur(7px)}
+  .cast{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;gap:6px;padding-bottom:26px}
+  .char img{height:172px;width:auto;display:block;filter:drop-shadow(0 12px 12px rgba(80,0,44,.35))}
+  .robot img{height:88px;width:auto;display:block;margin-bottom:8px;filter:drop-shadow(0 10px 10px rgba(80,0,44,.3));animation:bob 3s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+  .tier{position:absolute;left:6px;top:2px;z-index:3;text-align:center}
+  .tier img{width:62px;height:62px;object-fit:contain;filter:drop-shadow(0 0 16px rgba(255,255,255,.45)) drop-shadow(0 6px 10px rgba(80,0,44,.3))}
+  .tier .nm{font-size:11.5px;font-weight:800;margin-top:3px;color:#fff;text-shadow:0 1px 3px rgba(80,0,44,.4)}
+
+  .expwrap{position:relative;z-index:3;margin-top:2px}
+  .expwrap .lab{display:flex;justify-content:space-between;font-size:12px;font-weight:700;opacity:.95}
+  .expbar{height:9px;border-radius:9px;background:rgba(255,255,255,.28);overflow:hidden;margin-top:8px}
+  .expbar>i{display:block;height:100%;width:14%;border-radius:9px;background:#fff}
+
+  .legend{display:flex;gap:8px;margin-top:12px}
+  .leg{flex:1;background:#fff;border:1px solid var(--line);border-radius:16px;padding:11px 10px;text-align:center;box-shadow:var(--shadow)}
+  .leg img{height:30px;width:auto;object-fit:contain}
+  .leg .l{font-size:10.5px;color:var(--sub);font-weight:700;margin-top:5px}
+  .leg .v{font-size:13px;font-weight:800;margin-top:1px}
+  .leg .v.p{color:var(--uplus)}
+
+  .sec-h{display:flex;align-items:center;justify-content:space-between;margin:22px 4px 12px}
+  .sec-h h3{font-size:17px;letter-spacing:-.3px}
+  .sec-h .cnt{font-size:12px;font-weight:800;color:var(--uplus);background:var(--pink-soft);padding:5px 11px;border-radius:16px}
+  .mission{background:#fff;border-radius:18px;padding:13px;box-shadow:var(--shadow);display:flex;align-items:center;gap:13px;margin-bottom:10px;border:1px solid #fbeaf2}
+  .mission .ic{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font-size:23px;flex:none;background:var(--pink-soft)}
+  .mission .body{flex:1;min-width:0}
+  .mission .body .t{font-weight:700;font-size:14.5px;letter-spacing:-.2px}
+  .mission .body .r{font-size:12px;color:var(--gold);font-weight:800;margin-top:3px}
+  .mission .body .r.done{color:#13b877}
+  .go{border:none;background:var(--uplus);color:#fff;font-family:inherit;font-weight:800;font-size:13px;padding:11px 16px;border-radius:13px;flex:none;box-shadow:0 8px 16px rgba(230,0,126,.28);cursor:pointer}
+  .go.ghost{background:#f6eef2;color:var(--sub);box-shadow:none}
+  .done-tag{color:#13b877;font-weight:800;font-size:13px;flex:none;padding-right:8px}
+  .mission.done{opacity:.72}
+
+  .nav{position:absolute;left:0;right:0;bottom:0;height:76px;background:#fff;border-top:1px solid var(--line);display:flex;justify-content:space-around;align-items:center;padding-bottom:9px}
+  .nav a{display:flex;flex-direction:column;align-items:center;gap:4px;color:#c9b9c2;font-size:11px;font-weight:600;text-decoration:none}
+  .nav a svg{width:23px;height:23px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .nav a.on{color:var(--uplus)}
+
+  .note{margin:14px 4px 0;font-size:11.5px;color:var(--sub);text-align:center;line-height:1.5}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="scroll">
+    <div class="top">
+      <div class="brand"><div class="logo">U+</div><b>U-Quest</b></div>
+      <div class="points"><i>◆</i> 5,400P</div>
+    </div>
+
+    <div class="hello">
+      <h1><em>김은성</em>님, 오늘도 파이팅 👋</h1>
+      <p>강남점 · 신입사원 · 온보딩 Day 1 / 20</p>
+    </div>
+
+    <div class="hero">
+      <div class="head">
+        <span class="ptag">✨ 나의 성장 파트너</span>
+        <span class="lv-pill">Lv.1 적응중</span>
+      </div>
+      <div class="scene">
+        <div class="floor"></div>
+        <div class="tier">
+          <img src="../public/assets/uquest/generated/tiers/tier_silver.png" alt="Silver">
+          <div class="nm">Silver</div>
+        </div>
+        <div class="cast">
+          <div class="char"><img src="../public/assets/uquest/generated/characters/male_lv1.png" alt="캐릭터 Lv.1"></div>
+          <div class="robot"><img src="../public/assets/uquest/generated/ax-robots/ax_robot_explorer.png" alt="AX Explorer"></div>
+        </div>
+      </div>
+      <div class="expwrap">
+        <div class="lab"><span>캐릭터 성장</span><span>14%</span></div>
+        <div class="expbar"><i></i></div>
+      </div>
+    </div>
+
+    <div class="legend">
+      <div class="leg"><img src="../public/assets/uquest/generated/characters/male_lv1.png" alt=""><div class="l">캐릭터</div><div class="v p">Lv.1</div></div>
+      <div class="leg"><img src="../public/assets/uquest/generated/tiers/tier_silver.png" alt=""><div class="l">퀴즈 티어</div><div class="v">Silver</div></div>
+      <div class="leg"><img src="../public/assets/uquest/generated/ax-robots/ax_robot_explorer.png" alt=""><div class="l">AX 단계</div><div class="v">Explorer</div></div>
+    </div>
+
+    <div class="sec-h">
+      <h3>오늘의 미션</h3>
+      <span class="cnt">1 / 4 완료</span>
+    </div>
+
+    <div class="mission done">
+      <div class="ic">📅</div>
+      <div class="body"><div class="t">출석 체크</div><div class="r done">✓ +300P 지급 완료</div></div>
+      <div class="done-tag">✓</div>
+    </div>
+    <div class="mission">
+      <div class="ic">📘</div>
+      <div class="body"><div class="t">상담 품질 점검 학습</div><div class="r">+300P</div></div>
+      <button class="go">학습하기</button>
+    </div>
+    <div class="mission">
+      <div class="ic">✏️</div>
+      <div class="body"><div class="t">오늘의 퀴즈</div><div class="r">+300P / 문항</div></div>
+      <button class="go ghost">학습 후 가능</button>
+    </div>
+    <div class="mission">
+      <div class="ic">📸</div>
+      <div class="body"><div class="t">AX 인증하기</div><div class="r">+500P</div></div>
+      <button class="go">인증하기</button>
+    </div>
+
+    <p class="note">실제 캐릭터(남 Lv.1) · AX 로봇(Explorer) · 티어(Silver) 자산 적용본<br>레벨/단계/티어가 오르면 해당 자산으로 자동 교체됩니다.</p>
+    <div style="height:8px"></div>
+  </div>
+
+  <nav class="nav">
+    <a class="on" href="#"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>홈</a>
+    <a href="#"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h5"/></svg>학습</a>
+    <a href="#"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3 2.5V13"/><path d="M12 16.5h.01"/></svg>퀴즈</a>
+    <a href="#"><svg viewBox="0 0 24 24"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M9 7V5h6v2M9 13h.01M15 13h.01"/></svg>AX</a>
+    <a href="#"><svg viewBox="0 0 24 24"><path d="M5 8h14l-1 11H6z"/><path d="M9 8a3 3 0 0 1 6 0"/></svg>상점</a>
+    <a href="#"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>내정보</a>
+  </nav>
+</div>
+</body>
+</html>
