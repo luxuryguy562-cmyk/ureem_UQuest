@@ -812,8 +812,9 @@ function LearningView({
 }) {
   const todayCur = curriculums.find((item) => item.dayNumber === rookie.curriculumDay) ?? curriculums[0];
   const learnedToday = completions.some((item) => item.userId === rookie.user.id && item.curriculumId === todayCur.id);
-  const completedSomethingToday = completions.some((item) => item.userId === rookie.user.id && item.createdAt.startsWith(today));
-  const canLearn = attendedToday && !learnedToday && !completedSomethingToday && rookie.user.status === "active";
+  const todayLearnCount = completions.filter((item) => item.userId === rookie.user.id && item.createdAt.startsWith(today)).length;
+  const reachedDailyCap = todayLearnCount >= 2;
+  const canLearn = attendedToday && !learnedToday && !reachedDailyCap && rookie.user.status === "active";
   const progress = Math.min(100, Math.round((rookie.learningCount / 20) * 100));
 
   return (
@@ -821,7 +822,7 @@ function LearningView({
       <div className="e5-st">
         <h1>학습</h1>
         <div className="e5-st-sub">
-          <span>20일 커리큘럼 · 하루 1개</span>
+          <span>20일 커리큘럼 · 하루 2개까지</span>
           <b>{rookie.learningCount} / 20 완료</b>
         </div>
         <div className="e5-topbar">
@@ -835,7 +836,7 @@ function LearningView({
         <p>{todayCur.description}</p>
         <div className="e5-tsteps">
           <button className="learn" disabled={!canLearn} onClick={() => onComplete(todayCur)} type="button">
-            {learnedToday ? "오늘 학습 완료 ✓" : !attendedToday ? "오늘 출석 먼저 🔒" : completedSomethingToday ? "내일 이어서" : "학습하기"}
+            {learnedToday ? "오늘 학습 완료 ✓" : !attendedToday ? "오늘 출석 먼저 🔒" : reachedDailyCap ? "내일 이어서 (하루 2개)" : "학습하기"}
           </button>
           <button
             className={`quiz ${learnedToday ? "" : "lock"}`}
@@ -1989,6 +1990,7 @@ function apiErrorTitle(code?: string) {
     QUIZ_ALREADY_SUBMITTED: "재도전 불가",
     QUIZ_INCOMPLETE: "답변 필요",
     AX_EVIDENCE_REQUIRED: "사진 필요",
+    AX_DAILY_LIMIT: "오늘 AX 완료",
     SHOP_LOCKED_UNTIL_COMPLETION: "상점 잠김",
     POINTS_EXPIRED: "포인트 만료",
     COUPON_OUT_OF_STOCK: "재고 없음",

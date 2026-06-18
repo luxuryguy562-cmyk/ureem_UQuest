@@ -30,6 +30,7 @@ export type UQuestErrorCode =
   | "QUIZ_ALREADY_SUBMITTED"
   | "QUIZ_INCOMPLETE"
   | "AX_EVIDENCE_REQUIRED"
+  | "AX_DAILY_LIMIT"
   | "SHOP_LOCKED_UNTIL_COMPLETION"
   | "POINTS_EXPIRED"
   | "COUPON_OUT_OF_STOCK"
@@ -225,8 +226,8 @@ export function completeLearning(config: FinalUQuestConfig, userId: string, curr
     throw new UQuestDomainError("LEARNING_NOT_TODAY", `지금 진행할 학습은 Day ${summary.curriculumDay}입니다. 학습은 순서대로 진행됩니다.`);
   }
 
-  if (data.learningCompletions.some((item) => item.userId === userId && item.createdAt.startsWith(data.today))) {
-    throw new UQuestDomainError("DAILY_LEARNING_LIMIT", "학습 완료는 하루 1개만 가능합니다. 다음 학습은 다음 근무일에 이어서 진행하세요.");
+  if (data.learningCompletions.filter((item) => item.userId === userId && item.createdAt.startsWith(data.today)).length >= 2) {
+    throw new UQuestDomainError("DAILY_LEARNING_LIMIT", "학습 완료는 하루 2개까지 가능합니다. 나머지는 다음 근무일에 이어서 진행하세요.");
   }
 
   data = addPoint(
@@ -328,6 +329,10 @@ export function certifyAx(config: FinalUQuestConfig, userId: string, categoryId:
   const user = getUser(data, userId);
   requireActiveRookie(user);
   const category = getAxCategory(data, categoryId);
+  // AX는 하루 1개만, 매일 초기화.
+  if (data.axSubmissions.some((item) => item.userId === userId && item.createdAt.startsWith(data.today))) {
+    throw new UQuestDomainError("AX_DAILY_LIMIT", "AX 인증은 하루 1개만 가능합니다. 내일 다시 도전하세요.");
+  }
   if (!evidenceName.trim()) {
     throw new UQuestDomainError("AX_EVIDENCE_REQUIRED", "사진 업로드 또는 촬영이 필요합니다.");
   }
