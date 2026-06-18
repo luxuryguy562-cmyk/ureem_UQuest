@@ -174,6 +174,24 @@ U-Quest는 관리자 설정값을 기반으로 사용자 화면을 구성한다.
 
 ---
 
+## Supabase 프로젝트 격리 헌법 (절대 규칙)
+
+> 이 절은 타협 불가 규칙이다. 코드 리뷰/배포/AI 작업 어디서든 위반을 발견하면 즉시 차단한다.
+
+- **U-Quest는 오직 `uquest` 프로젝트(`ofeqiqauhvcovtzjangm`)에만 연결한다.**
+- **`Cashflow` 프로젝트(`ecfjkfqlnqfxovlwhdtx`)에는 절대 연결하지 않는다.** 같은 조직(`urvmldcrfrxfbqddzlzk`) 안의 다른 프로젝트(`ureem`, `pongdang` 등)도 마찬가지로 연결 금지다.
+- `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` 세 값은 **모두 같은 `ofeqiqauhvcovtzjangm` 프로젝트**를 가리켜야 한다. 하나라도 다른 프로젝트면 자격 증명이 섞인 것이며 사용 금지다.
+- 자격 증명이 잘못 주입되면 **조용히 다른 DB에 붙지 않고 즉시 연결을 거부한다 (fail-closed).** 강제 장치는 `src/lib/supabase/server.ts`의 `assertUQuestProject()`이며, URL과 키의 프로젝트 `ref`를 검증하고 금지 프로젝트면 `throw` 한다.
+- 새로운 Supabase 클라이언트(브라우저/엣지/서버 무엇이든)를 추가할 때도 동일하게 이 가드를 통과시켜야 한다. 가드를 우회하는 직접 `createClient` 호출은 금지한다.
+
+| 구분 | 프로젝트 ref | 연결 |
+|---|---|---|
+| uquest (이 앱) | `ofeqiqauhvcovtzjangm` | ✅ 허용 |
+| Cashflow | `ecfjkfqlnqfxovlwhdtx` | ❌ 금지 |
+| ureem / pongdang 등 기타 | 그 외 전부 | ❌ 금지 |
+
+---
+
 ## 변경 이력
 
 ### 2026-05-28
@@ -184,3 +202,7 @@ U-Quest는 관리자 설정값을 기반으로 사용자 화면을 구성한다.
 
 - 아키텍처 기준을 포인트/경험치/챕터/컬렉션 구조로 전환했다.
 - 서버 처리 대상을 미션 보상, 챕터 진행, 컬렉션 지급, 쿠폰 교환 중심으로 재정의했다.
+
+### 2026-06-18
+
+- Supabase 프로젝트 격리 헌법을 추가했다. U-Quest는 `ofeqiqauhvcovtzjangm`에만 연결하며 `Cashflow`(`ecfjkfqlnqfxovlwhdtx`) 등 타 프로젝트 연결을 코드(`assertUQuestProject`)와 문서 양쪽에서 차단한다.
