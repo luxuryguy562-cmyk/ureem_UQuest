@@ -74,8 +74,29 @@ export type RookieSummary = {
   pointExpired: boolean;
 };
 
+// 온보딩 기간: 시작(첫 출석) 후 30일. 그 안엔 출석·학습·퀴즈·AX 자유, 30일이 지나면 자동 수료.
+export const ONBOARDING_PERIOD_DAYS = 30;
+
+function applyAutoCompletion(config: FinalUQuestConfig): FinalUQuestConfig {
+  const users = config.users.map((user) => {
+    if (user.role !== "rookie" || user.status !== "active") return user;
+    const startDate = config.attendances
+      .filter((attendance) => attendance.userId === user.id)
+      .map((attendance) => attendance.attendanceDate)
+      .sort()[0];
+    if (!startDate) return user; // 아직 온보딩을 시작(첫 출석)하지 않음
+    const dueDate = addDays(startDate, ONBOARDING_PERIOD_DAYS);
+    if (config.today >= dueDate) {
+      return { ...user, status: "completed" as const, completedAt: user.completedAt ?? nowIso(dueDate) };
+    }
+    return user;
+  });
+  return { ...config, users };
+}
+
 export function normalizeConfig(config: FinalUQuestConfig): FinalUQuestConfig {
-  return JSON.parse(JSON.stringify(config)) as FinalUQuestConfig;
+  const cloned = JSON.parse(JSON.stringify(config)) as FinalUQuestConfig;
+  return applyAutoCompletion(cloned);
 }
 
 export function getUser(data: FinalUQuestConfig, userId: string): FinalUser {
@@ -103,7 +124,9 @@ export function deriveRookieSummary(data: FinalUQuestConfig, user: FinalUser): R
   const currentDay = Math.max(1, diffDays(hireDate, data.today) + 1);
   // 진도 기반: 오늘 진행할 Day = 완료한 학습 수 + 1 (날짜와 무관, 놓친 날로 밀리지 않음).
   const curriculumDay = Math.min(20, data.learningCompletions.filter((completion) => completion.userId === user.id).length + 1);
-  const endDate = addDays(hireDate, 27);
+  // 온보딩 종료일 = 시작(첫 출석) 후 30일. 아직 시작 전이면 입사일 기준 임시 표기.
+  const startDate = data.attendances.filter((attendance) => attendance.userId === user.id).map((attendance) => attendance.attendanceDate).sort()[0];
+  const endDate = addDays(startDate ?? hireDate, ONBOARDING_PERIOD_DAYS);
   const histories = data.pointHistories.filter((history) => history.userId === user.id);
   const pointBalance = histories.reduce((sum, history) => sum + history.amount, 0);
   const totalEarnedPoints = histories.filter((history) => history.amount > 0).reduce((sum, history) => sum + history.amount, 0);
@@ -226,8 +249,8 @@ export function completeLearning(config: FinalUQuestConfig, userId: string, curr
     throw new UQuestDomainError("LEARNING_NOT_TODAY", `지금 진행할 학습은 Day ${summary.curriculumDay}입니다. 학습은 순서대로 진행됩니다.`);
   }
 
-  if (data.learningCompletions.filter((item) => item.userId === userId && item.createdAt.startsWith(data.today)).length >= 2) {
-    throw new UQuestDomainError("DAILY_LEARNING_LIMIT", "학습 완료는 하루 2개까지 가능합니다. 나머지는 다음 근무일에 이어서 진행하세요.");
+  if (data.learningCompletions.some((item) => item.userId === userId && item.createdAt.startsWith(data.today))) {
+    throw new UQuestDomainError("DAILY_LEARNING_LIMIT", "학습 완료는 하루 1개만 가능합니다. 다음 근무일에 이어서 진행하세요.");
   }
 
   data = addPoint(
@@ -251,15 +274,8 @@ export function completeLearning(config: FinalUQuestConfig, userId: string, curr
     `Day ${curriculum.dayNumber} 학습 완료`
   );
 
-  // 진도 기반 자동 수료: 20일 학습을 모두 마치면 그 시점에 수료 처리(상점 오픈 + 포인트 3개월 시작).
-  const learnedCount = data.learningCompletions.filter((item) => item.userId === userId).length;
-  if (learnedCount >= 20) {
-    data = {
-      ...data,
-      users: updateUser(data.users, userId, { status: "completed", completedAt: nowIso(data.today) })
-    };
-  }
-
+  // 수료는 학습 완료가 아니라 "온보딩 시작 후 30일 경과"로 처리한다(normalizeConfig). 학습을
+  // 일찍 끝내도 30일까지 출석·퀴즈·AX를 계속 쌓을 수 있다.
   return awardBadges(data, userId);
 }
 

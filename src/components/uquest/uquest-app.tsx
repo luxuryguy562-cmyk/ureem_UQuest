@@ -468,7 +468,7 @@ export function UQuestApp({ config }: { config: FinalUQuestConfig }) {
               curriculums={data.curriculums}
             />
           ) : null}
-          {visibleScreen === "ax" ? <AxView categories={data.axCategories} onCertify={certifyAx} rookie={rookie} submissions={data.axSubmissions} /> : null}
+          {visibleScreen === "ax" ? <AxView categories={data.axCategories} onCertify={certifyAx} rookie={rookie} submissions={data.axSubmissions} today={data.today} /> : null}
           {visibleScreen === "badges" ? <BadgeView badges={data.badges} rookie={rookie} /> : null}
           {visibleScreen === "profile" ? <ProfileView data={data} onGo={go} rookie={rookie} /> : null}
           {visibleScreen === "shop" ? <ShopView coupons={data.coupons} onCancel={cancelCouponRequest} onRedeem={redeemCoupon} requests={data.couponRequests} rookie={rookie} today={data.today} /> : null}
@@ -812,9 +812,8 @@ function LearningView({
 }) {
   const todayCur = curriculums.find((item) => item.dayNumber === rookie.curriculumDay) ?? curriculums[0];
   const learnedToday = completions.some((item) => item.userId === rookie.user.id && item.curriculumId === todayCur.id);
-  const todayLearnCount = completions.filter((item) => item.userId === rookie.user.id && item.createdAt.startsWith(today)).length;
-  const reachedDailyCap = todayLearnCount >= 2;
-  const canLearn = attendedToday && !learnedToday && !reachedDailyCap && rookie.user.status === "active";
+  const completedSomethingToday = completions.some((item) => item.userId === rookie.user.id && item.createdAt.startsWith(today));
+  const canLearn = attendedToday && !learnedToday && !completedSomethingToday && rookie.user.status === "active";
   const progress = Math.min(100, Math.round((rookie.learningCount / 20) * 100));
 
   return (
@@ -822,7 +821,7 @@ function LearningView({
       <div className="e5-st">
         <h1>학습</h1>
         <div className="e5-st-sub">
-          <span>20일 커리큘럼 · 하루 2개까지</span>
+          <span>20일 커리큘럼 · 하루 1개</span>
           <b>{rookie.learningCount} / 20 완료</b>
         </div>
         <div className="e5-topbar">
@@ -836,7 +835,7 @@ function LearningView({
         <p>{todayCur.description}</p>
         <div className="e5-tsteps">
           <button className="learn" disabled={!canLearn} onClick={() => onComplete(todayCur)} type="button">
-            {learnedToday ? "오늘 학습 완료 ✓" : !attendedToday ? "오늘 출석 먼저 🔒" : reachedDailyCap ? "내일 이어서 (하루 2개)" : "학습하기"}
+            {learnedToday ? "오늘 학습 완료 ✓" : !attendedToday ? "오늘 출석 먼저 🔒" : completedSomethingToday ? "내일 이어서" : "학습하기"}
           </button>
           <button
             className={`quiz ${learnedToday ? "" : "lock"}`}
@@ -973,25 +972,63 @@ function AxView({
   rookie,
   categories,
   submissions,
+  today,
   onCertify
 }: {
   rookie: RookieSummary;
   categories: FinalAxCategory[];
   submissions: FinalUQuestConfig["axSubmissions"];
+  today: string;
   onCertify: (category: FinalAxCategory, evidenceFile: File) => void;
 }) {
-  function handleEvidence(category: FinalAxCategory, file: File | undefined) {
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const axDoneToday = submissions.some((submission) => submission.userId === rookie.user.id && submission.createdAt.startsWith(today));
+  const inactive = rookie.user.status !== "active";
+  const axProgress = Math.min(100, Math.round((rookie.axSubmissionCount / 20) * 100));
+  const activeCategory = categories.find((category) => category.id === activeId) ?? null;
+
+  function handleCapture(category: FinalAxCategory, file: File | undefined) {
     if (!file) return;
     onCertify(category, file);
+    setActiveId(null);
   }
 
-  const axProgress = Math.min(100, Math.round((rookie.axSubmissionCount / 20) * 100));
+  // 상세(활동) 화면: 예시 화면 + 사진 촬영 버튼만(업로드 없음). 하루 1회.
+  if (activeCategory) {
+    const blocked = inactive || axDoneToday;
+    return (
+      <div className="e5-screen e5-ax e5-axdetail">
+        <div className="e5-st">
+          <button className="e5-back" onClick={() => setActiveId(null)} type="button">← 항목 목록</button>
+          <h1>{activeCategory.title}</h1>
+          <p className="e5-st-p">{activeCategory.description}</p>
+        </div>
 
+        <section className="e5-axexample">
+          <div className="cap">예시 화면</div>
+          <div className="img">
+            <span>관리자가 등록한 예시 화면이 여기에 표시됩니다</span>
+          </div>
+          <p className="guide">예시처럼 활동한 화면을 촬영해 인증하세요. (별도 검수는 없습니다)</p>
+        </section>
+
+        <label className={`e5-axshoot ${blocked ? "disabled" : ""}`}>
+          {axDoneToday ? "오늘 AX 완료 ✓" : "📷 사진 촬영으로 인증"}
+          <input accept="image/*" capture="environment" disabled={blocked} onChange={(event) => {
+            handleCapture(activeCategory, event.currentTarget.files?.[0]);
+            event.currentTarget.value = "";
+          }} type="file" />
+        </label>
+      </div>
+    );
+  }
+
+  // 목록 화면: 항목별 "활동하기" 버튼 하나.
   return (
     <div className="e5-screen e5-ax">
       <div className="e5-st">
-        <h1>AX · DX 인증</h1>
-        <p className="e5-st-p">현장에서 AI 도구를 쓰고 인증하면 로봇이 성장해요</p>
+        <h1>AX 인증</h1>
+        <p className="e5-st-p">현장에서 AI 도구를 쓰고 인증하면 로봇이 성장해요 · 하루 1회</p>
       </div>
 
       <section className="e5-axhero">
@@ -1011,36 +1048,21 @@ function AxView({
       </section>
 
       <div className="e5-sec e5-sec-row">
-        <h3>AX · DX 항목</h3>
+        <h3>AX 항목</h3>
         <span className="e5-tag-ax">항목당 +{formatNumber(categories[0]?.rewardPoints ?? 500)}P</span>
       </div>
       <div className="e5-axgrid">
         {categories.map((category) => {
           const count = submissions.filter((submission) => submission.userId === rookie.user.id && submission.categoryId === category.id).length;
-          const disabled = rookie.user.status !== "active";
-
           return (
             <div className="e5-axcard" key={category.id}>
               <div className="ty">{category.type}</div>
               <div className="nm">{category.title}</div>
               <div className="rew">+{formatNumber(category.rewardPoints)}P</div>
               <div className="cnt">{count}회 인증</div>
-              <div className="up">
-                <label className={disabled ? "disabled" : ""}>
-                  📷 올리기
-                  <input accept="image/*" disabled={disabled} onChange={(event) => {
-                    handleEvidence(category, event.currentTarget.files?.[0]);
-                    event.currentTarget.value = "";
-                  }} type="file" />
-                </label>
-                <label className={disabled ? "disabled" : ""}>
-                  촬영
-                  <input accept="image/*" capture="environment" disabled={disabled} onChange={(event) => {
-                    handleEvidence(category, event.currentTarget.files?.[0]);
-                    event.currentTarget.value = "";
-                  }} type="file" />
-                </label>
-              </div>
+              <button className="e5-axgo" disabled={inactive} onClick={() => setActiveId(category.id)} type="button">
+                {axDoneToday ? "오늘 완료 ✓" : "활동하기"}
+              </button>
             </div>
           );
         })}

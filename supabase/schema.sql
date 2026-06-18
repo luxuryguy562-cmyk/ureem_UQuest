@@ -705,9 +705,5 @@ insert into public.ax_categories (code, type, title, description, reward_points,
 values
   ('ax-ai-helpdesk', 'AX', 'AI 헬프데스크', 'AI 헬프데스크를 실제 상담 준비에 활용합니다.', 500, 1),
   ('ax-smart-cs', 'AX', '스마트CS', '스마트CS로 고객 응대 정보를 확인합니다.', 500, 2),
-  ('ax-uplus-one', 'AX', 'U+ONE', 'U+ONE 핵심 화면과 업무 흐름을 익힙니다.', 500, 3),
-  ('ax-rate-simulator', 'AX', '요금 시뮬레이터', '요금 시뮬레이터로 상담 시나리오를 실습합니다.', 500, 4),
-  ('dx-lifecycle', 'DX', '생애주기', '고객 생애주기 관점으로 상담 포인트를 정리합니다.', 500, 5),
-  ('dx-competitor', 'DX', '타사확보', '타사 고객 확보 대화 흐름을 연습합니다.', 500, 6),
-  ('dx-conversion', 'DX', '자사전환', '자사 전환 체크포인트를 확인합니다.', 500, 7)
+  ('ax-rate-simulator', 'AX', '요금 시뮬레이터', '요금 시뮬레이터로 상담 시나리오를 실습합니다.', 500, 3)
 on conflict (code) do nothing;

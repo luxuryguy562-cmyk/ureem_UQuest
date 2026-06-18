@@ -67,16 +67,6 @@ const axCategories: FinalAxCategory[] = [
     sortOrder: 2
   },
   {
-    id: "ax-uplus-one",
-    code: "UPLUS_ONE",
-    type: "AX",
-    title: "U+ONE",
-    description: "U+ONE에서 고객 상담에 필요한 기본 정보를 확인합니다.",
-    rewardPoints: 500,
-    isPublished: true,
-    sortOrder: 3
-  },
-  {
     id: "ax-rate-simulator",
     code: "RATE_SIMULATOR",
     type: "AX",
@@ -84,37 +74,7 @@ const axCategories: FinalAxCategory[] = [
     description: "요금제 비교와 예상 청구 금액을 시뮬레이션합니다.",
     rewardPoints: 500,
     isPublished: true,
-    sortOrder: 4
-  },
-  {
-    id: "dx-lifecycle",
-    code: "LIFECYCLE",
-    type: "DX",
-    title: "생애주기",
-    description: "고객의 이용 단계에 맞는 상담 흐름을 확인합니다.",
-    rewardPoints: 500,
-    isPublished: true,
-    sortOrder: 5
-  },
-  {
-    id: "dx-competitor-winback",
-    code: "COMPETITOR_WINBACK",
-    type: "DX",
-    title: "타사확보",
-    description: "타사 고객 확보 상담에서 필요한 핵심 질문을 점검합니다.",
-    rewardPoints: 500,
-    isPublished: true,
-    sortOrder: 6
-  },
-  {
-    id: "dx-own-conversion",
-    code: "OWN_CONVERSION",
-    type: "DX",
-    title: "자사전환",
-    description: "자사 전환 상담의 혜택과 유의사항을 확인합니다.",
-    rewardPoints: 500,
-    isPublished: true,
-    sortOrder: 7
+    sortOrder: 3
   }
 ];
 
@@ -301,8 +261,8 @@ export const finalFallbackAppConfig: FinalUQuestConfig = {
   axSubmissions: [
     { id: "ax-sub-1", userId: "rookie-001", categoryId: "ax-ai-helpdesk", imageUrl: "/mock/ax-1.png", rewardPoints: 500, createdAt: "2026-06-04T15:10:00+09:00" },
     { id: "ax-sub-2", userId: "rookie-001", categoryId: "ax-smart-cs", imageUrl: "/mock/ax-2.png", rewardPoints: 500, createdAt: "2026-06-05T15:12:00+09:00" },
-    { id: "ax-sub-3", userId: "rookie-001", categoryId: "ax-uplus-one", imageUrl: "/mock/ax-3.png", rewardPoints: 500, createdAt: "2026-06-06T15:10:00+09:00" },
-    { id: "ax-sub-4", userId: "rookie-001", categoryId: "dx-lifecycle", imageUrl: "/mock/ax-4.png", rewardPoints: 500, createdAt: "2026-06-07T15:12:00+09:00" }
+    { id: "ax-sub-3", userId: "rookie-001", categoryId: "ax-rate-simulator", imageUrl: "/mock/ax-3.png", rewardPoints: 500, createdAt: "2026-06-06T15:10:00+09:00" },
+    { id: "ax-sub-4", userId: "rookie-001", categoryId: "ax-ai-helpdesk", imageUrl: "/mock/ax-4.png", rewardPoints: 500, createdAt: "2026-06-07T15:12:00+09:00" }
   ],
   badges,
   pointHistories,

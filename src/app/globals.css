@@ -3153,6 +3153,18 @@
 .e5-axcard .up label.disabled{opacity:.5;cursor:default}
 .e5-axcard .up input{display:none}
 
+/* AX 활동하기 버튼 + 상세(예시+촬영) */
+.e5-axgo{margin-top:10px;width:100%;border:0;font-family:inherit;font-size:12.5px;font-weight:1000;padding:10px;border-radius:11px;cursor:pointer;background:var(--uplus);color:#fff;box-shadow:0 6px 12px rgba(230,0,126,.22)}
+.e5-axgo:disabled{opacity:.5;cursor:default;box-shadow:none}
+.e5-back{align-self:flex-start;background:none;border:0;font-family:inherit;font-size:13px;font-weight:900;color:var(--uplus-sub);cursor:pointer;padding:0 0 4px}
+.e5-axexample{background:#fff;border:1px solid #efe7f7;border-radius:18px;padding:14px;box-shadow:0 10px 24px rgba(190,20,110,.08)}
+.e5-axexample .cap{font-size:11px;font-weight:1000;color:var(--ax);background:#f1ebff;display:inline-block;padding:3px 10px;border-radius:10px}
+.e5-axexample .img{margin-top:10px;height:220px;border-radius:14px;border:1.5px dashed #d9c9ea;background:repeating-linear-gradient(45deg,#faf6ff,#faf6ff 12px,#f3ecfb 12px,#f3ecfb 24px);display:flex;align-items:center;justify-content:center;text-align:center;color:var(--uplus-sub);font-size:12px;font-weight:800;padding:16px}
+.e5-axexample .guide{margin-top:10px;font-size:12px;font-weight:700;color:var(--uplus-sub);line-height:1.5}
+.e5-axshoot{display:flex;align-items:center;justify-content:center;margin-top:14px;font-size:15px;font-weight:1000;padding:16px;border-radius:14px;cursor:pointer;background:var(--uplus);color:#fff;box-shadow:0 10px 20px rgba(230,0,126,.25)}
+.e5-axshoot.disabled{opacity:.5;cursor:default;box-shadow:none;background:#f3ebf0;color:var(--uplus-deep)}
+.e5-axshoot input{display:none}
+
 /* 상점 */
 .e5-balance{background:linear-gradient(160deg,#ff9fcb,#cf3a86);border-radius:24px;padding:18px;color:#fff;box-shadow:0 16px 32px rgba(214,43,134,.28);position:relative;overflow:hidden}
 .e5-balance::after{content:"";position:absolute;width:170px;height:170px;right:-55px;top:-70px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.22),transparent 65%)}
