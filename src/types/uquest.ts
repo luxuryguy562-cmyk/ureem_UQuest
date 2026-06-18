@@ -3,7 +3,7 @@ export type FinalUserStatus = "pending" | "active" | "rejected" | "completed" | 
 export type FinalScreenKey = "home" | "learn" | "quiz" | "ax" | "badges" | "profile" | "shop" | "points" | "manager" | "admin";
 export type QuizTier = "Unranked" | "Bronze" | "Silver" | "Gold" | "Platinum" | "Diamond";
 export type AxLevel = "Explorer" | "User" | "Expert" | "Master";
-export type BadgeCategory = "attendance" | "quiz" | "tier" | "rare";
+export type BadgeCategory = "attendance" | "quiz" | "tier" | "ax" | "rare";
 export type CouponRequestStatus = "requested" | "canceled" | "sent";
 
 export interface FinalStore {
@@ -92,6 +92,7 @@ export interface FinalAxCategory {
   title: string;
   description: string;
   rewardPoints: number;
+  exampleImageUrl?: string;
   isPublished: boolean;
   sortOrder: number;
 }

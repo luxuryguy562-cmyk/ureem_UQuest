@@ -159,6 +159,7 @@ type RewardConfigDraft = {
   quizCorrectPoints: number;
   quizWrongPoints: number;
   axPoints: number;
+  badges: { id: string; rewardPoints: number }[];
 };
 
 export function UQuestApp({ config }: { config: FinalUQuestConfig }) {
@@ -429,6 +430,17 @@ export function UQuestApp({ config }: { config: FinalUQuestConfig }) {
     );
   }
 
+  async function updateAxExample(category: FinalAxCategory, file: File) {
+    const body = new FormData();
+    body.append("image", file);
+    await runApiFormMutation(
+      `/api/admin/ax-categories/${category.id}/example`,
+      body,
+      { title: "예시 이미지 저장", body: `${category.title} 예시 화면을 등록했습니다.`, tone: "good" },
+      currentUser.id
+    );
+  }
+
   const visibleScreen = role === "rookie" ? screen : role;
 
   if (!authChecked) {
@@ -501,6 +513,7 @@ export function UQuestApp({ config }: { config: FinalUQuestConfig }) {
           onCancelCoupon={cancelCouponRequest}
           onUpdateCurriculum={updateCurriculumSettings}
           onUpdateRewardConfig={updateRewardConfig}
+          onUpdateAxExample={updateAxExample}
           onReject={rejectUser}
           onSendCoupon={sendCouponRequest}
         />
@@ -1025,7 +1038,11 @@ function AxView({
         <section className="e5-axexample">
           <div className="cap">예시 화면</div>
           <div className="img">
-            <span>관리자가 등록한 예시 화면이 여기에 표시됩니다</span>
+            {activeCategory.exampleImageUrl ? (
+              <img alt={`${activeCategory.title} 예시`} src={activeCategory.exampleImageUrl} />
+            ) : (
+              <span>관리자가 등록한 예시 화면이 여기에 표시됩니다</span>
+            )}
           </div>
           <p className="guide">예시처럼 활동한 화면을 촬영해 인증하세요. (별도 검수는 없습니다)</p>
         </section>
@@ -1090,7 +1107,7 @@ function AxView({
 }
 
 function BadgeView({ rookie, badges }: { rookie: RookieSummary; badges: FinalBadge[] }) {
-  const grouped = (["attendance", "quiz", "tier", "rare"] as BadgeCategory[]).map((category) => ({
+  const grouped = (["attendance", "quiz", "tier", "ax", "rare"] as BadgeCategory[]).map((category) => ({
     category,
     items: badges.filter((badge) => badge.category === category).sort((left, right) => left.sortOrder - right.sortOrder)
   }));
@@ -1465,7 +1482,8 @@ function AdminView({
   onSendCoupon,
   onCancelCoupon,
   onUpdateCurriculum,
-  onUpdateRewardConfig
+  onUpdateRewardConfig,
+  onUpdateAxExample
 }: {
   data: FinalUQuestConfig;
   onApprove: (userId: string) => void;
@@ -1474,6 +1492,7 @@ function AdminView({
   onCancelCoupon: (requestId: string, reason: string) => void;
   onUpdateCurriculum: (curriculumId: string, draft: CurriculumDraft) => void;
   onUpdateRewardConfig: (values: RewardConfigDraft) => void;
+  onUpdateAxExample: (category: FinalAxCategory, file: File) => void;
 }) {
   const [tab, setTab] = useState<"dashboard" | "members" | "curriculum" | "ax" | "coupons" | "rewards" | "validation">("dashboard");
   const rookies = data.users.filter((user) => user.role === "rookie");
@@ -1547,7 +1566,7 @@ function AdminView({
       ) : null}
 
       {tab === "curriculum" ? <AdminCurriculumPanel curriculums={data.curriculums} onSave={onUpdateCurriculum} quizzes={data.quizzes} /> : null}
-      {tab === "ax" ? <AdminAxPanel categories={data.axCategories} /> : null}
+      {tab === "ax" ? <AdminAxPanel categories={data.axCategories} onUploadExample={onUpdateAxExample} /> : null}
       {tab === "rewards" ? <AdminRewardSimulatorPanel data={data} onSave={onUpdateRewardConfig} /> : null}
       {tab === "coupons" ? (
         <AdminCouponPanel coupons={data.coupons} requests={data.couponRequests} users={data.users} onCancel={onCancelCoupon} onSend={onSendCoupon} />
@@ -1558,49 +1577,74 @@ function AdminView({
 }
 
 function AdminRewardSimulatorPanel({ data, onSave }: { data: FinalUQuestConfig; onSave: (values: RewardConfigDraft) => void }) {
-  const [draft, setDraft] = useState<RewardConfigDraft>({
+  const [act, setAct] = useState({
     attendancePoints: data.rewardConfig?.attendancePoints ?? 100,
     learningPoints: data.rewardConfig?.learningPoints ?? 0,
     quizCorrectPoints: data.rewardConfig?.quizCorrectPoints ?? 300,
     quizWrongPoints: data.rewardConfig?.quizWrongPoints ?? 30,
     axPoints: data.rewardConfig?.axPoints ?? 200
   });
+  const [badgePoints, setBadgePoints] = useState<Record<string, number>>(() =>
+    Object.fromEntries(data.badges.map((badge) => [badge.id, badge.rewardPoints]))
+  );
 
   const ONBOARDING_DAYS = 30;
   const attendanceCount = ONBOARDING_DAYS;
   const learningCount = data.curriculums.length;
   const quizCount = data.quizzes.filter((question) => question.rewardPoints >= 0).length;
   const axCount = data.axCategories.length * ONBOARDING_DAYS;
-  const growBadges = data.badges.filter((badge) => !badge.isRare);
-  const rareBadges = data.badges.filter((badge) => badge.isRare);
-  const growBadgeTotal = growBadges.reduce((sum, badge) => sum + badge.rewardPoints, 0);
-  const rareBadgeTotal = rareBadges.reduce((sum, badge) => sum + badge.rewardPoints, 0);
+  const growBadges = data.badges.filter((badge) => !badge.isRare).sort((a, b) => a.sortOrder - b.sortOrder);
+  const rareBadges = data.badges.filter((badge) => badge.isRare).sort((a, b) => a.sortOrder - b.sortOrder);
+  const sumBadges = (list: typeof growBadges) => list.reduce((sum, badge) => sum + (badgePoints[badge.id] ?? 0), 0);
+  const growBadgeTotal = sumBadges(growBadges);
+  const rareBadgeTotal = sumBadges(rareBadges);
 
   const rows = [
-    { key: "att", label: "출석", unit: draft.attendancePoints as number | null, count: attendanceCount, total: draft.attendancePoints * attendanceCount },
-    { key: "learn", label: "학습", unit: draft.learningPoints as number | null, count: learningCount, total: draft.learningPoints * learningCount },
-    { key: "quiz", label: "퀴즈(정답)", unit: draft.quizCorrectPoints as number | null, count: quizCount, total: draft.quizCorrectPoints * quizCount },
-    { key: "ax", label: "AX", unit: draft.axPoints as number | null, count: axCount, total: draft.axPoints * axCount },
+    { key: "att", label: "출석", unit: act.attendancePoints as number | null, count: attendanceCount, total: act.attendancePoints * attendanceCount },
+    { key: "learn", label: "학습", unit: act.learningPoints as number | null, count: learningCount, total: act.learningPoints * learningCount },
+    { key: "quiz", label: "퀴즈(정답)", unit: act.quizCorrectPoints as number | null, count: quizCount, total: act.quizCorrectPoints * quizCount },
+    { key: "ax", label: "AX", unit: act.axPoints as number | null, count: axCount, total: act.axPoints * axCount },
     { key: "grow", label: "성장배지", unit: null, count: growBadges.length, total: growBadgeTotal },
     { key: "rare", label: "🟣 희귀배지", unit: null, count: rareBadges.length, total: rareBadgeTotal }
   ];
   const grandTotal = rows.reduce((sum, row) => sum + row.total, 0);
 
-  function setField(field: keyof RewardConfigDraft, value: string) {
-    setDraft((prev) => ({ ...prev, [field]: Math.max(0, Math.floor(Number(value) || 0)) }));
+  function setActField(field: keyof typeof act, value: string) {
+    setAct((prev) => ({ ...prev, [field]: Math.max(0, Math.floor(Number(value) || 0)) }));
   }
+  function setBadge(id: string, value: string) {
+    setBadgePoints((prev) => ({ ...prev, [id]: Math.max(0, Math.floor(Number(value) || 0)) }));
+  }
+  function apply() {
+    onSave({
+      ...act,
+      badges: data.badges.map((badge) => ({ id: badge.id, rewardPoints: badgePoints[badge.id] ?? badge.rewardPoints }))
+    });
+  }
+
+  const badgeGroup = (title: string, list: typeof growBadges) => (
+    <div className="reward-badge-group">
+      <h4>{title}</h4>
+      {list.map((badge) => (
+        <label className="reward-badge-row" key={badge.id}>
+          <span>{badge.name}</span>
+          <input inputMode="numeric" onChange={(event) => setBadge(badge.id, event.target.value)} value={badgePoints[badge.id] ?? 0} />
+        </label>
+      ))}
+    </div>
+  );
 
   return (
     <section className="u-card reward-sim">
       <h3>보상 경제 시뮬레이터</h3>
-      <p className="reward-sim-help">종목별 단위 포인트를 입력하면 합계·비중이 실시간 계산됩니다. <b>적용</b>하면 실제 출석·학습·퀴즈·AX 보상에 바로 반영돼요. (배지 금액은 배지 관리에서 · 만점 합계는 전정답 기준이라 오답값은 미포함)</p>
+      <p className="reward-sim-help">종목·배지별 단위 포인트를 입력하면 합계·비중·만점자 총액이 실시간 계산됩니다. <b>적용</b>하면 실제 보상에 바로 반영돼요. (만점 합계는 전정답 기준이라 오답값은 미포함)</p>
 
       <div className="reward-sim-inputs">
-        <label>출석 / 회<input inputMode="numeric" onChange={(event) => setField("attendancePoints", event.target.value)} value={draft.attendancePoints} /></label>
-        <label>학습 / 개<input inputMode="numeric" onChange={(event) => setField("learningPoints", event.target.value)} value={draft.learningPoints} /></label>
-        <label>퀴즈 정답 / 문항<input inputMode="numeric" onChange={(event) => setField("quizCorrectPoints", event.target.value)} value={draft.quizCorrectPoints} /></label>
-        <label>퀴즈 오답 / 문항<input inputMode="numeric" onChange={(event) => setField("quizWrongPoints", event.target.value)} value={draft.quizWrongPoints} /></label>
-        <label>AX / 건<input inputMode="numeric" onChange={(event) => setField("axPoints", event.target.value)} value={draft.axPoints} /></label>
+        <label>출석 / 회<input inputMode="numeric" onChange={(event) => setActField("attendancePoints", event.target.value)} value={act.attendancePoints} /></label>
+        <label>학습 / 개<input inputMode="numeric" onChange={(event) => setActField("learningPoints", event.target.value)} value={act.learningPoints} /></label>
+        <label>퀴즈 정답 / 문항<input inputMode="numeric" onChange={(event) => setActField("quizCorrectPoints", event.target.value)} value={act.quizCorrectPoints} /></label>
+        <label>퀴즈 오답 / 문항<input inputMode="numeric" onChange={(event) => setActField("quizWrongPoints", event.target.value)} value={act.quizWrongPoints} /></label>
+        <label>AX / 건<input inputMode="numeric" onChange={(event) => setActField("axPoints", event.target.value)} value={act.axPoints} /></label>
       </div>
 
       <table className="reward-sim-table">
@@ -1624,7 +1668,12 @@ function AdminRewardSimulatorPanel({ data, onSave }: { data: FinalUQuestConfig; 
         </tfoot>
       </table>
 
-      <button className="reward-apply" onClick={() => onSave(draft)} type="button">적용 — 실제 보상에 반영</button>
+      <div className="reward-badges">
+        {badgeGroup("성장배지 (누구나)", growBadges)}
+        {badgeGroup("🟣 희귀배지 (실력·수집)", rareBadges)}
+      </div>
+
+      <button className="reward-apply" onClick={apply} type="button">적용 — 실제 보상에 반영</button>
     </section>
   );
 }
@@ -1805,10 +1854,10 @@ function buildCurriculumDraft(curriculum: FinalCurriculum | undefined, quizzes: 
   };
 }
 
-function AdminAxPanel({ categories }: { categories: FinalAxCategory[] }) {
+function AdminAxPanel({ categories, onUploadExample }: { categories: FinalAxCategory[]; onUploadExample: (category: FinalAxCategory, file: File) => void }) {
   return (
     <section className="u-card">
-      <div className="readonly-note">AX/DX 항목 추가/삭제는 불가합니다. 관리자는 설명, 예시 이미지, 보상 포인트, 공개 여부만 수정할 수 있습니다.</div>
+      <div className="readonly-note">AX 항목 추가/삭제는 불가합니다. 관리자는 예시 이미지·보상 포인트·공개 여부를 수정할 수 있어요. 등록한 예시 이미지는 신입의 활동 화면에 표시됩니다.</div>
       <div className="ax-grid">
         {categories.map((category) => (
           <div className="ax-card" key={category.id}>
@@ -1816,6 +1865,21 @@ function AdminAxPanel({ categories }: { categories: FinalAxCategory[] }) {
             <strong>{category.title}</strong>
             <p>{category.description}</p>
             <em>{formatNumber(category.rewardPoints)}P · {category.isPublished ? "공개" : "비공개"}</em>
+            <div className="ax-example">
+              {category.exampleImageUrl ? (
+                <img alt={`${category.title} 예시`} src={category.exampleImageUrl} />
+              ) : (
+                <div className="ax-example-empty">예시 이미지 없음</div>
+              )}
+              <label className="ax-example-upload">
+                {category.exampleImageUrl ? "예시 교체" : "예시 등록"}
+                <input accept="image/*" onChange={(event) => {
+                  const file = event.currentTarget.files?.[0];
+                  if (file) onUploadExample(category, file);
+                  event.currentTarget.value = "";
+                }} type="file" />
+              </label>
+            </div>
           </div>
         ))}
       </div>
@@ -2236,6 +2300,7 @@ function badgeCategoryLabel(category: BadgeCategory) {
     attendance: "출석 배지",
     quiz: "퀴즈 배지",
     tier: "티어 배지",
+    ax: "AX 배지",
     rare: "희귀 배지"
   };
 

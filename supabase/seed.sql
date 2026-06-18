@@ -91,12 +91,13 @@ values
   ('tier_gold',     'tier', 'Gold',     '정답률 60% 이상을 달성했습니다.', '정답률 60% 이상', 2000, 'tier_gold',     false, false, 23),
   ('tier_platinum', 'tier', 'Platinum', '정답률 80% 이상을 달성했습니다.', '정답률 80% 이상', 3000, 'tier_platinum', false, false, 24),
   ('tier_diamond',  'tier', 'Diamond',  '정답률 95% 이상을 달성했습니다.', '정답률 95% 이상', 5000, 'tier_diamond',  false, false, 25),
-  ('rare_attendance', 'rare', '성실의 증명',    '캐릭터 레벨 4 이상(출석·학습·퀴즈 정답 종합)에 도달했습니다.', '획득 전에는 조건 숨김', 3000,  'rare_attendance', true, true, 31),
+  ('rare_attendance', 'attendance', '성실의 증명', '캐릭터 레벨 4 이상(출석·학습·퀴즈 종합 성실)에 도달했습니다.', '캐릭터 레벨 4 달성', 3000,  'rare_attendance', false, false, 6),
   ('rare_quiz',       'rare', '지식의 증명',    '퀴즈 정답률 90% 이상을 달성했습니다.', '획득 전에는 조건 숨김', 3000,  'rare_quiz',       true, true, 32),
   ('rare_tier',       'rare', '실력의 증명',    'Diamond 티어를 달성했습니다.',   '획득 전에는 조건 숨김', 5000,  'rare_tier',       true, true, 33),
-  ('rare_ax_master',  'rare', '혁신의 증명',    'AX Master에 도달했습니다.',      '획득 전에는 조건 숨김', 5000,  'rare_ax_master',  true, true, 34),
-  ('rare_all_public', 'rare', '성장의 정점',    '모든 공개 배지를 획득했습니다.', '획득 전에는 조건 숨김', 10000, 'rare_all_public', true, true, 35),
-  ('rare_legend',     'rare', 'U-Quest Legend', '모든 희귀 배지를 획득했습니다.', '획득 전에는 조건 숨김', 15000, 'rare_legend',     true, true, 36)
+  ('rare_ax_master',  'ax', '혁신의 증명',      'AX Master(20건)에 도달했습니다.', 'AX Master 달성', 5000,  'rare_ax_master',  false, false, 41),
+  ('rare_ax_peak',    'rare', 'AX 정점',        'AX 60건 이상 인증했습니다.',     '획득 전에는 조건 숨김', 5000,  'rare_ax_master',  true, true, 35),
+  ('rare_all_public', 'rare', '성장의 정점',    '모든 공개 배지를 획득했습니다.', '획득 전에는 조건 숨김', 10000, 'rare_all_public', true, true, 36),
+  ('rare_legend',     'rare', 'U-Quest Legend', '모든 희귀 배지를 획득했습니다.', '획득 전에는 조건 숨김', 15000, 'rare_legend',     true, true, 37)
 on conflict (code) do nothing;
 
 -- 6) 쿠폰 (상점 기본 구성) --------------------------------------------------

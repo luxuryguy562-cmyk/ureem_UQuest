@@ -252,6 +252,7 @@ async function assembleConfigFromDb(supabase: Supabase, today: string): Promise<
     title: r.title,
     description: r.description,
     rewardPoints: r.reward_points,
+    exampleImageUrl: r.example_image_url ?? undefined,
     isPublished: r.is_published,
     sortOrder: r.sort_order
   }));
@@ -573,6 +574,38 @@ async function persistDeltas(supabase: Supabase, before: FinalUQuestConfig, next
     }
   }
   await persistQuizSets(supabase, before, next);
+
+  // 6-1) 배지 보상 포인트 수정 (관리자 시뮬레이터)
+  const beforeBadges = byId(before.badges);
+  for (const badge of next.badges) {
+    const prev = beforeBadges.get(badge.id);
+    if (prev && prev.rewardPoints !== badge.rewardPoints) {
+      await throwOnError(
+        supabase.from("badges").update({ reward_points: badge.rewardPoints }).eq("code", badge.id),
+        "badges.update"
+      );
+    }
+  }
+
+  // 6-2) AX 항목 수정 (예시 이미지 등)
+  const beforeAx = byId(before.axCategories);
+  for (const category of next.axCategories) {
+    const prev = beforeAx.get(category.id);
+    if (prev && (prev.exampleImageUrl !== category.exampleImageUrl || prev.rewardPoints !== category.rewardPoints || prev.description !== category.description || prev.isPublished !== category.isPublished)) {
+      await throwOnError(
+        supabase
+          .from("ax_categories")
+          .update({
+            description: category.description,
+            reward_points: category.rewardPoints,
+            example_image_url: category.exampleImageUrl ?? null,
+            is_published: category.isPublished
+          })
+          .eq("id", category.id),
+        "ax_categories.update"
+      );
+    }
+  }
 
   // 7) 알림 / 감사 로그 (append-only)
   await insertNew(supabase, "notifications", before.notifications, next.notifications, (n) => ({

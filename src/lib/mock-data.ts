@@ -94,12 +94,13 @@ const badges: FinalBadge[] = [
   { id: "tier_gold", category: "tier", name: "Gold", description: "정답률 60% 이상을 달성했습니다.", conditionLabel: "정답률 60% 이상", rewardPoints: 2000, imageKey: "tier_gold", isRare: false, isHidden: false, sortOrder: 23 },
   { id: "tier_platinum", category: "tier", name: "Platinum", description: "정답률 80% 이상을 달성했습니다.", conditionLabel: "정답률 80% 이상", rewardPoints: 3000, imageKey: "tier_platinum", isRare: false, isHidden: false, sortOrder: 24 },
   { id: "tier_diamond", category: "tier", name: "Diamond", description: "정답률 95% 이상을 달성했습니다.", conditionLabel: "정답률 95% 이상", rewardPoints: 5000, imageKey: "tier_diamond", isRare: false, isHidden: false, sortOrder: 25 },
-  { id: "rare_attendance", category: "rare", name: "성실의 증명", description: "캐릭터 레벨 4 이상(출석·학습·퀴즈 정답 종합)에 도달했습니다.", conditionLabel: "획득 전에는 조건 숨김", rewardPoints: 3000, imageKey: "rare_attendance", isRare: true, isHidden: true, sortOrder: 31 },
+  { id: "rare_attendance", category: "attendance", name: "성실의 증명", description: "캐릭터 레벨 4 이상(출석·학습·퀴즈 종합 성실)에 도달했습니다.", conditionLabel: "캐릭터 레벨 4 달성", rewardPoints: 3000, imageKey: "rare_attendance", isRare: false, isHidden: false, sortOrder: 6 },
   { id: "rare_quiz", category: "rare", name: "지식의 증명", description: "퀴즈 정답률 90% 이상을 달성했습니다.", conditionLabel: "획득 전에는 조건 숨김", rewardPoints: 3000, imageKey: "rare_quiz", isRare: true, isHidden: true, sortOrder: 32 },
   { id: "rare_tier", category: "rare", name: "실력의 증명", description: "Diamond 티어를 달성했습니다.", conditionLabel: "획득 전에는 조건 숨김", rewardPoints: 5000, imageKey: "rare_tier", isRare: true, isHidden: true, sortOrder: 33 },
-  { id: "rare_ax_master", category: "rare", name: "혁신의 증명", description: "AX Master에 도달했습니다.", conditionLabel: "획득 전에는 조건 숨김", rewardPoints: 5000, imageKey: "rare_ax_master", isRare: true, isHidden: true, sortOrder: 34 },
-  { id: "rare_all_public", category: "rare", name: "성장의 정점", description: "모든 공개 배지를 획득했습니다.", conditionLabel: "획득 전에는 조건 숨김", rewardPoints: 10000, imageKey: "rare_all_public", isRare: true, isHidden: true, sortOrder: 35 },
-  { id: "rare_legend", category: "rare", name: "U-Quest Legend", description: "모든 희귀 배지를 획득했습니다.", conditionLabel: "획득 전에는 조건 숨김", rewardPoints: 15000, imageKey: "rare_legend", isRare: true, isHidden: true, sortOrder: 36 }
+  { id: "rare_ax_master", category: "ax", name: "혁신의 증명", description: "AX Master(20건)에 도달했습니다.", conditionLabel: "AX Master 달성", rewardPoints: 5000, imageKey: "rare_ax_master", isRare: false, isHidden: false, sortOrder: 41 },
+  { id: "rare_ax_peak", category: "rare", name: "AX 정점", description: "AX 60건 이상 인증했습니다.", conditionLabel: "획득 전에는 조건 숨김", rewardPoints: 5000, imageKey: "rare_ax_master", isRare: true, isHidden: true, sortOrder: 35 },
+  { id: "rare_all_public", category: "rare", name: "성장의 정점", description: "모든 공개 배지를 획득했습니다.", conditionLabel: "획득 전에는 조건 숨김", rewardPoints: 10000, imageKey: "rare_all_public", isRare: true, isHidden: true, sortOrder: 36 },
+  { id: "rare_legend", category: "rare", name: "U-Quest Legend", description: "모든 희귀 배지를 획득했습니다.", conditionLabel: "획득 전에는 조건 숨김", rewardPoints: 15000, imageKey: "rare_legend", isRare: true, isHidden: true, sortOrder: 37 }
 ];
 
 const coupons: FinalCoupon[] = [

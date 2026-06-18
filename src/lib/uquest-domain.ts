@@ -625,9 +625,11 @@ export function updateCurriculumSettings(config: FinalUQuestConfig, adminId: str
   };
 }
 
-export type RewardConfigInput = Partial<FinalRewardConfig>;
+export type RewardSettingsInput = Partial<FinalRewardConfig> & {
+  badges?: { id: string; rewardPoints: number }[];
+};
 
-export function updateRewardConfig(config: FinalUQuestConfig, adminId: string, input: RewardConfigInput): FinalUQuestConfig {
+export function updateRewardConfig(config: FinalUQuestConfig, adminId: string, input: RewardSettingsInput): FinalUQuestConfig {
   const data = normalizeConfig(config);
   const admin = getUser(data, adminId);
   requireRole(admin, ["admin"]);
@@ -645,9 +647,17 @@ export function updateRewardConfig(config: FinalUQuestConfig, adminId: string, i
     axPoints: sanitize(input.axPoints, current.axPoints)
   };
 
+  const badgeOverrides = new Map((input.badges ?? []).map((badge) => [badge.id, Math.max(0, Math.floor(Number(badge.rewardPoints)))]));
+  const badges = data.badges.map((badge) =>
+    badgeOverrides.has(badge.id) && Number.isFinite(badgeOverrides.get(badge.id))
+      ? { ...badge, rewardPoints: badgeOverrides.get(badge.id) as number }
+      : badge
+  );
+
   return {
     ...data,
     rewardConfig,
+    badges,
     adminAuditLogs: [
       ...data.adminAuditLogs,
       {
@@ -657,6 +667,32 @@ export function updateRewardConfig(config: FinalUQuestConfig, adminId: string, i
         targetType: "reward_config",
         targetId: "current",
         reason: "보상 단위 포인트 설정 변경",
+        createdAt: nowIso(data.today)
+      }
+    ]
+  };
+}
+
+export function updateAxCategoryExample(config: FinalUQuestConfig, adminId: string, categoryId: string, imageUrl: string): FinalUQuestConfig {
+  const data = normalizeConfig(config);
+  const admin = getUser(data, adminId);
+  requireRole(admin, ["admin"]);
+  const category = getAxCategory(data, categoryId);
+  const cleaned = imageUrl.trim();
+  if (!cleaned) throw new UQuestDomainError("AX_EVIDENCE_REQUIRED", "예시 이미지가 필요합니다.");
+
+  return {
+    ...data,
+    axCategories: data.axCategories.map((item) => (item.id === categoryId ? { ...item, exampleImageUrl: cleaned } : item)),
+    adminAuditLogs: [
+      ...data.adminAuditLogs,
+      {
+        id: createId("audit"),
+        actorId: adminId,
+        action: "update_ax_example",
+        targetType: "ax_category",
+        targetId: categoryId,
+        reason: `${category.title} 예시 이미지 등록`,
         createdAt: nowIso(data.today)
       }
     ]
@@ -758,25 +794,10 @@ function isBadgeEarned(badgeId: string, summary: RookieSummary, user: FinalUser,
   if (badgeId === "rare_quiz") return summary.quizAccuracyRate >= 90 && summary.quizSolvedCount >= 30;
   if (badgeId === "rare_tier") return ids.has("tier_diamond") || summary.quizTier === "Diamond";
   if (badgeId === "rare_ax_master") return summary.axLevel === "Master";
+  if (badgeId === "rare_ax_peak") return summary.axSubmissionCount >= 60;
   if (badgeId === "rare_all_public") return data.badges.filter((item) => !item.isRare).every((item) => ids.has(item.id));
-  if (badgeId === "rare_legend") return ["rare_attendance", "rare_quiz", "rare_tier", "rare_ax_master", "rare_all_public"].every((id) => ids.has(id));
+  if (badgeId === "rare_legend") return ["rare_quiz", "rare_tier", "rare_ax_peak", "rare_all_public"].every((id) => ids.has(id));
   return false;
-}
-
-function awardAxStageReward(data: FinalUQuestConfig, userId: string, before: number, after: number) {
-  const rewards = [
-    { count: 5, point: 1000, label: "Explorer" },
-    { count: 10, point: 2000, label: "User" },
-    { count: 15, point: 3000, label: "Expert" },
-    { count: 20, point: 5000, label: "Master" }
-  ];
-
-  return rewards.reduce((current, reward) => {
-    if (before < reward.count && after >= reward.count) {
-      return addPoint(current, userId, reward.point, "ax", `AX ${reward.label} 단계 보상`);
-    }
-    return current;
-  }, data);
 }
 
 function addPoint(data: FinalUQuestConfig, userId: string, amount: number, type: FinalPointHistory["type"], reason: string): FinalUQuestConfig {

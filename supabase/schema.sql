@@ -20,9 +20,11 @@ end $$;
 
 do $$
 begin
-  create type public.uquest_badge_category as enum ('attendance', 'quiz', 'tier', 'rare');
+  create type public.uquest_badge_category as enum ('attendance', 'quiz', 'tier', 'ax', 'rare');
 exception when duplicate_object then null;
 end $$;
+-- 기존 DB 호환: 'ax' 값이 없으면 추가.
+alter type public.uquest_badge_category add value if not exists 'ax';
 
 do $$
 begin

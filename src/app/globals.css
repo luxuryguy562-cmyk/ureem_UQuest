@@ -3164,6 +3164,12 @@
 .e5-axshoot{display:flex;align-items:center;justify-content:center;margin-top:14px;font-size:15px;font-weight:1000;padding:16px;border-radius:14px;cursor:pointer;background:var(--uplus);color:#fff;box-shadow:0 10px 20px rgba(230,0,126,.25)}
 .e5-axshoot.disabled{opacity:.5;cursor:default;box-shadow:none;background:#f3ebf0;color:var(--uplus-deep)}
 .e5-axshoot input{display:none}
+.e5-axexample .img img{max-width:100%;max-height:100%;border-radius:10px;object-fit:contain}
+.ax-example{margin-top:10px;display:flex;align-items:center;gap:10px}
+.ax-example img{width:54px;height:54px;border-radius:10px;object-fit:cover;border:1px solid #efe7f7}
+.ax-example-empty{width:54px;height:54px;border-radius:10px;border:1.5px dashed #d9c9ea;display:flex;align-items:center;justify-content:center;text-align:center;font-size:9px;font-weight:800;color:var(--uplus-sub);padding:4px}
+.ax-example-upload{font-size:11px;font-weight:1000;color:#fff;background:var(--uplus);padding:8px 12px;border-radius:10px;cursor:pointer}
+.ax-example-upload input{display:none}
 
 /* 보상 경제 시뮬레이터 (관리자) */
 .reward-sim h3{font-size:16px;font-weight:1000;letter-spacing:-.3px}
@@ -3177,6 +3183,10 @@
 .reward-sim-table tfoot td{border-bottom:0;border-top:2px solid #efe7f7;font-size:13px}
 .reward-bar{display:inline-block;width:70px;height:7px;border-radius:6px;background:#f0e6f5;overflow:hidden;vertical-align:middle;margin-right:6px}
 .reward-bar i{display:block;height:100%;background:linear-gradient(90deg,#ff8fc4,#cf3a86)}
+.reward-badges{margin-top:18px;display:grid;gap:14px}
+.reward-badge-group h4{font-size:12.5px;font-weight:1000;color:var(--uplus-deep);margin-bottom:8px}
+.reward-badge-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid #f3eef8;font-size:12.5px;font-weight:800}
+.reward-badge-row input{width:96px;border:1.5px solid #e7d9ec;border-radius:9px;padding:7px 10px;font-family:inherit;font-size:13px;font-weight:800;text-align:right}
 .reward-apply{margin-top:18px;width:100%;border:0;font-family:inherit;font-size:15px;font-weight:1000;padding:15px;border-radius:14px;cursor:pointer;background:var(--uplus);color:#fff;box-shadow:0 10px 20px rgba(230,0,126,.25)}
 
 /* 상점 */
