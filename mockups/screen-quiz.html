@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>U-Quest 퀴즈 가안</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+:root{--uplus:#e6007e;--uplus-br:#ff3aa1;--uplus-deep:#a0125f;--ink:#3a2230;--sub:#a98da0;--pink-bg:#fbeef5;--pink-soft:#ffe9f3;--gold:#f0a000;--good:#13b877;--line:#f3e2eb;--shadow:0 10px 26px rgba(190,20,110,.1)}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Pretendard',system-ui,sans-serif;background:#ece0e7;display:flex;justify-content:center;padding:24px;color:var(--ink)}
+.phone{width:390px;min-height:800px;background:var(--pink-bg);border-radius:38px;overflow:hidden;position:relative;box-shadow:0 30px 70px rgba(60,10,40,.3);display:flex;flex-direction:column}
+.qtop{padding:18px 18px 6px;display:flex;align-items:center;gap:12px}
+.qtop .x{width:34px;height:34px;border-radius:10px;background:#fff;border:1px solid var(--line);display:grid;place-items:center;font-weight:900;color:var(--sub)}
+.qbar{flex:1;height:10px;border-radius:10px;background:#ffdcec;overflow:hidden}
+.qbar>i{display:block;height:100%;width:66%;border-radius:10px;background:linear-gradient(90deg,var(--uplus-br),var(--uplus))}
+.qtop .cnt{font-size:13px;font-weight:1000;color:var(--uplus-deep)}
+.qbody{flex:1;overflow:auto;padding:14px 18px 18px}
+.qday{font-size:12px;font-weight:1000;color:var(--uplus);background:var(--pink-soft);display:inline-block;padding:5px 11px;border-radius:14px}
+.qcard{background:#fff;border:1px solid #fbeaf2;border-radius:22px;padding:22px 18px;margin-top:12px;box-shadow:var(--shadow);text-align:center}
+.qcard .qn{font-size:12.5px;color:var(--sub);font-weight:800}
+.qcard h2{font-size:19px;line-height:1.45;letter-spacing:-.3px;margin-top:10px}
+.opts{margin-top:16px;display:flex;flex-direction:column;gap:11px}
+.opt{display:flex;align-items:center;gap:13px;background:#fff;border:2px solid #f0e2ea;border-radius:16px;padding:15px 14px;font-weight:700;font-size:14.5px;cursor:pointer;text-align:left}
+.opt .k{width:30px;height:30px;border-radius:9px;background:#f6eef2;color:var(--sub);display:grid;place-items:center;font-weight:1000;font-size:13px;flex:none}
+.opt.sel{border-color:var(--uplus);background:#fff5fa}
+.opt.sel .k{background:var(--uplus);color:#fff}
+.qfoot{padding:14px 18px 18px;border-top:1px solid var(--line);background:var(--pink-bg)}
+.qfoot .submit{width:100%;border:0;background:var(--uplus);color:#fff;font-family:inherit;font-weight:1000;font-size:15px;padding:16px;border-radius:16px;box-shadow:0 10px 22px rgba(230,0,126,.28);cursor:pointer}
+.qnote{text-align:center;font-size:11.5px;color:var(--sub);font-weight:700;margin-top:10px}
+</style></head>
+<body><div class="phone">
+  <div class="qtop"><div class="x">✕</div><div class="qbar"><i></i></div><span class="cnt">2/3</span></div>
+  <div class="qbody">
+    <span class="qday">DAY 5 · 스마트CS 응대 루틴</span>
+    <div class="qcard">
+      <div class="qn">Q2.</div>
+      <h2>스마트CS에서 고객 응대 직후 가장 먼저 해야 할 일은 무엇인가요?</h2>
+    </div>
+    <div class="opts">
+      <div class="opt"><div class="k">A</div>상담 내용을 기록으로 남긴다</div>
+      <div class="opt sel"><div class="k">B</div>고객 상황을 먼저 확인한다</div>
+      <div class="opt"><div class="k">C</div>기록 없이 다음 고객을 받는다</div>
+      <div class="opt"><div class="k">D</div>동료 계정으로 처리한다</div>
+    </div>
+    <p class="qnote">⚠️ 퀴즈는 재도전할 수 없어요. 신중히 선택하세요.</p>
+  </div>
+  <div class="qfoot"><button class="submit">다음 문제 →</button></div>
+</div></body></html>

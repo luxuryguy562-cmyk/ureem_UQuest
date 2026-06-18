@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>U-Quest 상점 가안</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+:root{--uplus:#e6007e;--uplus-br:#ff3aa1;--uplus-deep:#a0125f;--ink:#3a2230;--sub:#a98da0;--pink-bg:#fbeef5;--pink-soft:#ffe9f3;--gold:#f0a000;--good:#13b877;--line:#f3e2eb;--shadow:0 10px 26px rgba(190,20,110,.1)}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Pretendard',system-ui,sans-serif;background:#ece0e7;display:flex;justify-content:center;padding:24px;color:var(--ink)}
+.phone{width:390px;min-height:800px;background:var(--pink-bg);border-radius:38px;overflow:hidden;position:relative;box-shadow:0 30px 70px rgba(60,10,40,.3);padding-bottom:92px}
+.scroll{height:100%;overflow:auto;padding:0 18px}
+.top{display:flex;align-items:center;justify-content:space-between;padding:18px 4px 6px}
+.brand{display:flex;align-items:center;gap:9px}
+.brand .logo{height:30px;padding:0 10px;border-radius:9px;background:var(--uplus);color:#fff;font-weight:800;font-size:17px;display:grid;place-items:center}
+.brand b{font-size:17px;color:var(--uplus-deep)}
+/* 포인트 잔액 hero */
+.balance{background:linear-gradient(160deg,#ff9fcb,#cf3a86);border-radius:24px;padding:18px;color:#fff;box-shadow:0 16px 32px rgba(214,43,134,.28);margin-top:6px;position:relative;overflow:hidden}
+.balance::after{content:"";position:absolute;width:170px;height:170px;right:-55px;top:-70px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.22),transparent 65%)}
+.balance .l{font-size:12.5px;font-weight:800;opacity:.92}
+.balance .amt{font-size:36px;font-weight:1000;letter-spacing:-1.5px;margin-top:2px}
+.balance .amt span{font-size:18px;margin-left:3px}
+.balance .exp{font-size:11.5px;opacity:.9;margin-top:6px;font-weight:700}
+/* 수료 전 잠금 안내 */
+.locknote{display:flex;align-items:center;gap:10px;background:#fff3d6;border:1px solid #ffe2a6;border-radius:14px;padding:11px 13px;margin-top:12px}
+.locknote .i{font-size:18px}
+.locknote .t{font-size:12px;font-weight:800;color:#9a6a00;line-height:1.4}
+.sec{margin:22px 4px 12px;display:flex;align-items:center;justify-content:space-between}
+.sec h3{font-size:16px;font-weight:800;letter-spacing:-.3px}
+.sec .more{font-size:12px;font-weight:800;color:var(--sub)}
+.coupon{display:flex;align-items:center;gap:14px;background:#fff;border:1px solid #fbeaf2;border-radius:18px;padding:13px;margin-bottom:10px;box-shadow:var(--shadow)}
+.coupon .thumb{width:66px;height:66px;border-radius:14px;display:grid;place-items:center;font-size:32px;flex:none;background:linear-gradient(160deg,#fff0f7,#ffd9ec)}
+.coupon .body{flex:1;min-width:0}
+.coupon .nm{font-weight:800;font-size:14.5px;letter-spacing:-.2px}
+.coupon .meta{font-size:11.5px;color:var(--sub);font-weight:700;margin-top:3px}
+.coupon .price{display:flex;align-items:center;gap:6px;margin-top:7px}
+.coupon .price b{color:var(--uplus);font-weight:1000;font-size:15px}
+.coupon .price s{color:#c9b3c0;font-size:11.5px}
+.coupon .buy{border:0;background:var(--uplus);color:#fff;font-family:inherit;font-weight:1000;font-size:12.5px;padding:10px 14px;border-radius:12px;flex:none;box-shadow:0 6px 14px rgba(230,0,126,.25)}
+.coupon.soldout{opacity:.6}
+.coupon.soldout .buy{background:#e7dde2;color:#a98da0;box-shadow:none}
+.coupon .badge-stock{font-size:10px;font-weight:1000;color:#c0392b;background:#ffe2dd;padding:3px 8px;border-radius:10px;margin-left:6px}
+.nav{position:absolute;left:0;right:0;bottom:0;height:76px;background:#fff;border-top:1px solid var(--line);display:flex;justify-content:space-around;align-items:center;padding-bottom:9px}
+.nav a{display:flex;flex-direction:column;align-items:center;gap:4px;color:#c9b9c2;font-size:11px;font-weight:700;text-decoration:none}
+.nav a svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.nav a.on{color:var(--uplus)}
+</style></head>
+<body><div class="phone"><div class="scroll">
+  <div class="top"><div class="brand"><div class="logo">U+</div><b>U-Quest 상점</b></div></div>
+  <div class="balance">
+    <div class="l">내 포인트</div>
+    <div class="amt">5,400<span>P</span></div>
+    <div class="exp">수료 후 3개월간 사용 가능</div>
+  </div>
+  <div class="locknote"><span class="i">🔒</span><span class="t">상점은 4주 온보딩 수료 후 열려요. 지금은 미리보기만 가능해요.</span></div>
+
+  <div class="sec"><h3>교환 가능한 쿠폰</h3><span class="more">전체 ›</span></div>
+
+  <div class="coupon">
+    <div class="thumb">☕</div>
+    <div class="body"><div class="nm">스타벅스 아메리카노</div><div class="meta">재고 충분 · 모바일 교환권</div><div class="price"><b>5,000P</b><s>5,000원</s></div></div>
+    <button class="buy">교환</button>
+  </div>
+  <div class="coupon">
+    <div class="thumb">🏪</div>
+    <div class="body"><div class="nm">편의점 상품권 1만원권<span class="badge-stock">99개</span></div><div class="meta">CU·GS25 등 사용</div><div class="price"><b>10,000P</b><s>10,000원</s></div></div>
+    <button class="buy">교환</button>
+  </div>
+  <div class="coupon">
+    <div class="thumb">🍗</div>
+    <div class="body"><div class="nm">치킨 세트 기프티콘</div><div class="meta">인기 프랜차이즈</div><div class="price"><b>22,000P</b><s>22,000원</s></div></div>
+    <button class="buy">교환</button>
+  </div>
+  <div class="coupon soldout">
+    <div class="thumb">🎁</div>
+    <div class="body"><div class="nm">한정판 굿즈 패키지<span class="badge-stock">품절</span></div><div class="meta">재고 소진</div><div class="price"><b>15,000P</b></div></div>
+    <button class="buy">품절</button>
+  </div>
+  <div style="height:8px"></div>
+</div>
+<nav class="nav">
+  <a href="#"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>홈</a>
+  <a href="#"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h5"/></svg>학습</a>
+  <a href="#"><svg viewBox="0 0 24 24"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M9 7V5h6v2M9 13h.01M15 13h.01"/></svg>AX</a>
+  <a class="on" href="#"><svg viewBox="0 0 24 24"><path d="M5 8h14l-1 11H6z"/><path d="M9 8a3 3 0 0 1 6 0"/></svg>상점</a>
+  <a href="#"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>MY</a>
+</nav></div></body></html>

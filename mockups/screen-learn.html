@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>U-Quest 학습 가안</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+:root{--uplus:#e6007e;--uplus-br:#ff3aa1;--uplus-deep:#a0125f;--ink:#3a2230;--sub:#a98da0;--pink-bg:#fbeef5;--pink-soft:#ffe9f3;--gold:#f0a000;--good:#13b877;--line:#f3e2eb;--shadow:0 10px 26px rgba(190,20,110,.1)}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Pretendard',system-ui,sans-serif;background:#ece0e7;display:flex;justify-content:center;padding:24px;color:var(--ink)}
+.phone{width:390px;min-height:800px;background:var(--pink-bg);border-radius:38px;overflow:hidden;position:relative;box-shadow:0 30px 70px rgba(60,10,40,.3);padding-bottom:92px}
+.scroll{height:100%;overflow:auto;padding:0 18px}
+.top{display:flex;align-items:center;justify-content:space-between;padding:18px 4px 6px}
+.brand{display:flex;align-items:center;gap:9px}
+.brand .logo{height:30px;padding:0 10px;border-radius:9px;background:var(--uplus);color:#fff;font-weight:800;font-size:17px;display:grid;place-items:center;letter-spacing:-.5px}
+.brand b{font-size:17px;color:var(--uplus-deep)}
+.points{display:flex;align-items:center;gap:5px;background:#fff;padding:8px 12px;border-radius:30px;box-shadow:var(--shadow);font-weight:1000;font-size:13.5px;color:var(--uplus-deep)}
+.points i{color:var(--uplus);font-style:normal}
+.scr-title{padding:8px 4px 12px}
+.scr-title h1{font-size:22px;letter-spacing:-.6px}
+.scr-title .sub{display:flex;align-items:center;justify-content:space-between;margin-top:10px}
+.scr-title .sub span{font-size:12.5px;color:var(--sub);font-weight:700}
+.scr-title .sub b{font-size:12.5px;color:var(--uplus);font-weight:1000}
+.topbar{height:8px;border-radius:8px;background:#ffdcec;overflow:hidden;margin-top:8px}
+.topbar>i{display:block;height:100%;width:25%;border-radius:8px;background:linear-gradient(90deg,var(--uplus-br),var(--uplus))}
+/* 오늘의 학습 hero */
+.tcard{background:linear-gradient(162deg,#ff9fcb,#cf3a86);border-radius:24px;padding:18px;color:#fff;box-shadow:0 16px 32px rgba(214,43,134,.28);margin-top:6px;position:relative;overflow:hidden}
+.tcard::after{content:"";position:absolute;width:160px;height:160px;right:-50px;top:-60px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.25),transparent 65%)}
+.tcard .eb{font-size:12px;font-weight:1000;background:rgba(255,255,255,.25);display:inline-block;padding:5px 11px;border-radius:14px;backdrop-filter:blur(4px)}
+.tcard h2{font-size:21px;margin:12px 0 6px;letter-spacing:-.4px}
+.tcard p{font-size:13px;opacity:.92;line-height:1.5}
+.tcard .steps{display:flex;gap:8px;margin-top:16px}
+.tcard .steps button{flex:1;border:0;font-family:inherit;font-weight:1000;font-size:13.5px;padding:13px;border-radius:14px;cursor:pointer}
+.tcard .steps .learn{background:#fff;color:var(--uplus)}
+.tcard .steps .quiz{background:rgba(255,255,255,.22);color:#fff}
+.tcard .steps .quiz.lock{opacity:.55}
+.sec{margin:22px 4px 12px;font-size:16px;font-weight:800;letter-spacing:-.3px}
+/* 커리큘럼 리스트 */
+.day{display:flex;align-items:center;gap:13px;background:#fff;border:1px solid #fbeaf2;border-radius:16px;padding:12px 13px;margin-bottom:9px;box-shadow:var(--shadow)}
+.day .dn{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-weight:1000;font-size:14px;flex:none}
+.day.done .dn{background:#e7f7f0;color:var(--good)}
+.day.today .dn{background:var(--uplus);color:#fff;box-shadow:0 6px 14px rgba(230,0,126,.3)}
+.day.lock .dn{background:#f4eef1;color:#c9b3c0}
+.day .info{flex:1;min-width:0}
+.day .info .t{font-weight:700;font-size:14px;letter-spacing:-.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.day .info .s{font-size:11.5px;font-weight:800;margin-top:2px}
+.day.done .info .s{color:var(--good)}
+.day.today .info .s{color:var(--uplus)}
+.day.lock .info{opacity:.6}
+.day.lock .info .s{color:var(--sub)}
+.day .chev{color:#dcc6d3;font-weight:900;flex:none}
+.nav{position:absolute;left:0;right:0;bottom:0;height:76px;background:#fff;border-top:1px solid var(--line);display:flex;justify-content:space-around;align-items:center;padding-bottom:9px}
+.nav a{display:flex;flex-direction:column;align-items:center;gap:4px;color:#c9b9c2;font-size:11px;font-weight:700;text-decoration:none}
+.nav a svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.nav a.on{color:var(--uplus)}
+</style></head>
+<body><div class="phone"><div class="scroll">
+  <div class="top"><div class="brand"><div class="logo">U+</div><b>U-Quest</b></div><div class="points"><i>◆</i> 5,400P</div></div>
+  <div class="scr-title">
+    <h1>학습</h1>
+    <div class="sub"><span>20일 커리큘럼 · 하루 1개</span><b>5 / 20 완료</b></div>
+    <div class="topbar"><i></i></div>
+  </div>
+
+  <div class="tcard">
+    <span class="eb">📘 오늘의 학습 · DAY 5</span>
+    <h2>스마트CS 응대 루틴</h2>
+    <p>고객 응대 전후로 스마트CS 기록을 남기는 표준 루틴을 익혀요.</p>
+    <div class="steps">
+      <button class="learn">학습하기</button>
+      <button class="quiz lock">학습 후 퀴즈 🔒</button>
+    </div>
+  </div>
+
+  <div class="sec">전체 커리큘럼</div>
+  <div class="day done"><div class="dn">D1</div><div class="info"><div class="t">첫 출근과 기본 규칙</div><div class="s">학습·퀴즈 완료</div></div><span class="chev">›</span></div>
+  <div class="day done"><div class="dn">D2</div><div class="info"><div class="t">매장 동선과 고객 맞이</div><div class="s">학습·퀴즈 완료</div></div><span class="chev">›</span></div>
+  <div class="day done"><div class="dn">D3</div><div class="info"><div class="t">요금제 기본 구조</div><div class="s">학습·퀴즈 완료</div></div><span class="chev">›</span></div>
+  <div class="day done"><div class="dn">D4</div><div class="info"><div class="t">U+ONE 핵심 사용법</div><div class="s">학습·퀴즈 완료</div></div><span class="chev">›</span></div>
+  <div class="day today"><div class="dn">D5</div><div class="info"><div class="t">스마트CS 응대 루틴</div><div class="s">오늘 · +300P 대기</div></div><span class="chev">›</span></div>
+  <div class="day lock"><div class="dn">D6</div><div class="info"><div class="t">AI 헬프데스크 활용</div><div class="s">내일 오픈</div></div><span class="chev">›</span></div>
+  <div class="day lock"><div class="dn">D7</div><div class="info"><div class="t">요금 시뮬레이터 실습</div><div class="s">잠김</div></div><span class="chev">›</span></div>
+  <div style="height:8px"></div>
+</div>
+<nav class="nav">
+  <a href="#"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>홈</a>
+  <a class="on" href="#"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h5"/></svg>학습</a>
+  <a href="#"><svg viewBox="0 0 24 24"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M9 7V5h6v2M9 13h.01M15 13h.01"/></svg>AX</a>
+  <a href="#"><svg viewBox="0 0 24 24"><path d="M5 8h14l-1 11H6z"/><path d="M9 8a3 3 0 0 1 6 0"/></svg>상점</a>
+  <a href="#"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>MY</a>
+</nav></div></body></html>

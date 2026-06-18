@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>U-Quest MY 가안</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+:root{--uplus:#e6007e;--uplus-br:#ff3aa1;--uplus-deep:#a0125f;--ink:#3a2230;--sub:#a98da0;--pink-bg:#fbeef5;--pink-soft:#ffe9f3;--gold:#f0a000;--good:#13b877;--line:#f3e2eb;--shadow:0 10px 26px rgba(190,20,110,.1)}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Pretendard',system-ui,sans-serif;background:#ece0e7;display:flex;justify-content:center;padding:24px;color:var(--ink)}
+.phone{width:390px;min-height:800px;background:var(--pink-bg);border-radius:38px;overflow:hidden;position:relative;box-shadow:0 30px 70px rgba(60,10,40,.3);padding-bottom:92px}
+.scroll{height:100%;overflow:auto;padding:0 18px}
+.top{display:flex;align-items:center;justify-content:space-between;padding:18px 4px 10px}
+.brand b{font-size:18px;font-weight:800;color:var(--uplus-deep)}
+.brand b span{color:var(--uplus)}
+.logout{font-size:12px;font-weight:800;color:var(--sub);background:#fff;border:1px solid var(--line);padding:7px 12px;border-radius:20px}
+/* 프로필 hero */
+.phero{position:relative;border-radius:24px;overflow:hidden;padding:16px;color:#fff;background:radial-gradient(56% 64% at 30% 46%,rgba(255,255,255,.55),transparent 70%),linear-gradient(162deg,#ff9fcb,#cf3a86);box-shadow:0 16px 32px rgba(214,43,134,.28);display:flex;align-items:center;gap:14px}
+.phero .av{height:118px;width:auto;filter:drop-shadow(0 10px 12px rgba(90,8,50,.3))}
+.phero .info{flex:1}
+.phero .nm{font-size:20px;font-weight:1000;letter-spacing:-.4px}
+.phero .role{font-size:12px;opacity:.92;margin-top:2px;font-weight:700}
+.phero .tier{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.95);color:var(--uplus-deep);font-weight:1000;font-size:12px;padding:5px 10px;border-radius:14px;margin-top:10px}
+.phero .tier img{width:20px;height:20px}
+.phero .pts{margin-top:10px;font-size:13px;font-weight:800}
+.phero .pts b{font-size:18px}
+/* 성장 3칸 */
+.g3{display:flex;background:#fff;border:1px solid var(--line);border-radius:16px;margin-top:12px;padding:11px 4px;box-shadow:var(--shadow)}
+.g3 .s{flex:1;display:flex;align-items:center;justify-content:center;gap:8px}
+.g3 .s+.s{border-left:1px solid #f1dbe7}
+.g3 .s img{height:30px;width:auto}
+.g3 .s .l{font-size:10px;color:var(--sub);font-weight:800}
+.g3 .s .v{font-size:13px;font-weight:1000}
+.g3 .s .v.p{color:var(--uplus)}
+.sec{margin:22px 4px 12px;display:flex;align-items:center;justify-content:space-between}
+.sec h3{font-size:16px;font-weight:800;letter-spacing:-.3px}
+.sec .more{font-size:12px;font-weight:800;color:var(--sub)}
+/* 배지 도감 */
+.badges{background:#fff;border:1px solid #fbeaf2;border-radius:18px;padding:14px;box-shadow:var(--shadow)}
+.bgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px 6px}
+.bg{display:flex;flex-direction:column;align-items:center;gap:5px}
+.bg img{width:54px;height:54px;object-fit:contain}
+.bg.locked img{filter:grayscale(1) opacity(.5)}
+.bg span{font-size:9.5px;font-weight:800;color:var(--sub);text-align:center;line-height:1.2}
+.bg.got span{color:var(--ink)}
+/* 메뉴 */
+.menu{background:#fff;border:1px solid var(--line);border-radius:18px;margin-top:12px;overflow:hidden;box-shadow:var(--shadow)}
+.menu a{display:flex;align-items:center;gap:12px;padding:14px 15px;border-bottom:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.menu a:last-child{border-bottom:0}
+.menu a .mi{width:34px;height:34px;border-radius:10px;background:var(--pink-soft);display:grid;place-items:center;font-size:17px;flex:none}
+.menu a .mt{flex:1;font-weight:700;font-size:14px}
+.menu a .chev{color:#dcc6d3;font-weight:900}
+.nav{position:absolute;left:0;right:0;bottom:0;height:76px;background:#fff;border-top:1px solid var(--line);display:flex;justify-content:space-around;align-items:center;padding-bottom:9px}
+.nav a{display:flex;flex-direction:column;align-items:center;gap:4px;color:#c9b9c2;font-size:11px;font-weight:700;text-decoration:none}
+.nav a svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.nav a.on{color:var(--uplus)}
+</style></head>
+<body><div class="phone"><div class="scroll">
+  <div class="top"><div class="brand"><b>U<span>·</span>Quest MY</b></div><span class="logout">로그아웃</span></div>
+
+  <div class="phero">
+    <img class="av" src="../public/assets/uquest/generated/characters/male_lv1.png" alt="">
+    <div class="info">
+      <div class="nm">김은성</div>
+      <div class="role">강남점 · 신입사원 · D+5</div>
+      <span class="tier"><img src="../public/assets/uquest/generated/tiers/tier_silver.png" alt="">Silver · 정답률 50%</span>
+      <div class="pts">보유 포인트 <b>5,400P</b></div>
+    </div>
+  </div>
+
+  <div class="g3">
+    <div class="s"><img src="../public/assets/uquest/generated/characters/male_lv1.png" alt=""><div><div class="l">캐릭터</div><div class="v p">Lv.1</div></div></div>
+    <div class="s"><img src="../public/assets/uquest/generated/tiers/tier_silver.png" alt=""><div><div class="l">퀴즈 티어</div><div class="v">Silver</div></div></div>
+    <div class="s"><img src="../public/assets/uquest/generated/ax-robots/ax_robot_explorer.png" alt=""><div><div class="l">AX 단계</div><div class="v">Explorer</div></div></div>
+  </div>
+
+  <div class="sec"><h3>배지 도감</h3><span class="more">2 / 22 · 전체 ›</span></div>
+  <div class="badges"><div class="bgrid">
+    <div class="bg got"><img src="../public/assets/uquest/generated/badges/attendance_1.png" alt=""><span>첫 출근</span></div>
+    <div class="bg got"><img src="../public/assets/uquest/generated/badges/quiz_1.png" alt=""><span>첫 도전</span></div>
+    <div class="bg locked"><img src="../public/assets/uquest/generated/badges/attendance_5.png" alt=""><span>성실 사원</span></div>
+    <div class="bg locked"><img src="../public/assets/uquest/generated/badges/quiz_10.png" alt=""><span>학습가</span></div>
+    <div class="bg locked"><img src="../public/assets/uquest/generated/badges/tier_silver.png" alt=""><span>Silver</span></div>
+    <div class="bg locked"><img src="../public/assets/uquest/generated/badges/tier_gold.png" alt=""><span>Gold</span></div>
+    <div class="bg locked"><img src="../public/assets/uquest/generated/badges/attendance_10.png" alt=""><span>꾸준 사원</span></div>
+    <div class="bg locked"><img src="../public/assets/uquest/generated/badges/badge_locked.png" alt=""><span>???</span></div>
+  </div></div>
+
+  <div class="sec"><h3>내 활동</h3></div>
+  <div class="menu">
+    <a href="#"><span class="mi">🧾</span><span class="mt">포인트 이력</span><span class="chev">›</span></a>
+    <a href="#"><span class="mi">🎟️</span><span class="mt">쿠폰 교환 내역</span><span class="chev">›</span></a>
+    <a href="#"><span class="mi">🔔</span><span class="mt">알림</span><span class="chev">›</span></a>
+    <a href="#"><span class="mi">⚙️</span><span class="mt">계정 설정</span><span class="chev">›</span></a>
+  </div>
+  <div style="height:8px"></div>
+</div>
+<nav class="nav">
+  <a href="#"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>홈</a>
+  <a href="#"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h5"/></svg>학습</a>
+  <a href="#"><svg viewBox="0 0 24 24"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M9 7V5h6v2M9 13h.01M15 13h.01"/></svg>AX</a>
+  <a href="#"><svg viewBox="0 0 24 24"><path d="M5 8h14l-1 11H6z"/><path d="M9 8a3 3 0 0 1 6 0"/></svg>상점</a>
+  <a class="on" href="#"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>MY</a>
+</nav></div></body></html>
