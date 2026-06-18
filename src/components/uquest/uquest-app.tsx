@@ -1162,7 +1162,7 @@ function ProfileStageCard({ rookie }: { rookie: RookieSummary }) {
         </div>
         <div className="profile-summary-main">
           <strong>{rookie.user.name}</strong>
-          <span>신입사원</span>
+          <span>{rookie.shopOpened ? "수료생" : "신입사원"}</span>
           <em>입사일 {rookie.user.hireDate?.replaceAll("-", ".") ?? "-"}</em>
         </div>
         <div className="profile-tier-summary">
@@ -1175,11 +1175,11 @@ function ProfileStageCard({ rookie }: { rookie: RookieSummary }) {
       <div className="profile-stage-scene">
         <div className="scene-actor character">
           <CharacterImage level={rookie.characterLevel} size="stage" user={rookie.user} />
-          <strong>Lv.{rookie.characterLevel} 적응중</strong>
+          <strong>Lv.{rookie.characterLevel} {rookie.shopOpened ? "수료 훈장 🎖" : "적응중"}</strong>
           <div className="scene-progress">
             <i style={{ width: `${rookie.progressRate}%` }} />
           </div>
-          <span>캐릭터 성장 {rookie.progressRate}%</span>
+          <span>{rookie.shopOpened ? "최종 성실도" : "캐릭터 성장"} {rookie.progressRate}%</span>
         </div>
         <div className="scene-actor robot">
           <img alt={`${rookie.axLevel} AX 로봇`} src={axRobotAssets[rookie.axLevel]} />

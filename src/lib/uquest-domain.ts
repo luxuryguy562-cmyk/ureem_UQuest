@@ -116,7 +116,13 @@ export function deriveRookieSummary(data: FinalUQuestConfig, user: FinalUser): R
   const quizTier = getQuizTier(quizAccuracyRate, quizSolvedCount);
   const axSubmissionCount = data.axSubmissions.filter((submission) => submission.userId === user.id).length;
   const axLevel = getAxLevel(axSubmissionCount);
-  const progressRate = Math.min(100, Math.round(((attendanceCount + learningCount + submissions.length + Math.min(axSubmissionCount, 20)) / 80) * 100));
+  // 캐릭터 레벨 = 성실 종합(출석·학습·퀴즈 정답)의 3축 평균. AX는 별도 트랙(로봇)이라 제외.
+  // 누락(안 함)과 오답 모두 정답 수를 못 올리므로 성장이 둔화된다 → "성실한 만큼" 레벨이 오른다.
+  const totalQuizQuestions = data.quizzes.filter((question) => question.rewardPoints >= 0).length || 1;
+  const attendanceTrack = Math.min(1, attendanceCount / 20);
+  const learningTrack = Math.min(1, learningCount / 20);
+  const quizTrack = Math.min(1, quizCorrectCount / totalQuizQuestions);
+  const progressRate = Math.min(100, Math.round(((attendanceTrack + learningTrack + quizTrack) / 3) * 100));
   const characterLevel = Math.min(5, Math.max(1, Math.floor(progressRate / 25) + 1));
   const pointExpireDate = user.completedAt ? addMonths(user.completedAt.slice(0, 10), 3) : null;
   const pointExpired = Boolean(pointExpireDate && data.today > pointExpireDate);
@@ -277,12 +283,14 @@ export function submitQuiz(config: FinalUQuestConfig, userId: string, curriculum
 
   const answers = questions.map((question) => {
     const selectedOption = answerMap[question.id] ?? -1;
+    const isCorrect = selectedOption === question.correctOption;
     return {
       questionId: question.id,
       selectedOption,
       correctOption: question.correctOption,
-      isCorrect: selectedOption === question.correctOption,
-      rewardPoints: question.rewardPoints
+      isCorrect,
+      // 성실 비례: 정답은 만점, 오답은 시도 인정으로 소액(50P)만. 찍기와 학습이 구분된다.
+      rewardPoints: isCorrect ? question.rewardPoints : 50
     };
   });
   const correctCount = answers.filter((answer) => answer.isCorrect).length;
@@ -304,12 +312,12 @@ export function submitQuiz(config: FinalUQuestConfig, userId: string, curriculum
           submittedAt: nowIso(data.today)
         }
       ],
-      users: updateUser(data.users, userId, { exp: user.exp + answers.length * 5 })
+      users: updateUser(data.users, userId, { exp: user.exp + correctCount * 5 })
     },
     userId,
     earnedPoints,
     "quiz",
-    `Day ${curriculum.dayNumber} 퀴즈 ${answers.length}문제 제출`
+    `Day ${curriculum.dayNumber} 퀴즈 ${correctCount}/${answers.length} 정답`
   );
 
   return awardBadges(data, userId);
@@ -670,8 +678,9 @@ function isBadgeEarned(badgeId: string, summary: RookieSummary, user: FinalUser,
   if (badgeId === "tier_gold") return ["Gold", "Platinum", "Diamond"].includes(summary.quizTier);
   if (badgeId === "tier_platinum") return ["Platinum", "Diamond"].includes(summary.quizTier);
   if (badgeId === "tier_diamond") return summary.quizTier === "Diamond";
-  if (badgeId === "rare_attendance") return ["attendance_1", "attendance_5", "attendance_10", "attendance_15", "attendance_20"].every((id) => ids.has(id));
-  if (badgeId === "rare_quiz") return ["quiz_1", "quiz_10", "quiz_30", "quiz_50", "quiz_60"].every((id) => ids.has(id));
+  // 참여 전량(누구나)이 아니라 성실의 정점(소수)에 부여 → 진짜 희귀.
+  if (badgeId === "rare_attendance") return summary.characterLevel >= 4;
+  if (badgeId === "rare_quiz") return summary.quizAccuracyRate >= 90 && summary.quizSolvedCount >= 30;
   if (badgeId === "rare_tier") return ids.has("tier_diamond") || summary.quizTier === "Diamond";
   if (badgeId === "rare_ax_master") return summary.axLevel === "Master";
   if (badgeId === "rare_all_public") return data.badges.filter((item) => !item.isRare).every((item) => ids.has(item.id));
