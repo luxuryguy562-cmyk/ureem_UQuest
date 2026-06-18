@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>U-Quest 홈 — 가안 B (Clean)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+  :root{
+    --bg:#ffffff; --soft:#f4f5f7; --line:#eceef1; --ink:#15171c; --sub:#9aa0ab;
+    --accent:#e6007e; --accent-soft:#ffeaf5; --good:#13b877; --ink2:#5b616e;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  body{font-family:'Pretendard',system-ui,sans-serif;background:#e7e9ee;display:flex;justify-content:center;padding:24px;color:var(--ink)}
+  .phone{width:390px;min-height:780px;background:var(--bg);border-radius:38px;overflow:hidden;position:relative;box-shadow:0 30px 70px rgba(20,24,50,.3);padding-bottom:92px}
+  .scroll{height:100%;overflow:auto}
+
+  .top{display:flex;align-items:center;justify-content:space-between;padding:22px 22px 8px}
+  .brand{font-size:18px;font-weight:800;letter-spacing:-.5px}
+  .brand span{color:var(--accent)}
+  .bell{width:40px;height:40px;border-radius:12px;background:var(--soft);display:grid;place-items:center;font-size:18px;position:relative}
+  .bell::after{content:"";position:absolute;top:9px;right:10px;width:7px;height:7px;border-radius:50%;background:var(--accent)}
+
+  /* points hero */
+  .hero{padding:14px 22px 22px}
+  .hero .lbl{font-size:13px;color:var(--sub);font-weight:600}
+  .hero .amt{font-size:38px;font-weight:800;letter-spacing:-1.5px;margin-top:2px}
+  .hero .amt span{font-size:20px;color:var(--sub);margin-left:3px;font-weight:700}
+  .hero .who{display:flex;align-items:center;gap:10px;margin-top:16px}
+  .hero .ava{width:42px;height:42px;border-radius:13px;background:var(--accent-soft);display:grid;place-items:center;font-size:22px}
+  .hero .who .n{font-size:15px;font-weight:700}
+  .hero .who .s{font-size:12.5px;color:var(--sub);margin-top:1px}
+  .hero .dday{margin-left:auto;font-size:12px;font-weight:700;color:var(--accent);background:var(--accent-soft);padding:7px 12px;border-radius:20px}
+
+  .divider{height:8px;background:var(--soft)}
+
+  /* growth row */
+  .block{padding:20px 22px}
+  .block h3{font-size:15px;font-weight:700;margin-bottom:14px;letter-spacing:-.3px}
+  .growth{display:flex;gap:10px}
+  .gcard{flex:1;border:1px solid var(--line);border-radius:18px;padding:15px}
+  .gcard .gt{font-size:12px;color:var(--sub);font-weight:600;display:flex;align-items:center;gap:6px}
+  .gcard .gv{font-size:17px;font-weight:800;margin:8px 0 10px;letter-spacing:-.3px}
+  .gcard .gv b{color:var(--accent)}
+  .mini{height:6px;border-radius:6px;background:var(--soft);overflow:hidden}
+  .mini > i{display:block;height:100%;border-radius:6px;background:var(--accent)}
+  .mini.g > i{background:var(--good)}
+  .gcard .pct{font-size:11px;color:var(--sub);margin-top:6px;font-weight:600}
+
+  /* character strip */
+  .charcard{display:flex;align-items:center;gap:16px;border:1px solid var(--line);border-radius:18px;padding:16px;margin-top:4px}
+  .charcard .blob{width:78px;height:78px;border-radius:20px;background:linear-gradient(160deg,#fff0f8,#ffd9ec);display:grid;place-items:center;font-size:44px;flex:none}
+  .charcard .ci{flex:1}
+  .charcard .ci .lv{font-size:13px;font-weight:800}
+  .charcard .ci .lv span{color:var(--accent)}
+  .charcard .ci .d{font-size:12px;color:var(--sub);margin:3px 0 9px}
+
+  /* today list */
+  .sec-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+  .sec-h .cnt{font-size:12.5px;color:var(--sub);font-weight:600}
+  .row-m{display:flex;align-items:center;gap:14px;padding:15px 2px;border-bottom:1px solid var(--line)}
+  .row-m:last-child{border-bottom:none}
+  .row-m .ic{width:40px;height:40px;border-radius:12px;background:var(--soft);display:grid;place-items:center;font-size:20px;flex:none}
+  .row-m .tx{flex:1}
+  .row-m .tx .t{font-size:14.5px;font-weight:700;letter-spacing:-.2px}
+  .row-m .tx .r{font-size:12px;color:var(--sub);margin-top:2px;font-weight:600}
+  .row-m .act{font-size:13px;font-weight:700;color:var(--accent);flex:none}
+  .row-m .act.done{color:var(--good)}
+  .row-m .act.lock{color:#c4c8d0}
+  .row-m.is-done .ic{background:#e7f7f0}
+
+  .cta{margin:8px 22px 0;display:block;width:calc(100% - 44px);border:none;background:var(--accent);color:#fff;font-family:inherit;font-weight:800;font-size:15px;padding:16px;border-radius:16px;cursor:pointer;box-shadow:0 10px 22px rgba(230,0,126,.28)}
+
+  /* nav */
+  .nav{position:absolute;left:0;right:0;bottom:0;height:74px;background:#fff;border-top:1px solid var(--line);display:flex;justify-content:space-around;align-items:center;padding-bottom:8px}
+  .nav a{display:flex;flex-direction:column;align-items:center;gap:4px;color:#bcc0c9;font-size:11px;font-weight:600;text-decoration:none}
+  .nav a svg{width:23px;height:23px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .nav a.on{color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="scroll">
+    <div class="top">
+      <div class="brand">U<span>·</span>Quest</div>
+      <div class="bell">🔔</div>
+    </div>
+
+    <div class="hero">
+      <div class="lbl">내 포인트</div>
+      <div class="amt">5,400<span>P</span></div>
+      <div class="who">
+        <div class="ava">🧑‍💼</div>
+        <div><div class="n">김은성</div><div class="s">강남점 · 신입사원</div></div>
+        <div class="dday">Day 1 / 20</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="block">
+      <h3>나의 성장</h3>
+      <div class="growth">
+        <div class="gcard">
+          <div class="gt">🛡️ 퀴즈 티어</div>
+          <div class="gv"><b>Silver</b></div>
+          <div class="mini"><i style="width:50%"></i></div>
+          <div class="pct">정답률 50%</div>
+        </div>
+        <div class="gcard">
+          <div class="gt">🤖 AX 단계</div>
+          <div class="gv">Explorer</div>
+          <div class="mini g"><i style="width:40%"></i></div>
+          <div class="pct">AX 성장 40%</div>
+        </div>
+      </div>
+
+      <div class="charcard">
+        <div class="blob">🧑‍💼</div>
+        <div class="ci">
+          <div class="lv">Lv.1 <span>적응중</span></div>
+          <div class="d">캐릭터 성장 14% · 다음 레벨까지 86%</div>
+          <div class="mini"><i style="width:14%"></i></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="block">
+      <div class="sec-h"><h3 style="margin:0">오늘의 미션</h3><span class="cnt">1 / 4 완료</span></div>
+
+      <div class="row-m is-done">
+        <div class="ic">📅</div>
+        <div class="tx"><div class="t">출석 체크</div><div class="r">+300P 지급 완료</div></div>
+        <div class="act done">완료 ✓</div>
+      </div>
+      <div class="row-m">
+        <div class="ic">📘</div>
+        <div class="tx"><div class="t">상담 품질 점검 학습</div><div class="r">+300P</div></div>
+        <div class="act">학습 ›</div>
+      </div>
+      <div class="row-m">
+        <div class="ic">✏️</div>
+        <div class="tx"><div class="t">오늘의 퀴즈</div><div class="r">+300P / 문항</div></div>
+        <div class="act lock">학습 후 ›</div>
+      </div>
+      <div class="row-m">
+        <div class="ic">📸</div>
+        <div class="tx"><div class="t">AX 인증</div><div class="r">+500P</div></div>
+        <div class="act">인증 ›</div>
+      </div>
+    </div>
+
+    <button class="cta">이어서 학습하기</button>
+    <div style="height:18px"></div>
+  </div>
+
+  <nav class="nav">
+    <a class="on" href="#"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>홈</a>
+    <a href="#"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h5"/></svg>학습</a>
+    <a href="#"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3 2.5V13"/><path d="M12 16.5h.01"/></svg>퀴즈</a>
+    <a href="#"><svg viewBox="0 0 24 24"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M9 7V5h6v2M9 13h.01M15 13h.01"/></svg>AX</a>
+    <a href="#"><svg viewBox="0 0 24 24"><path d="M5 8h14l-1 11H6z"/><path d="M9 8a3 3 0 0 1 6 0"/></svg>상점</a>
+    <a href="#"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>내정보</a>
+  </nav>
+</div>
+</body>
+</html>

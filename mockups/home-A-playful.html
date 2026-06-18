@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>U-Quest 홈 — 가안 A (Playful)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+  :root{
+    --bg:#eef1f8; --card:#ffffff; --ink:#1c2030; --sub:#8b91a7;
+    --brand:#6c4cf1; --brand2:#9b7bff; --good:#27d07f; --good-d:#1fae68;
+    --gold:#f7b500; --pink:#ff5d8f; --sky:#3ec5ff;
+    --shadow:0 10px 30px rgba(34,40,72,.10);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  body{font-family:'Pretendard',system-ui,sans-serif;background:#d9deec;display:flex;justify-content:center;padding:24px;color:var(--ink)}
+  .phone{width:390px;min-height:780px;background:var(--bg);border-radius:38px;overflow:hidden;position:relative;box-shadow:0 30px 70px rgba(20,24,50,.35);padding-bottom:96px}
+  .scroll{height:100%;overflow:auto;padding:0 18px}
+
+  /* top bar */
+  .top{display:flex;align-items:center;justify-content:space-between;padding:20px 4px 12px}
+  .brand{display:flex;align-items:center;gap:9px}
+  .brand .logo{width:34px;height:34px;border-radius:11px;background:linear-gradient(135deg,var(--brand),var(--brand2));display:grid;place-items:center;color:#fff;font-weight:800;font-size:15px;box-shadow:0 6px 14px rgba(108,76,241,.4)}
+  .brand b{font-size:18px;letter-spacing:-.4px}
+  .brand b span{color:var(--brand)}
+  .points{display:flex;align-items:center;gap:6px;background:#fff;padding:8px 13px;border-radius:30px;box-shadow:var(--shadow);font-weight:800;font-size:14px}
+  .points i{color:var(--gold);font-style:normal}
+
+  /* hero greeting */
+  .hello{padding:8px 6px 14px}
+  .hello h1{font-size:23px;letter-spacing:-.6px;line-height:1.25}
+  .hello h1 em{font-style:normal;color:var(--brand)}
+  .hello p{color:var(--sub);font-size:13.5px;margin-top:4px;font-weight:500}
+  .dday{display:inline-flex;gap:6px;align-items:center;margin-top:10px;background:#efeaff;color:var(--brand);font-weight:700;font-size:12.5px;padding:6px 11px;border-radius:20px}
+
+  /* character card */
+  .hero{background:linear-gradient(160deg,#7858ff,#6c4cf1 55%,#5a37e0);border-radius:26px;padding:20px;color:#fff;box-shadow:0 18px 36px rgba(90,55,224,.35);position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;width:200px;height:200px;right:-60px;top:-70px;background:radial-gradient(circle,rgba(255,255,255,.22),transparent 70%)}
+  .hero .row{display:flex;align-items:center;gap:16px;position:relative;z-index:1}
+  .avatar{width:120px;height:120px;border-radius:50%;background:radial-gradient(circle at 50% 35%,#fff,#e9e3ff);display:grid;place-items:center;font-size:66px;flex:none;box-shadow:inset 0 -8px 18px rgba(108,76,241,.25),0 10px 24px rgba(0,0,0,.18)}
+  .hero .meta{flex:1}
+  .hero .lvtag{display:inline-block;background:rgba(255,255,255,.2);padding:4px 10px;border-radius:14px;font-weight:700;font-size:12px;backdrop-filter:blur(4px)}
+  .hero h2{font-size:19px;margin:8px 0 3px;letter-spacing:-.3px}
+  .hero .small{font-size:12px;opacity:.85}
+  .bar{height:9px;border-radius:9px;background:rgba(255,255,255,.25);margin-top:12px;overflow:hidden}
+  .bar > i{display:block;height:100%;width:14%;border-radius:9px;background:linear-gradient(90deg,#b9ffec,#27d07f)}
+  .hero .barlabel{display:flex;justify-content:space-between;font-size:11.5px;opacity:.9;margin-top:7px}
+
+  /* stat chips */
+  .stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+  .chip{background:var(--card);border-radius:20px;padding:15px 16px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px}
+  .chip .ic{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font-size:23px;flex:none}
+  .chip.silver .ic{background:linear-gradient(135deg,#e7ecf5,#c6cfe0)}
+  .chip.ax .ic{background:linear-gradient(135deg,#dff4ff,#bfe9ff)}
+  .chip .t{font-size:12px;color:var(--sub);font-weight:600}
+  .chip .v{font-size:16px;font-weight:800;letter-spacing:-.3px}
+  .chip .v small{font-size:11.5px;color:var(--sub);font-weight:600}
+
+  /* today */
+  .sec-h{display:flex;align-items:center;justify-content:space-between;margin:24px 6px 12px}
+  .sec-h h3{font-size:17px;letter-spacing:-.3px}
+  .sec-h .badge{font-size:12px;font-weight:700;color:var(--good-d);background:#e3f9ee;padding:5px 11px;border-radius:16px}
+  .mission{background:var(--card);border-radius:20px;padding:14px;box-shadow:var(--shadow);display:flex;align-items:center;gap:13px;margin-bottom:11px}
+  .mission .ic{width:48px;height:48px;border-radius:15px;display:grid;place-items:center;font-size:24px;flex:none}
+  .m1 .ic{background:#fff0e0}.m2 .ic{background:#e8e3ff}.m3 .ic{background:#ffe5ee}.m4 .ic{background:#e0f6ff}
+  .mission .body{flex:1;min-width:0}
+  .mission .body .ttl{font-weight:700;font-size:14.5px;letter-spacing:-.2px}
+  .mission .body .rew{font-size:12px;color:var(--gold);font-weight:800;margin-top:3px}
+  .mission .body .rew.done{color:var(--good-d)}
+  .go{border:none;background:linear-gradient(135deg,var(--good),var(--good-d));color:#fff;font-family:inherit;font-weight:800;font-size:13px;padding:11px 16px;border-radius:14px;flex:none;box-shadow:0 8px 16px rgba(31,174,104,.32);cursor:pointer}
+  .go.ghost{background:#eef0f6;color:var(--sub);box-shadow:none}
+  .done-tag{display:flex;align-items:center;gap:5px;color:var(--good-d);font-weight:800;font-size:13px;flex:none;padding-right:6px}
+
+  /* bottom nav */
+  .nav{position:absolute;left:0;right:0;bottom:0;height:78px;background:#fff;border-top:1px solid #eef0f6;display:flex;justify-content:space-around;align-items:center;padding:0 8px 10px;box-shadow:0 -6px 20px rgba(30,34,60,.06)}
+  .nav a{display:flex;flex-direction:column;align-items:center;gap:4px;color:#b4b9c9;font-size:11px;font-weight:600;text-decoration:none;flex:1}
+  .nav a svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .nav a.on{color:var(--brand)}
+  .nav a.on .pill{position:absolute;top:8px;width:42px;height:34px;border-radius:12px;background:#efeaff;z-index:-1}
+  .nav a{position:relative}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="scroll">
+    <div class="top">
+      <div class="brand"><div class="logo">U</div><b>U<span>·</span>Quest</b></div>
+      <div class="points"><i>◆</i> 5,400P</div>
+    </div>
+
+    <div class="hello">
+      <h1><em>김은성</em>님,<br>오늘도 한 걸음 성장해요 👋</h1>
+      <p>강남점 · 신입사원</p>
+      <span class="dday">🚩 온보딩 Day 1 / 20</span>
+    </div>
+
+    <div class="hero">
+      <div class="row">
+        <div class="avatar">🧑‍💼</div>
+        <div class="meta">
+          <span class="lvtag">Lv.1 · 적응중</span>
+          <h2>새내기 캐릭터</h2>
+          <div class="small">출석·학습으로 경험치를 모아요</div>
+          <div class="bar"><i></i></div>
+          <div class="barlabel"><span>캐릭터 성장</span><span>14%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="chip silver">
+        <div class="ic">🛡️</div>
+        <div><div class="t">퀴즈 티어</div><div class="v">Silver <small>정답률 50%</small></div></div>
+      </div>
+      <div class="chip ax">
+        <div class="ic">🤖</div>
+        <div><div class="t">AX 성장</div><div class="v">Explorer <small>40%</small></div></div>
+      </div>
+    </div>
+
+    <div class="sec-h">
+      <h3>오늘의 미션</h3>
+      <span class="badge">1 / 4 완료</span>
+    </div>
+
+    <div class="mission m1">
+      <div class="ic">📅</div>
+      <div class="body"><div class="ttl">출석 체크</div><div class="rew done">✓ 완료 · +300P 지급</div></div>
+      <div class="done-tag">✓</div>
+    </div>
+    <div class="mission m2">
+      <div class="ic">📘</div>
+      <div class="body"><div class="ttl">상담 품질 점검 학습</div><div class="rew">+300P</div></div>
+      <button class="go">학습하기</button>
+    </div>
+    <div class="mission m3">
+      <div class="ic">✏️</div>
+      <div class="body"><div class="ttl">오늘의 퀴즈</div><div class="rew">+300P / 문항</div></div>
+      <button class="go ghost">학습 후 가능</button>
+    </div>
+    <div class="mission m4">
+      <div class="ic">📸</div>
+      <div class="body"><div class="ttl">AX 인증하기</div><div class="rew">+500P</div></div>
+      <button class="go">인증하기</button>
+    </div>
+    <div style="height:8px"></div>
+  </div>
+
+  <nav class="nav">
+    <a class="on" href="#"><span class="pill"></span><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>홈</a>
+    <a href="#"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h5"/></svg>학습</a>
+    <a href="#"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3 2.5V13"/><path d="M12 16.5h.01"/></svg>퀴즈</a>
+    <a href="#"><svg viewBox="0 0 24 24"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M9 7V5h6v2M9 13h.01M15 13h.01"/></svg>AX</a>
+    <a href="#"><svg viewBox="0 0 24 24"><path d="M5 8h14l-1 11H6z"/><path d="M9 8a3 3 0 0 1 6 0"/></svg>상점</a>
+    <a href="#"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>내정보</a>
+  </nav>
+</div>
+</body>
+</html>
