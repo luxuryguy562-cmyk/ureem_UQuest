@@ -116,12 +116,12 @@ export function deriveRookieSummary(data: FinalUQuestConfig, user: FinalUser): R
   const quizTier = getQuizTier(quizAccuracyRate, quizSolvedCount);
   const axSubmissionCount = data.axSubmissions.filter((submission) => submission.userId === user.id).length;
   const axLevel = getAxLevel(axSubmissionCount);
-  // 캐릭터 레벨 = 성실 종합(출석·학습·퀴즈 정답)의 3축 평균. AX는 별도 트랙(로봇)이라 제외.
-  // 누락(안 함)과 오답 모두 정답 수를 못 올리므로 성장이 둔화된다 → "성실한 만큼" 레벨이 오른다.
+  // 캐릭터 레벨 = 성실성(참여) = 출석·학습·퀴즈풀이의 3축 평균. 정답 여부는 무관(지식은 티어 담당).
+  // AX는 별도 트랙(로봇)이라 제외. 빠지거나 안 풀면 성장이 둔화된다 → "성실한 만큼" 레벨이 오른다.
   const totalQuizQuestions = data.quizzes.filter((question) => question.rewardPoints >= 0).length || 1;
   const attendanceTrack = Math.min(1, attendanceCount / 20);
   const learningTrack = Math.min(1, learningCount / 20);
-  const quizTrack = Math.min(1, quizCorrectCount / totalQuizQuestions);
+  const quizTrack = Math.min(1, quizSolvedCount / totalQuizQuestions);
   const progressRate = Math.min(100, Math.round(((attendanceTrack + learningTrack + quizTrack) / 3) * 100));
   const characterLevel = Math.min(5, Math.max(1, Math.floor(progressRate / 25) + 1));
   const pointExpireDate = user.completedAt ? addMonths(user.completedAt.slice(0, 10), 3) : null;
