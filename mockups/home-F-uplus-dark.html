@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>U-Quest 홈 — 가안 F (U+ · 다크 무대)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+  :root{
+    /* LG U+ 마젠타 + 다크 */
+    --bg:#160910; --bg2:#1f0c18; --card:#26121f; --line:#3a1c2d;
+    --uplus:#ff2e9a; --uplus-2:#e6007e; --uplus-soft:#ff7cc2;
+    --ink:#fdeef6; --sub:#c79bb2; --gold:#ffc24d; --good:#34d39a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  body{font-family:'Pretendard',system-ui,sans-serif;background:#0a0509;display:flex;justify-content:center;padding:24px;color:var(--ink)}
+  .phone{width:390px;min-height:800px;border-radius:38px;overflow:hidden;position:relative;padding-bottom:94px;
+         background:radial-gradient(120% 60% at 50% -5%, #3a0f2a 0%, var(--bg2) 45%, var(--bg) 100%);
+         box-shadow:0 30px 80px rgba(0,0,0,.6)}
+  .scroll{height:100%;overflow:auto;padding:0 18px}
+
+  .top{display:flex;align-items:center;justify-content:space-between;padding:20px 4px 10px}
+  .brand{display:flex;align-items:center;gap:9px}
+  .brand .logo{height:30px;padding:0 10px;border-radius:9px;background:var(--uplus-2);color:#fff;font-weight:800;font-size:17px;display:grid;place-items:center;letter-spacing:-.5px;box-shadow:0 0 18px rgba(230,0,126,.7)}
+  .brand b{font-size:17px;letter-spacing:-.3px}
+  .points{display:flex;align-items:center;gap:7px;background:rgba(255,46,154,.12);border:1px solid rgba(255,46,154,.4);padding:8px 13px;border-radius:30px;font-weight:800;font-size:14px;color:#ffd0e8}
+  .points i{color:var(--uplus);font-style:normal;text-shadow:0 0 10px rgba(255,46,154,.9)}
+
+  .hello{padding:8px 4px 14px}
+  .hello h1{font-size:21px;letter-spacing:-.4px}
+  .hello h1 em{font-style:normal;background:linear-gradient(90deg,var(--uplus-soft),var(--uplus));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hello p{color:var(--sub);font-size:13px;margin-top:5px;font-weight:600}
+
+  /* ===== 다크 무대: 캐릭터 + AX로봇 + 티어 함께 ===== */
+  .stage{position:relative;border-radius:28px;overflow:hidden;padding:18px;border:1px solid var(--line);
+         background:
+           radial-gradient(90% 70% at 50% -10%, rgba(255,46,154,.32), transparent 60%),
+           linear-gradient(165deg,#2c1322,#1c0c16);
+         box-shadow:0 20px 44px rgba(0,0,0,.5), inset 0 0 40px rgba(255,46,154,.06)}
+  .stage .head{display:flex;align-items:center;justify-content:space-between;position:relative;z-index:3}
+  .ptag{display:inline-flex;align-items:center;gap:6px;background:rgba(255,46,154,.16);color:#ffc6e4;font-weight:800;font-size:12px;padding:6px 12px;border-radius:18px;border:1px solid rgba(255,46,154,.3)}
+  .lv-pill{font-size:12px;font-weight:800;color:#fff;background:linear-gradient(135deg,var(--uplus),var(--uplus-2));padding:6px 12px;border-radius:18px;box-shadow:0 0 16px rgba(255,46,154,.5)}
+
+  .scene{position:relative;height:200px}
+  .spot{position:absolute;left:50%;top:-14px;transform:translateX(-50%);width:230px;height:200px;z-index:1;
+        background:radial-gradient(50% 50% at 50% 0%, rgba(255,124,194,.35), transparent 68%)}
+  /* 공유 무대 바닥(네온 링) */
+  .floor{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);width:280px;height:54px;border-radius:50%;z-index:1;
+         background:radial-gradient(50% 60% at 50% 50%, rgba(255,46,154,.30), transparent 70%)}
+  .floor::after{content:"";position:absolute;left:50%;bottom:50%;transform:translate(-50%,50%);width:230px;height:46px;border-radius:50%;border:1.5px solid rgba(255,46,154,.45);box-shadow:0 0 20px rgba(255,46,154,.4)}
+  .cast{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;gap:4px;z-index:2;padding-bottom:32px}
+  .char{font-size:120px;line-height:1;filter:drop-shadow(0 0 24px rgba(255,46,154,.4)) drop-shadow(0 12px 12px rgba(0,0,0,.5))}
+  .robot{font-size:60px;line-height:1;margin-bottom:12px;filter:drop-shadow(0 0 18px rgba(255,124,194,.5)) drop-shadow(0 10px 10px rgba(0,0,0,.5));animation:bob 3s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+  .tier{position:absolute;right:8px;top:4px;z-index:3;text-align:center}
+  .tier .shield{width:58px;height:58px;border-radius:17px;display:grid;place-items:center;font-size:29px;
+                background:linear-gradient(160deg,#3a1c2d,#26121f);border:1px solid rgba(255,46,154,.5);
+                box-shadow:0 0 22px rgba(255,46,154,.45), inset 0 0 14px rgba(255,124,194,.2)}
+  .tier .nm{font-size:11.5px;font-weight:800;margin-top:6px;color:var(--uplus-soft)}
+
+  .expwrap{position:relative;z-index:3;margin-top:2px}
+  .expwrap .lab{display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:var(--sub)}
+  .expbar{height:9px;border-radius:9px;background:#2a1320;border:1px solid var(--line);overflow:hidden;margin-top:8px}
+  .expbar>i{display:block;height:100%;width:14%;border-radius:9px;background:linear-gradient(90deg,var(--uplus-soft),var(--uplus));box-shadow:0 0 14px rgba(255,46,154,.8)}
+
+  .legend{display:flex;gap:8px;margin-top:13px}
+  .leg{flex:1;background:rgba(255,255,255,.035);border:1px solid var(--line);border-radius:16px;padding:11px 10px;text-align:center}
+  .leg .ic{font-size:20px}
+  .leg .l{font-size:10.5px;color:var(--sub);font-weight:700;margin-top:3px}
+  .leg .v{font-size:13px;font-weight:800;margin-top:1px}
+  .leg .v.p{color:var(--uplus-soft)}
+
+  .sec-h{display:flex;align-items:center;justify-content:space-between;margin:22px 4px 12px}
+  .sec-h h3{font-size:17px;letter-spacing:-.3px}
+  .sec-h h3 span{color:var(--uplus)}
+  .sec-h .cnt{font-size:12px;font-weight:800;color:#ffc6e4;background:rgba(255,46,154,.14);padding:5px 11px;border-radius:16px}
+  .mission{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:18px;padding:13px;display:flex;align-items:center;gap:13px;margin-bottom:10px}
+  .mission .ic{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font-size:23px;flex:none;background:rgba(255,46,154,.12);border:1px solid rgba(255,46,154,.22)}
+  .mission .body{flex:1;min-width:0}
+  .mission .body .t{font-weight:700;font-size:14.5px;letter-spacing:-.2px}
+  .mission .body .r{font-size:12px;color:var(--gold);font-weight:800;margin-top:3px}
+  .mission .body .r.done{color:var(--good)}
+  .go{border:none;background:linear-gradient(135deg,var(--uplus),var(--uplus-2));color:#fff;font-family:inherit;font-weight:800;font-size:13px;padding:11px 16px;border-radius:13px;flex:none;box-shadow:0 0 18px rgba(255,46,154,.4);cursor:pointer}
+  .go.ghost{background:transparent;color:var(--sub);border:1px solid var(--line);box-shadow:none}
+  .done-tag{color:var(--good);font-weight:800;font-size:13px;flex:none;padding-right:8px}
+  .mission.done{opacity:.62}
+
+  .nav{position:absolute;left:0;right:0;bottom:0;height:76px;background:rgba(22,9,16,.92);backdrop-filter:blur(10px);border-top:1px solid var(--line);display:flex;justify-content:space-around;align-items:center;padding-bottom:9px}
+  .nav a{display:flex;flex-direction:column;align-items:center;gap:4px;color:#8a6678;font-size:11px;font-weight:600;text-decoration:none}
+  .nav a svg{width:23px;height:23px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .nav a.on{color:var(--uplus)}
+  .nav a.on svg{filter:drop-shadow(0 0 6px rgba(255,46,154,.9))}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="scroll">
+    <div class="top">
+      <div class="brand"><div class="logo">U+</div><b>U-Quest</b></div>
+      <div class="points"><i>◆</i> 5,400P</div>
+    </div>
+
+    <div class="hello">
+      <h1><em>김은성</em>님, 오늘도 파이팅 👋</h1>
+      <p>강남점 · 신입사원 · 온보딩 Day 1 / 20</p>
+    </div>
+
+    <div class="stage">
+      <div class="head">
+        <span class="ptag">✨ 나의 성장 파트너</span>
+        <span class="lv-pill">Lv.1 적응중</span>
+      </div>
+      <div class="scene">
+        <div class="spot"></div>
+        <div class="floor"></div>
+        <div class="tier"><div class="shield">🛡️</div><div class="nm">Silver</div></div>
+        <div class="cast">
+          <div class="char">🧑‍💼</div>
+          <div class="robot">🤖</div>
+        </div>
+      </div>
+      <div class="expwrap">
+        <div class="lab"><span>캐릭터 성장</span><span>14%</span></div>
+        <div class="expbar"><i></i></div>
+      </div>
+      <div class="legend">
+        <div class="leg"><div class="ic">🧑‍💼</div><div class="l">캐릭터</div><div class="v p">Lv.1</div></div>
+        <div class="leg"><div class="ic">🛡️</div><div class="l">퀴즈 티어</div><div class="v">Silver</div></div>
+        <div class="leg"><div class="ic">🤖</div><div class="l">AX 단계</div><div class="v">Explorer</div></div>
+      </div>
+    </div>
+
+    <div class="sec-h">
+      <h3>오늘의 <span>미션</span></h3>
+      <span class="cnt">1 / 4 완료</span>
+    </div>
+
+    <div class="mission done">
+      <div class="ic">📅</div>
+      <div class="body"><div class="t">출석 체크</div><div class="r done">✓ +300P 지급 완료</div></div>
+      <div class="done-tag">✓</div>
+    </div>
+    <div class="mission">
+      <div class="ic">📘</div>
+      <div class="body"><div class="t">상담 품질 점검 학습</div><div class="r">+300P</div></div>
+      <button class="go">학습하기</button>
+    </div>
+    <div class="mission">
+      <div class="ic">✏️</div>
+      <div class="body"><div class="t">오늘의 퀴즈</div><div class="r">+300P / 문항</div></div>
+      <button class="go ghost">학습 후 가능</button>
+    </div>
+    <div class="mission">
+      <div class="ic">📸</div>
+      <div class="body"><div class="t">AX 인증하기</div><div class="r">+500P</div></div>
+      <button class="go">인증하기</button>
+    </div>
+    <div style="height:8px"></div>
+  </div>
+
+  <nav class="nav">
+    <a class="on" href="#"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>홈</a>
+    <a href="#"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h5"/></svg>학습</a>
+    <a href="#"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3 2.5V13"/><path d="M12 16.5h.01"/></svg>퀴즈</a>
+    <a href="#"><svg viewBox="0 0 24 24"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M9 7V5h6v2M9 13h.01M15 13h.01"/></svg>AX</a>
+    <a href="#"><svg viewBox="0 0 24 24"><path d="M5 8h14l-1 11H6z"/><path d="M9 8a3 3 0 0 1 6 0"/></svg>상점</a>
+    <a href="#"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>내정보</a>
+  </nav>
+</div>
+</body>
+</html>
