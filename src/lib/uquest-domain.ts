@@ -22,6 +22,7 @@ export type UQuestErrorCode =
   | "ACCOUNT_COMPLETED"
   | "ACCOUNT_INACTIVE"
   | "DUPLICATE_ATTENDANCE"
+  | "ATTENDANCE_REQUIRED"
   | "LEARNING_NOT_TODAY"
   | "DAILY_LEARNING_LIMIT"
   | "LEARNING_ALREADY_COMPLETED"
@@ -90,15 +91,17 @@ export function getCurrentCurriculum(data: FinalUQuestConfig, user: FinalUser): 
 }
 
 export function getCurrentCurriculumDay(data: FinalUQuestConfig, user: FinalUser) {
-  const hireDate = user.hireDate ?? data.today;
-  return Math.min(20, Math.max(1, diffDays(hireDate, data.today) + 1));
+  // 진도(페이스) 기반: 완료한 학습 수의 "다음" Day가 오늘 진행할 Day. 달력일/입사일과 무관.
+  const learningCount = data.learningCompletions.filter((item) => item.userId === user.id).length;
+  return Math.min(20, learningCount + 1);
 }
 
 export function deriveRookieSummary(data: FinalUQuestConfig, user: FinalUser): RookieSummary {
   const storeName = data.stores.find((store) => store.id === user.storeId)?.name ?? "본사";
   const hireDate = user.hireDate ?? data.today;
   const currentDay = Math.max(1, diffDays(hireDate, data.today) + 1);
-  const curriculumDay = Math.min(20, Math.max(1, currentDay));
+  // 진도 기반: 오늘 진행할 Day = 완료한 학습 수 + 1 (날짜와 무관, 놓친 날로 밀리지 않음).
+  const curriculumDay = Math.min(20, data.learningCompletions.filter((completion) => completion.userId === user.id).length + 1);
   const endDate = addDays(hireDate, 27);
   const histories = data.pointHistories.filter((history) => history.userId === user.id);
   const pointBalance = histories.reduce((sum, history) => sum + history.amount, 0);
@@ -203,16 +206,21 @@ export function completeLearning(config: FinalUQuestConfig, userId: string, curr
   const curriculum = getCurriculum(data, curriculumId);
   const summary = deriveRookieSummary(data, user);
 
+  // 출석 관문: 그날 출석해야 학습/퀴즈를 진행할 수 있다(출근 → 오늘의 온보딩).
+  if (!data.attendances.some((item) => item.userId === userId && item.attendanceDate === data.today)) {
+    throw new UQuestDomainError("ATTENDANCE_REQUIRED", "오늘 출석을 먼저 완료해야 학습을 진행할 수 있습니다.");
+  }
+
   if (data.learningCompletions.some((item) => item.userId === userId && item.curriculumId === curriculumId)) {
     throw new UQuestDomainError("LEARNING_ALREADY_COMPLETED", "이미 완료한 커리큘럼입니다.");
   }
 
   if (curriculum.dayNumber !== summary.curriculumDay) {
-    throw new UQuestDomainError("LEARNING_NOT_TODAY", `오늘은 Day ${summary.curriculumDay}만 완료할 수 있습니다.`);
+    throw new UQuestDomainError("LEARNING_NOT_TODAY", `지금 진행할 학습은 Day ${summary.curriculumDay}입니다. 학습은 순서대로 진행됩니다.`);
   }
 
   if (data.learningCompletions.some((item) => item.userId === userId && item.createdAt.startsWith(data.today))) {
-    throw new UQuestDomainError("DAILY_LEARNING_LIMIT", "학습 완료는 하루 1개만 가능합니다.");
+    throw new UQuestDomainError("DAILY_LEARNING_LIMIT", "학습 완료는 하루 1개만 가능합니다. 다음 학습은 다음 근무일에 이어서 진행하세요.");
   }
 
   data = addPoint(
@@ -236,6 +244,15 @@ export function completeLearning(config: FinalUQuestConfig, userId: string, curr
     `Day ${curriculum.dayNumber} 학습 완료`
   );
 
+  // 진도 기반 자동 수료: 20일 학습을 모두 마치면 그 시점에 수료 처리(상점 오픈 + 포인트 3개월 시작).
+  const learnedCount = data.learningCompletions.filter((item) => item.userId === userId).length;
+  if (learnedCount >= 20) {
+    data = {
+      ...data,
+      users: updateUser(data.users, userId, { status: "completed", completedAt: nowIso(data.today) })
+    };
+  }
+
   return awardBadges(data, userId);
 }
 
@@ -244,6 +261,10 @@ export function submitQuiz(config: FinalUQuestConfig, userId: string, curriculum
   const user = getUser(data, userId);
   requireActiveRookie(user);
   const curriculum = getCurriculum(data, curriculumId);
+  // 출석 관문: 그날 출석해야 퀴즈도 진행할 수 있다.
+  if (!data.attendances.some((item) => item.userId === userId && item.attendanceDate === data.today)) {
+    throw new UQuestDomainError("ATTENDANCE_REQUIRED", "오늘 출석을 먼저 완료해야 퀴즈를 진행할 수 있습니다.");
+  }
   const learning = data.learningCompletions.find((item) => item.userId === userId && item.curriculumId === curriculumId);
   if (!learning) throw new UQuestDomainError("LEARNING_REQUIRED", "학습 완료 후 퀴즈를 풀 수 있습니다.");
   if (data.quizSubmissions.some((item) => item.userId === userId && item.curriculumId === curriculumId)) {

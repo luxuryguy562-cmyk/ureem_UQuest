@@ -442,6 +442,7 @@ export function UQuestApp({ config }: { config: FinalUQuestConfig }) {
           ) : null}
           {visibleScreen === "learn" ? (
             <LearningView
+              attendedToday={data.attendances.some((item) => item.userId === rookie.user.id && item.attendanceDate === data.today)}
               completions={data.learningCompletions}
               curriculums={data.curriculums}
               onComplete={completeLearning}
@@ -661,10 +662,20 @@ function HomeView({
   const learnedToday = data.learningCompletions.some((item) => item.userId === rookie.user.id && item.curriculumId === todayCurriculum.id);
   const quizDoneToday = data.quizSubmissions.some((item) => item.userId === rookie.user.id && item.curriculumId === todayCurriculum.id);
   const axToday = data.axSubmissions.some((item) => item.userId === rookie.user.id && item.createdAt.startsWith(data.today));
+  const notStarted = rookie.user.status === "active" && rookie.attendanceCount === 0 && rookie.learningCount === 0;
 
   return (
     <div className="e5-home">
       <StatusBanner rookie={rookie} />
+
+      {notStarted ? (
+        <section className="e5-welcome">
+          <div className="emoji">🚀</div>
+          <h2>U-Quest 온보딩을 시작해요!</h2>
+          <p>출석을 찍으면 오늘부터 4주 온보딩이 시작됩니다. 매 근무일에 출석 → 학습 → 퀴즈를 진행하고, 쉬는 날은 건너뛰어도 진도가 사라지지 않아요.</p>
+          <button onClick={onAttendance} type="button">온보딩 시작하기 (출석)</button>
+        </section>
+      ) : null}
 
       <div className="e5-hello">
         <div className="e5-hello-text">
@@ -736,8 +747,8 @@ function HomeView({
           <span className="e5-cnt">{[todayDone, learnedToday, quizDoneToday, axToday].filter(Boolean).length} / 4 완료</span>
         </div>
         <E5Mission action="출석하기" done={todayDone} icon="📅" onClick={onAttendance} reward="+300P" title="출석 체크" />
-        <E5Mission action="학습하기" done={learnedToday} icon="📘" onClick={() => onGo("learn")} reward="+300P" title={`${todayCurriculum.title} 학습`} />
-        <E5Mission action={learnedToday ? "퀴즈 풀기" : "학습 후 가능"} done={quizDoneToday} ghost={!learnedToday} icon="✏️" onClick={() => onGo("quiz")} reward="+300P / 문항" title="오늘의 퀴즈" />
+        <E5Mission action={!todayDone ? "출석 먼저" : "학습하기"} done={learnedToday} ghost={!todayDone} icon="📘" onClick={() => onGo("learn")} reward="+300P" title={`${todayCurriculum.title} 학습`} />
+        <E5Mission action={!todayDone ? "출석 먼저" : learnedToday ? "퀴즈 풀기" : "학습 후 가능"} done={quizDoneToday} ghost={!todayDone || !learnedToday} icon="✏️" onClick={() => onGo("quiz")} reward="+300P / 문항" title="오늘의 퀴즈" />
         <E5Mission action="인증하기" done={axToday} icon="📸" onClick={() => onGo("ax")} reward="+500P" title="AX 인증하기" />
       </section>
     </div>
@@ -784,6 +795,7 @@ function LearningView({
   curriculums,
   completions,
   today,
+  attendedToday,
   onSelect,
   onComplete,
   onGo
@@ -793,14 +805,15 @@ function LearningView({
   completions: FinalUQuestConfig["learningCompletions"];
   selectedId: string;
   today: string;
+  attendedToday: boolean;
   onSelect: (id: string) => void;
   onComplete: (curriculum: FinalCurriculum) => void;
   onGo: (screen: FinalScreenKey) => void;
 }) {
-  void today;
   const todayCur = curriculums.find((item) => item.dayNumber === rookie.curriculumDay) ?? curriculums[0];
   const learnedToday = completions.some((item) => item.userId === rookie.user.id && item.curriculumId === todayCur.id);
-  const canLearn = !learnedToday && rookie.user.status === "active";
+  const completedSomethingToday = completions.some((item) => item.userId === rookie.user.id && item.createdAt.startsWith(today));
+  const canLearn = attendedToday && !learnedToday && !completedSomethingToday && rookie.user.status === "active";
   const progress = Math.min(100, Math.round((rookie.learningCount / 20) * 100));
 
   return (
@@ -822,7 +835,7 @@ function LearningView({
         <p>{todayCur.description}</p>
         <div className="e5-tsteps">
           <button className="learn" disabled={!canLearn} onClick={() => onComplete(todayCur)} type="button">
-            {learnedToday ? "오늘 학습 완료 ✓" : "학습하기"}
+            {learnedToday ? "오늘 학습 완료 ✓" : !attendedToday ? "오늘 출석 먼저 🔒" : completedSomethingToday ? "내일 이어서" : "학습하기"}
           </button>
           <button
             className={`quiz ${learnedToday ? "" : "lock"}`}
@@ -837,6 +850,8 @@ function LearningView({
           </button>
         </div>
       </section>
+
+      <div className="e5-restnote">🌴 쉬는 날(휴무)엔 건너뛰어도 괜찮아요. 진도는 사라지지 않고 다음 근무일에 이어집니다.</div>
 
       <div className="e5-sec">전체 커리큘럼</div>
       {curriculums.map((item) => {
@@ -1966,6 +1981,7 @@ function apiErrorTitle(code?: string) {
     ACCOUNT_COMPLETED: "수료 완료",
     ACCOUNT_INACTIVE: "접근 제한",
     DUPLICATE_ATTENDANCE: "중복 출석",
+    ATTENDANCE_REQUIRED: "출석 먼저",
     LEARNING_NOT_TODAY: "오늘 학습 아님",
     DAILY_LEARNING_LIMIT: "오늘 학습 완료",
     LEARNING_ALREADY_COMPLETED: "이미 완료",
