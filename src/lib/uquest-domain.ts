@@ -665,7 +665,7 @@ export function updateRewardConfig(config: FinalUQuestConfig, adminId: string, i
         actorId: adminId,
         action: "update_reward_config",
         targetType: "reward_config",
-        targetId: "current",
+        targetId: "",
         reason: "보상 단위 포인트 설정 변경",
         createdAt: nowIso(data.today)
       }
