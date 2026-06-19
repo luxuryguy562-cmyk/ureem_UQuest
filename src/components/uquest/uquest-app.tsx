@@ -872,7 +872,7 @@ function HomeView({
             </div>
           </div>
           <div className="e5-stat">
-            <img alt="" src={axRobotAssets[rookie.axLevel]} />
+            <div className="e5-ax-badge">🤖</div>
             <div className="e5-stat-tx">
               <span className="l">AX 단계</span>
               <span className="v">{rookie.axLevel}</span>
