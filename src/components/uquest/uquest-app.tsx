@@ -245,7 +245,17 @@ export function UQuestApp({ config }: { config: FinalUQuestConfig }) {
         return false;
       }
 
-      if (payload.config) setData(payload.config);
+      if (payload.config) {
+        const nextConfig = payload.config;
+        // 서버 config는 activeUserId를 '첫 active 신입'으로 다시 잡으므로, 로그인 세션의
+        // 사용자 식별자를 보존해 화면이 다른 사람(데모신입)으로 바뀌지 않게 한다.
+        setData((current) => ({
+          ...nextConfig,
+          activeUserId: current.activeUserId,
+          managerUserId: current.managerUserId,
+          adminUserId: current.adminUserId
+        }));
+      }
       pushToast(success);
       return true;
     } catch {
@@ -279,7 +289,17 @@ export function UQuestApp({ config }: { config: FinalUQuestConfig }) {
         return false;
       }
 
-      if (payload.config) setData(payload.config);
+      if (payload.config) {
+        const nextConfig = payload.config;
+        // 서버 config는 activeUserId를 '첫 active 신입'으로 다시 잡으므로, 로그인 세션의
+        // 사용자 식별자를 보존해 화면이 다른 사람(데모신입)으로 바뀌지 않게 한다.
+        setData((current) => ({
+          ...nextConfig,
+          activeUserId: current.activeUserId,
+          managerUserId: current.managerUserId,
+          adminUserId: current.adminUserId
+        }));
+      }
       pushToast(success);
       return true;
     } catch {
