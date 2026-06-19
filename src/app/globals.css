@@ -2291,6 +2291,8 @@
   border-color:#fed7aa;
 }
 .badge-grid > div.hidden { filter:saturate(.55); }
+.badge-grid > div:not(.acquired) .badge-icon { filter:grayscale(1) opacity(.45); }
+.badge-grid > div:not(.acquired) strong { color:#94a3b8; }
 .badge-medal {
   width:42px;
   height:42px;
