@@ -1690,6 +1690,7 @@ function AdminCurriculumPanel({
   onSave: (curriculumId: string, draft: CurriculumDraft) => void;
 }) {
   const [selectedId, setSelectedId] = useState(curriculums[0]?.id ?? "");
+  const [entered, setEntered] = useState(false);
   const selected = curriculums.find((curriculum) => curriculum.id === selectedId) ?? curriculums[0];
   const [draft, setDraft] = useState<CurriculumDraft>(() => buildCurriculumDraft(selected, quizzes));
 
@@ -1747,28 +1748,47 @@ function AdminCurriculumPanel({
     }));
   }
 
+  if (!entered) {
+    return (
+      <section className="u-card curriculum-admin-card">
+        <div className="card-title-row">
+          <div>
+            <span className="eyebrow">설정 화면</span>
+            <h2>커리큘럼/퀴즈 관리</h2>
+          </div>
+        </div>
+        <p className="curriculum-list-hint">Day를 선택하면 편집 화면으로 들어갑니다.</p>
+        <div className="admin-day-list">
+          {curriculums.map((curriculum) => (
+            <button
+              key={curriculum.id}
+              onClick={() => {
+                setSelectedId(curriculum.id);
+                setDraft(buildCurriculumDraft(curriculum, quizzes));
+                setEntered(true);
+              }}
+              type="button"
+            >
+              <div>
+                <strong>Day {curriculum.dayNumber}. {curriculum.title}</strong>
+                <span>{quizzes.filter((quiz) => quiz.curriculumId === curriculum.id).length}문제 · 클릭해 편집</span>
+              </div>
+              <em>{curriculum.isPublished ? "공개" : "비공개"} ›</em>
+            </button>
+          ))}
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="u-card curriculum-admin-card">
       <div className="card-title-row">
-        <div>
-          <span className="eyebrow">설정 화면</span>
-          <h2>커리큘럼/퀴즈 관리</h2>
-        </div>
+        <button className="back-pill" onClick={() => setEntered(false)} type="button">← 목록</button>
+        <h2>Day {selected.dayNumber} 편집</h2>
         <button className="save-pill" onClick={() => onSave(selected.id, draft)} type="button">저장</button>
       </div>
-      <div className="admin-curriculum-layout">
-        <div className="admin-day-list">
-        {curriculums.map((curriculum) => (
-          <button className={curriculum.id === selected.id ? "selected" : ""} key={curriculum.id} onClick={() => setSelectedId(curriculum.id)} type="button">
-            <div>
-              <strong>Day {curriculum.dayNumber}. {curriculum.title}</strong>
-              <span>{quizzes.filter((quiz) => quiz.curriculumId === curriculum.id).length}문제 · Day별 문제 수 변경 가능</span>
-            </div>
-            <em>{curriculum.isPublished ? "공개" : "비공개"}</em>
-          </button>
-        ))}
-        </div>
-        <div className="curriculum-editor">
+      <div className="curriculum-editor">
           <div className="editor-grid">
             <label>
               제목
@@ -1833,7 +1853,6 @@ function AdminCurriculumPanel({
             ))}
           </div>
         </div>
-      </div>
     </section>
   );
 }

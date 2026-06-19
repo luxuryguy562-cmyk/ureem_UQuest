@@ -2538,6 +2538,23 @@
   font-weight:1000;
   cursor:pointer;
 }
+.back-pill {
+  flex:0 0 auto;
+  border:0;
+  border-radius:999px;
+  background:#eef2f7;
+  color:#334155;
+  padding:9px 13px;
+  font-size:12px;
+  font-weight:1000;
+  cursor:pointer;
+}
+.curriculum-list-hint {
+  font-size:12px;
+  color:#64748b;
+  font-weight:700;
+  margin:2px 0 10px;
+}
 .admin-curriculum-layout {
   display:grid;
   gap:12px;
