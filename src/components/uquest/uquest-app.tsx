@@ -1087,27 +1087,6 @@ function AxView({
       </section>
 
       <div className="e5-sec e5-sec-row">
-        <h3>AX 항목</h3>
-        <span className="e5-tag-ax">항목당 +{formatNumber(categories[0]?.rewardPoints ?? 500)}P</span>
-      </div>
-      <div className="e5-axgrid">
-        {categories.map((category) => {
-          const count = submissions.filter((submission) => submission.userId === rookie.user.id && submission.categoryId === category.id).length;
-          return (
-            <div className="e5-axcard" key={category.id}>
-              <div className="ty">{category.type}</div>
-              <div className="nm">{category.title}</div>
-              <div className="rew">+{formatNumber(category.rewardPoints)}P</div>
-              <div className="cnt">{count}회 인증</div>
-              <button className="e5-axgo" disabled={inactive} onClick={() => setActiveId(category.id)} type="button">
-                {axDoneToday ? "오늘 완료 ✓" : "활동하기"}
-              </button>
-            </div>
-          );
-        })}
-      </div>
-
-      <div className="e5-sec e5-sec-row">
         <h3>내 AX 이력</h3>
       </div>
       <div className="e5-axsum">
@@ -1117,7 +1096,7 @@ function AxView({
       </div>
 
       {histDates.length === 0 ? (
-        <div className="e5-axempty">아직 AX 인증 기록이 없어요. 위에서 활동을 인증해보세요.</div>
+        <div className="e5-axempty">아직 AX 인증 기록이 없어요. 아래에서 활동을 인증해보세요.</div>
       ) : (
         histDates.map((day) => {
           const done = doneByDate.get(day) ?? new Set<string>();
@@ -1139,6 +1118,27 @@ function AxView({
           );
         })
       )}
+
+      <div className="e5-sec e5-sec-row">
+        <h3>AX 항목</h3>
+        <span className="e5-tag-ax">항목당 +{formatNumber(categories[0]?.rewardPoints ?? 500)}P</span>
+      </div>
+      <div className="e5-axgrid">
+        {categories.map((category) => {
+          const count = submissions.filter((submission) => submission.userId === rookie.user.id && submission.categoryId === category.id).length;
+          return (
+            <div className="e5-axcard" key={category.id}>
+              <div className="ty">{category.type}</div>
+              <div className="nm">{category.title}</div>
+              <div className="rew">+{formatNumber(category.rewardPoints)}P</div>
+              <div className="cnt">{count}회 인증</div>
+              <button className="e5-axgo" disabled={inactive} onClick={() => setActiveId(category.id)} type="button">
+                {axDoneToday ? "오늘 완료 ✓" : "활동하기"}
+              </button>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
