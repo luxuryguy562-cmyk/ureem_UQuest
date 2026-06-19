@@ -1143,7 +1143,10 @@ function ProfileView({
   return (
     <div className="e5-screen e5-my">
       <section className="e5-phero">
-        <CharacterImage level={rookie.characterLevel} size="stage" user={rookie.user} />
+        <div className="e5-phero-cast">
+          <CharacterImage level={rookie.characterLevel} size="stage" user={rookie.user} />
+          <img className="e5-phero-robot" alt={`${rookie.axLevel} AX 로봇`} src={axRobotAssets[rookie.axLevel]} />
+        </div>
         <div className="info">
           <div className="nm">{rookie.user.name}</div>
           <div className="role">{rookie.storeName} · 신입사원 · D+{rookie.currentDay}</div>
