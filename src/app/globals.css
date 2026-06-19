@@ -3234,13 +3234,26 @@
 .store-help{font-size:12px;color:#64748b;line-height:1.6;margin-top:6px;font-weight:700}
 .store-csv{width:100%;box-sizing:border-box;min-height:120px;margin-top:12px;border:1.5px solid #e7d9ec;border-radius:12px;padding:11px;font-family:inherit;font-size:12px;line-height:1.6;resize:vertical}
 .store-parsed{margin-top:8px;font-size:12px;font-weight:800;color:#2563eb}
-.store-sec{margin:20px 0 10px;font-size:14px;font-weight:1000;color:#334155}
+.store-sec{margin:18px 0 8px;font-size:14px;font-weight:1000;color:#334155}
+.store-add{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:6px}
+.store-add input{min-width:0;box-sizing:border-box;border:1.5px solid #e7d9ec;border-radius:9px;padding:8px 9px;font-family:inherit;font-size:12.5px;font-weight:700}
+.store-add-btn{border:0;background:#2563eb;color:#fff;font-family:inherit;font-weight:1000;font-size:12.5px;padding:0 16px;border-radius:9px;cursor:pointer}
+.store-add-btn:disabled{opacity:.45;cursor:default}
 .store-group{border:1px solid #eef2f7;border-radius:12px;padding:10px 12px;margin-bottom:8px}
 .store-group h4{font-size:13px;font-weight:1000;color:#cf3a86;margin-bottom:6px}
-.store-team{display:flex;gap:8px;font-size:11.5px;padding:5px 0;border-top:1px solid #f3f5f9}
-.store-team:first-of-type{border-top:0}
-.store-team .tm{flex:none;width:88px;font-weight:1000;color:#475569}
-.store-team .st{color:#64748b;font-weight:700;line-height:1.5}
+.store-team-block{border-top:1px solid #f3f5f9;padding-top:6px;margin-top:6px}
+.store-team-block:first-of-type{border-top:0;margin-top:0;padding-top:0}
+.store-team-block .tm{font-size:11px;font-weight:1000;color:#475569;margin-bottom:3px}
+.store-row{display:flex;align-items:center;gap:7px;padding:5px 0;font-size:12.5px;font-weight:800}
+.store-row .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.store-row.off .nm{color:#cbd5e1}
+.store-row .tg,.store-row .ed{flex:none;border:1px solid #e2e8f0;background:#fff;font-family:inherit;font-size:11px;font-weight:900;padding:5px 9px;border-radius:8px;cursor:pointer;color:#475569}
+.store-row .ed{background:#eef2f7}
+.store-edit{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;padding:7px 0;border-bottom:1px dashed #e2e8f0}
+.store-edit input{min-width:0;box-sizing:border-box;border:1.5px solid #cbd5e1;border-radius:8px;padding:7px 8px;font-family:inherit;font-size:12px;font-weight:700}
+.store-edit-act{grid-column:1 / -1;display:flex;gap:6px}
+.store-edit-act button{border:0;background:#2563eb;color:#fff;font-family:inherit;font-weight:1000;font-size:12px;padding:7px 14px;border-radius:8px;cursor:pointer}
+.store-edit-act button.sub{background:#eef2f7;color:#475569}
 
 /* 보상 경제 시뮬레이터 (관리자) — e5 변수 미적용 영역이라 색상 고정 */
 .reward-sim h3{font-size:16px;font-weight:1000;letter-spacing:-.3px}

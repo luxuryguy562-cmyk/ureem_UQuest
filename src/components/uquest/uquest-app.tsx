@@ -444,6 +444,15 @@ export function UQuestApp({ config }: { config: FinalUQuestConfig }) {
     );
   }
 
+  async function updateStore(storeId: string, patch: { name?: string; district?: string; team?: string; isActive?: boolean }) {
+    await runApiMutation(
+      `/api/admin/stores/${storeId}`,
+      patch,
+      { title: "매장 수정", body: "매장 정보를 저장했습니다.", tone: "good" },
+      currentUser.id
+    );
+  }
+
   async function updateAxExample(category: FinalAxCategory, file: File) {
     const body = new FormData();
     body.append("image", file);
@@ -535,6 +544,7 @@ export function UQuestApp({ config }: { config: FinalUQuestConfig }) {
           onUpdateRewardConfig={updateRewardConfig}
           onUpdateAxExample={updateAxExample}
           onImportStores={importStores}
+          onUpdateStore={updateStore}
           onReject={rejectUser}
           onSendCoupon={sendCouponRequest}
         />
@@ -1660,7 +1670,8 @@ function AdminView({
   onUpdateCurriculum,
   onUpdateRewardConfig,
   onUpdateAxExample,
-  onImportStores
+  onImportStores,
+  onUpdateStore
 }: {
   data: FinalUQuestConfig;
   onApprove: (userId: string) => void;
@@ -1671,6 +1682,7 @@ function AdminView({
   onUpdateRewardConfig: (values: RewardConfigDraft) => void;
   onUpdateAxExample: (category: FinalAxCategory, file: File) => void;
   onImportStores: (rows: { district: string; team: string; name: string }[]) => void;
+  onUpdateStore: (storeId: string, patch: { name?: string; district?: string; team?: string; isActive?: boolean }) => void;
 }) {
   const [tab, setTab] = useState<"dashboard" | "members" | "curriculum" | "ax" | "coupons" | "rewards" | "stores" | "validation">("dashboard");
   const rookies = data.users.filter((user) => user.role === "rookie");
@@ -1748,7 +1760,7 @@ function AdminView({
       {tab === "curriculum" ? <AdminCurriculumPanel curriculums={data.curriculums} onSave={onUpdateCurriculum} quizzes={data.quizzes} /> : null}
       {tab === "ax" ? <AdminAxPanel categories={data.axCategories} onUploadExample={onUpdateAxExample} /> : null}
       {tab === "rewards" ? <AdminRewardSimulatorPanel data={data} onSave={onUpdateRewardConfig} /> : null}
-      {tab === "stores" ? <AdminStorePanel data={data} onImport={onImportStores} /> : null}
+      {tab === "stores" ? <AdminStorePanel data={data} onImport={onImportStores} onUpdateStore={onUpdateStore} /> : null}
       {tab === "coupons" ? (
         <AdminCouponPanel coupons={data.coupons} requests={data.couponRequests} users={data.users} onCancel={onCancelCoupon} onSend={onSendCoupon} />
       ) : null}
@@ -1768,16 +1780,26 @@ function parseStoreCsv(text: string): { district: string; team: string; name: st
     .filter((row) => row.district !== "담당" && row.name !== "매장");
 }
 
-function AdminStorePanel({ data, onImport }: { data: FinalUQuestConfig; onImport: (rows: { district: string; team: string; name: string }[]) => void }) {
+function AdminStorePanel({
+  data,
+  onImport,
+  onUpdateStore
+}: {
+  data: FinalUQuestConfig;
+  onImport: (rows: { district: string; team: string; name: string }[]) => void;
+  onUpdateStore: (storeId: string, patch: { name?: string; district?: string; team?: string; isActive?: boolean }) => void;
+}) {
   const [csv, setCsv] = useState("");
+  const [add, setAdd] = useState({ district: "", team: "", name: "" });
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [edit, setEdit] = useState({ district: "", team: "", name: "" });
   const parsed = parseStoreCsv(csv);
-  const parsedDistricts = new Set(parsed.map((row) => row.district)).size;
 
-  const active = data.stores.filter((store) => store.district && store.team);
+  const managed = data.stores.filter((store) => store.district || store.team);
   const groups = new Map<string, Map<string, FinalStore[]>>();
-  for (const store of active) {
-    const district = store.district as string;
-    const team = store.team as string;
+  for (const store of managed) {
+    const district = store.district ?? "기타";
+    const team = store.team ?? "기타";
     if (!groups.has(district)) groups.set(district, new Map());
     const teams = groups.get(district)!;
     if (!teams.has(team)) teams.set(team, []);
@@ -1787,28 +1809,65 @@ function AdminStorePanel({ data, onImport }: { data: FinalUQuestConfig; onImport
   return (
     <section className="u-card store-admin">
       <h3>매장 관리</h3>
-      <p className="store-help">엑셀의 <b>담당 · 팀장 · 매장</b> 3열을 복사해 아래에 붙여넣고 적용하세요. 매장명이 식별자라 같은 이름은 갱신됩니다.</p>
+
+      <div className="store-sec">매장 추가</div>
+      <div className="store-add">
+        <input placeholder="담당" value={add.district} onChange={(event) => setAdd({ ...add, district: event.target.value })} />
+        <input placeholder="팀장" value={add.team} onChange={(event) => setAdd({ ...add, team: event.target.value })} />
+        <input placeholder="매장명" value={add.name} onChange={(event) => setAdd({ ...add, name: event.target.value })} />
+        <button
+          className="store-add-btn"
+          disabled={!add.name.trim()}
+          onClick={() => {
+            onImport([{ district: add.district, team: add.team, name: add.name }]);
+            setAdd({ district: "", team: "", name: "" });
+          }}
+          type="button"
+        >
+          추가
+        </button>
+      </div>
+
+      <div className="store-sec">등록 매장 ({managed.length}개)</div>
+      {[...groups.entries()].map(([district, teams]) => (
+        <div className="store-group" key={district}>
+          <h4>{district}</h4>
+          {[...teams.entries()].map(([team, stores]) => (
+            <div className="store-team-block" key={team}>
+              <div className="tm">{team}</div>
+              {stores.map((store) =>
+                editingId === store.id ? (
+                  <div className="store-edit" key={store.id}>
+                    <input placeholder="담당" value={edit.district} onChange={(event) => setEdit({ ...edit, district: event.target.value })} />
+                    <input placeholder="팀장" value={edit.team} onChange={(event) => setEdit({ ...edit, team: event.target.value })} />
+                    <input placeholder="매장명" value={edit.name} onChange={(event) => setEdit({ ...edit, name: event.target.value })} />
+                    <div className="store-edit-act">
+                      <button onClick={() => { onUpdateStore(store.id, edit); setEditingId(null); }} type="button">저장</button>
+                      <button className="sub" onClick={() => setEditingId(null)} type="button">취소</button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className={`store-row ${store.isActive ? "" : "off"}`} key={store.id}>
+                    <span className="nm">{store.name}{store.isActive ? "" : " · 비활성"}</span>
+                    <button className="tg" onClick={() => onUpdateStore(store.id, { isActive: !store.isActive })} type="button">{store.isActive ? "비활성화" : "활성화"}</button>
+                    <button className="ed" onClick={() => { setEditingId(store.id); setEdit({ district: store.district ?? "", team: store.team ?? "", name: store.name }); }} type="button">수정</button>
+                  </div>
+                )
+              )}
+            </div>
+          ))}
+        </div>
+      ))}
+
+      <div className="store-sec">CSV 대량 등록 (엑셀 담당·팀장·매장 3열 붙여넣기)</div>
       <textarea
         className="store-csv"
         value={csv}
         onChange={(event) => setCsv(event.target.value)}
         placeholder={"청주담당  원준기team  복대\n청주담당  원준기team  강터\n충북담당  고준team  오창\n..."}
       />
-      <div className="store-parsed">{parsed.length > 0 ? `인식됨 — 담당 ${parsedDistricts}개 · 매장 ${parsed.length}개` : "붙여넣으면 인식 결과가 표시됩니다."}</div>
-      <button className="reward-apply" disabled={parsed.length === 0} onClick={() => onImport(parsed)} type="button">적용 ({parsed.length}개 매장)</button>
-
-      <div className="store-sec">현재 등록 ({active.length}개 매장)</div>
-      {[...groups.entries()].map(([district, teams]) => (
-        <div className="store-group" key={district}>
-          <h4>{district}</h4>
-          {[...teams.entries()].map(([team, stores]) => (
-            <div className="store-team" key={team}>
-              <span className="tm">{team}</span>
-              <span className="st">{stores.map((store) => store.name).join(" · ")}</span>
-            </div>
-          ))}
-        </div>
-      ))}
+      <div className="store-parsed">{parsed.length > 0 ? `인식됨 — 담당 ${new Set(parsed.map((row) => row.district)).size}개 · 매장 ${parsed.length}개` : "붙여넣으면 인식 결과가 표시됩니다."}</div>
+      <button className="reward-apply" disabled={parsed.length === 0} onClick={() => onImport(parsed)} type="button">CSV 적용 ({parsed.length}개)</button>
     </section>
   );
 }

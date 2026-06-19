@@ -744,6 +744,38 @@ export function importStores(config: FinalUQuestConfig, adminId: string, input: 
   };
 }
 
+export type StoreUpdateInput = { name?: string; district?: string; team?: string; isActive?: boolean };
+
+export function updateStore(config: FinalUQuestConfig, adminId: string, storeId: string, input: StoreUpdateInput): FinalUQuestConfig {
+  const data = normalizeConfig(config);
+  requireRole(getUser(data, adminId), ["admin"]);
+  const target = data.stores.find((store) => store.id === storeId);
+  if (!target) throw new UQuestDomainError("NOT_FOUND", "매장을 찾을 수 없습니다.", 404);
+  const name = input.name !== undefined ? input.name.trim() : target.name;
+  if (!name) throw new UQuestDomainError("INVALID_INPUT", "매장명을 입력해야 합니다.");
+
+  const stores = data.stores.map((store) =>
+    store.id === storeId
+      ? {
+          ...store,
+          name,
+          district: input.district !== undefined ? input.district.trim() || undefined : store.district,
+          team: input.team !== undefined ? input.team.trim() || undefined : store.team,
+          isActive: input.isActive !== undefined ? input.isActive : store.isActive
+        }
+      : store
+  );
+
+  return {
+    ...data,
+    stores,
+    adminAuditLogs: [
+      ...data.adminAuditLogs,
+      { id: createId("audit"), actorId: adminId, action: "update_store", targetType: "store", targetId: storeId, reason: `매장 수정: ${name}`, createdAt: nowIso(data.today) }
+    ]
+  };
+}
+
 export function isUQuestDomainError(error: unknown): error is UQuestDomainError {
   return error instanceof UQuestDomainError;
 }
