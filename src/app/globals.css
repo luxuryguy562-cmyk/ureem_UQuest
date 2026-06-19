@@ -3188,27 +3188,28 @@
 .ax-example-upload{font-size:11px;font-weight:1000;color:#fff;background:var(--uplus);padding:8px 12px;border-radius:10px;cursor:pointer}
 .ax-example-upload input{display:none}
 
-/* 보상 경제 시뮬레이터 (관리자) */
+/* 보상 경제 시뮬레이터 (관리자) — e5 변수 미적용 영역이라 색상 고정 */
 .reward-sim h3{font-size:16px;font-weight:1000;letter-spacing:-.3px}
-.reward-sim-help{font-size:12px;color:var(--uplus-sub);line-height:1.6;margin-top:6px}
+.reward-sim-help{font-size:12px;color:#64748b;line-height:1.6;margin-top:6px}
 .reward-sim-inputs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
-.reward-sim-inputs label{display:flex;flex-direction:column;gap:5px;font-size:11.5px;font-weight:800;color:var(--uplus-deep)}
-.reward-sim-inputs input{border:1.5px solid #e7d9ec;border-radius:10px;padding:9px 11px;font-family:inherit;font-size:14px;font-weight:800;text-align:right}
+.reward-sim-inputs label{display:flex;flex-direction:column;gap:5px;min-width:0;font-size:11.5px;font-weight:800;color:#a0125f}
+.reward-sim-inputs input{width:100%;box-sizing:border-box;border:1.5px solid #e7d9ec;border-radius:10px;padding:9px 11px;font-family:inherit;font-size:14px;font-weight:800;text-align:right}
 .reward-sticky{position:sticky;top:0;z-index:6;background:#fff;border:1.5px solid #efe7f7;border-radius:14px;padding:11px 12px;margin:12px 0 4px;box-shadow:0 8px 16px rgba(15,23,42,.1)}
 .reward-sticky-total{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:9px}
-.reward-sticky-total span{font-size:12px;font-weight:900;color:var(--uplus-sub)}
-.reward-sticky-total b{font-size:21px;font-weight:1000;color:var(--uplus-deep);letter-spacing:-.5px}
+.reward-sticky-total span{font-size:12px;font-weight:900;color:#64748b}
+.reward-sticky-total b{font-size:21px;font-weight:1000;color:#cf3a86;letter-spacing:-.5px}
 .reward-sticky-rows{display:grid;gap:5px}
 .reward-sticky-row{display:grid;grid-template-columns:80px 1fr auto;align-items:center;gap:8px;font-size:10.5px;font-weight:800}
-.reward-sticky-row .lab{color:var(--uplus-deep);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.reward-sticky-row .num{color:var(--uplus-sub);white-space:nowrap}
+.reward-sticky-row .lab{color:#334155;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.reward-sticky-row .num{color:#64748b;white-space:nowrap}
 .reward-bar{height:7px;border-radius:6px;background:#f0e6f5;overflow:hidden}
 .reward-bar i{display:block;height:100%;background:linear-gradient(90deg,#ff8fc4,#cf3a86)}
 .reward-badges{margin-top:18px;display:grid;gap:16px}
-.reward-badge-group h4{font-size:12.5px;font-weight:1000;color:var(--uplus-deep);margin-bottom:8px;padding-bottom:6px;border-bottom:2px solid #f0e6f5}
+.reward-badge-group h4{font-size:12.5px;font-weight:1000;color:#334155;margin-bottom:8px;padding-bottom:6px;border-bottom:2px solid #f0e6f5}
 .reward-badge-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid #f3eef8;font-size:12.5px;font-weight:800}
-.reward-badge-row input{width:96px;border:1.5px solid #e7d9ec;border-radius:9px;padding:7px 10px;font-family:inherit;font-size:13px;font-weight:800;text-align:right}
-.reward-apply{margin-top:18px;width:100%;border:0;font-family:inherit;font-size:15px;font-weight:1000;padding:15px;border-radius:14px;cursor:pointer;background:var(--uplus);color:#fff;box-shadow:0 10px 20px rgba(230,0,126,.25)}
+.reward-badge-row span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.reward-badge-row input{flex:0 0 auto;width:90px;box-sizing:border-box;border:1.5px solid #e7d9ec;border-radius:9px;padding:7px 10px;font-family:inherit;font-size:13px;font-weight:800;text-align:right}
+.reward-apply{margin-top:18px;width:100%;border:0;font-family:inherit;font-size:15px;font-weight:1000;padding:15px;border-radius:14px;cursor:pointer;background:#e6007e;color:#fff;box-shadow:0 10px 20px rgba(230,0,126,.25)}
 
 /* 상점 */
 .e5-balance{background:linear-gradient(160deg,#ff9fcb,#cf3a86);border-radius:24px;padding:18px;color:#fff;box-shadow:0 16px 32px rgba(214,43,134,.28);position:relative;overflow:hidden}
