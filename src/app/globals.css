@@ -3037,7 +3037,6 @@
 .e5-stat + .e5-stat { border-left:1px solid #f1dbe7; }
 .e5-stat img,
 .e5-stat .character-image { height:30px; width:auto; object-fit:contain; }
-.e5-ax-badge { font-size:24px; line-height:1; width:30px; text-align:center; }
 .e5-stat-tx { display:flex; flex-direction:column; line-height:1.2; }
 .e5-stat-tx .l { font-size:10px; color:var(--uplus-sub); font-weight:800; }
 .e5-stat-tx .v { font-size:13px; font-weight:1000; color:#3a2230; letter-spacing:-.2px; }
