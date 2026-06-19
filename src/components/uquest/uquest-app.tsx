@@ -1503,16 +1503,7 @@ function AdminView({
 
   return (
     <main className="final-screen role-screen">
-      <ScreenTitle eyebrow="본사 관리자" title="운영 대시보드" meta="전체 권한" />
-      <div className="admin-kpi-grid">
-        <Metric label="전체 신입" value={`${rookies.length}명`} />
-        <Metric label="진행 중" value={`${rookies.filter((user) => user.status === "active").length}명`} />
-        <Metric label="수료자" value={`${completed}명`} />
-        <Metric label="평균 진행률" value={`${avgProgress}%`} />
-        <Metric label="승인 대기" value={`${pending}건`} />
-        <Metric label="쿠폰 요청" value={`${requestedCoupons.length}건`} />
-      </div>
-
+      <ScreenTitle eyebrow="본사 관리자" title="관리 콘솔" meta="전체 권한" />
       <div className="admin-tabs-final">
         {[
           ["dashboard", "대시보드"],
@@ -1530,16 +1521,26 @@ function AdminView({
       </div>
 
       {tab === "dashboard" ? (
-        <section className="u-card">
-          <div className="compact-list">
-            {data.notifications.map((notification) => (
-              <div key={notification.id}>
-                <strong>{notification.title}</strong>
-                <span>{notification.message}</span>
-              </div>
-            ))}
+        <>
+          <div className="admin-kpi-grid">
+            <Metric label="전체 신입" value={`${rookies.length}명`} />
+            <Metric label="진행 중" value={`${rookies.filter((user) => user.status === "active").length}명`} />
+            <Metric label="수료자" value={`${completed}명`} />
+            <Metric label="평균 진행률" value={`${avgProgress}%`} />
+            <Metric label="승인 대기" value={`${pending}건`} />
+            <Metric label="쿠폰 요청" value={`${requestedCoupons.length}건`} />
           </div>
-        </section>
+          <section className="u-card">
+            <div className="compact-list">
+              {data.notifications.map((notification) => (
+                <div key={notification.id}>
+                  <strong>{notification.title}</strong>
+                  <span>{notification.message}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+        </>
       ) : null}
 
       {tab === "members" ? (
