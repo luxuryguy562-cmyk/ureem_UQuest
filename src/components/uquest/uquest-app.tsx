@@ -579,6 +579,7 @@ function AuthView({
   const [message, setMessage] = useState<string | null>(null);
   const [district, setDistrict] = useState("");
   const [team, setTeam] = useState("");
+  const [openPicker, setOpenPicker] = useState<"district" | "team" | "store" | null>(null);
   const [form, setForm] = useState({
     name: "",
     phone: "",
@@ -635,6 +636,15 @@ function AuthView({
     onAuthenticated(payload.user);
   }
 
+  const picker =
+    openPicker === "district"
+      ? { title: "담당 선택", items: districts.map((value) => ({ value, label: value })), current: district, pick: (value: string) => { setDistrict(value); setTeam(""); update("storeId", ""); } }
+      : openPicker === "team"
+        ? { title: "팀장 선택", items: teamOptions.map((value) => ({ value, label: value })), current: team, pick: (value: string) => { setTeam(value); update("storeId", ""); } }
+        : openPicker === "store"
+          ? { title: "매장 선택", items: storeOptions.map((store) => ({ value: store.id, label: store.name })), current: form.storeId, pick: (value: string) => update("storeId", value) }
+          : null;
+
   return (
     <div className="phone final-shell auth-shell">
       <form className="auth-card" onSubmit={submit}>
@@ -659,30 +669,24 @@ function AuthView({
             </label>
             <label>
               담당
-              <select value={district} onChange={(event) => { setDistrict(event.currentTarget.value); setTeam(""); update("storeId", ""); }}>
-                <option value="">담당 선택</option>
-                {districts.map((item) => (
-                  <option key={item} value={item}>{item}</option>
-                ))}
-              </select>
+              <button className="picker-field" onClick={() => setOpenPicker("district")} type="button">
+                <span className={district ? "" : "ph"}>{district || "담당 선택"}</span>
+                <em>▾</em>
+              </button>
             </label>
             <label>
               팀장
-              <select value={team} disabled={!district} onChange={(event) => { setTeam(event.currentTarget.value); update("storeId", ""); }}>
-                <option value="">{district ? "팀장 선택" : "담당 먼저 선택"}</option>
-                {teamOptions.map((item) => (
-                  <option key={item} value={item}>{item}</option>
-                ))}
-              </select>
+              <button className="picker-field" disabled={!district} onClick={() => setOpenPicker("team")} type="button">
+                <span className={team ? "" : "ph"}>{team || (district ? "팀장 선택" : "담당 먼저 선택")}</span>
+                <em>▾</em>
+              </button>
             </label>
             <label>
               매장
-              <select value={form.storeId} disabled={!team} onChange={(event) => update("storeId", event.currentTarget.value)}>
-                <option value="">{team ? "매장 선택" : "팀장 먼저 선택"}</option>
-                {storeOptions.map((store) => (
-                  <option key={store.id} value={store.id}>{store.name}</option>
-                ))}
-              </select>
+              <button className="picker-field" disabled={!team} onClick={() => setOpenPicker("store")} type="button">
+                <span className={form.storeId ? "" : "ph"}>{storeOptions.find((store) => store.id === form.storeId)?.name || (team ? "매장 선택" : "팀장 먼저 선택")}</span>
+                <em>▾</em>
+              </button>
             </label>
             <label>
               입사일
@@ -708,6 +712,34 @@ function AuthView({
         <button className="primary-action" type="submit">{mode === "login" ? "로그인" : "가입 요청"}</button>
         {mode === "login" ? <small>테스트 계정: rookie.kim / manager.gn / admin.hq, 비밀번호 demo</small> : null}
       </form>
+
+      {picker ? (
+        <div className="sheet-overlay" onClick={() => setOpenPicker(null)}>
+          <div className="sheet" onClick={(event) => event.stopPropagation()}>
+            <div className="sheet-head">
+              <h3>{picker.title}</h3>
+              <button onClick={() => setOpenPicker(null)} type="button">✕</button>
+            </div>
+            <div className="sheet-list">
+              {picker.items.length === 0 ? (
+                <div className="sheet-empty">선택 항목이 없습니다.</div>
+              ) : (
+                picker.items.map((item) => (
+                  <button
+                    className={picker.current === item.value ? "on" : ""}
+                    key={item.value}
+                    onClick={() => { picker.pick(item.value); setOpenPicker(null); }}
+                    type="button"
+                  >
+                    {item.label}
+                    {picker.current === item.value ? <span className="ck">✓</span> : null}
+                  </button>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
