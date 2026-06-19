@@ -1593,19 +1593,20 @@ function AdminRewardSimulatorPanel({ data, onSave }: { data: FinalUQuestConfig; 
   const learningCount = data.curriculums.length;
   const quizCount = data.quizzes.filter((question) => question.rewardPoints >= 0).length;
   const axCount = data.axCategories.length * ONBOARDING_DAYS;
-  const growBadges = data.badges.filter((badge) => !badge.isRare).sort((a, b) => a.sortOrder - b.sortOrder);
-  const rareBadges = data.badges.filter((badge) => badge.isRare).sort((a, b) => a.sortOrder - b.sortOrder);
-  const sumBadges = (list: typeof growBadges) => list.reduce((sum, badge) => sum + (badgePoints[badge.id] ?? 0), 0);
-  const growBadgeTotal = sumBadges(growBadges);
-  const rareBadgeTotal = sumBadges(rareBadges);
+  const sumBadges = (predicate: (badge: FinalBadge) => boolean) =>
+    data.badges.filter(predicate).reduce((sum, badge) => sum + (badgePoints[badge.id] ?? 0), 0);
+  const growBadgeTotal = sumBadges((badge) => !badge.isRare);
+  const rareBadgeTotal = sumBadges((badge) => badge.isRare);
+  const growBadgeCount = data.badges.filter((badge) => !badge.isRare).length;
+  const rareBadgeCount = data.badges.filter((badge) => badge.isRare).length;
 
   const rows = [
-    { key: "att", label: "출석", unit: act.attendancePoints as number | null, count: attendanceCount, total: act.attendancePoints * attendanceCount },
-    { key: "learn", label: "학습", unit: act.learningPoints as number | null, count: learningCount, total: act.learningPoints * learningCount },
-    { key: "quiz", label: "퀴즈(정답)", unit: act.quizCorrectPoints as number | null, count: quizCount, total: act.quizCorrectPoints * quizCount },
-    { key: "ax", label: "AX", unit: act.axPoints as number | null, count: axCount, total: act.axPoints * axCount },
-    { key: "grow", label: "성장배지", unit: null, count: growBadges.length, total: growBadgeTotal },
-    { key: "rare", label: "🟣 희귀배지", unit: null, count: rareBadges.length, total: rareBadgeTotal }
+    { key: "att", label: "출석", total: act.attendancePoints * attendanceCount },
+    { key: "learn", label: "학습", total: act.learningPoints * learningCount },
+    { key: "quiz", label: "퀴즈(정답)", total: act.quizCorrectPoints * quizCount },
+    { key: "ax", label: "AX", total: act.axPoints * axCount },
+    { key: "grow", label: `성장배지(${growBadgeCount})`, total: growBadgeTotal },
+    { key: "rare", label: `🟣 희귀배지(${rareBadgeCount})`, total: rareBadgeTotal }
   ];
   const grandTotal = rows.reduce((sum, row) => sum + row.total, 0);
 
@@ -1622,22 +1623,31 @@ function AdminRewardSimulatorPanel({ data, onSave }: { data: FinalUQuestConfig; 
     });
   }
 
-  const badgeGroup = (title: string, list: typeof growBadges) => (
-    <div className="reward-badge-group">
-      <h4>{title}</h4>
-      {list.map((badge) => (
-        <label className="reward-badge-row" key={badge.id}>
-          <span>{badge.name}</span>
-          <input inputMode="numeric" onChange={(event) => setBadge(badge.id, event.target.value)} value={badgePoints[badge.id] ?? 0} />
-        </label>
-      ))}
-    </div>
-  );
+  const badgeCategories: BadgeCategory[] = ["attendance", "quiz", "tier", "ax", "rare"];
 
   return (
     <section className="u-card reward-sim">
       <h3>보상 경제 시뮬레이터</h3>
-      <p className="reward-sim-help">종목·배지별 단위 포인트를 입력하면 합계·비중·만점자 총액이 실시간 계산됩니다. <b>적용</b>하면 실제 보상에 바로 반영돼요. (만점 합계는 전정답 기준이라 오답값은 미포함)</p>
+      <p className="reward-sim-help">종목·배지별 단위 포인트를 입력하면 합계·비중·만점자 총액이 실시간 계산됩니다. <b>적용</b>하면 실제 보상에 반영돼요. (만점 합계는 전정답 기준)</p>
+
+      <div className="reward-sticky">
+        <div className="reward-sticky-total">
+          <span>만점자 총액</span>
+          <b>{formatNumber(grandTotal)}P</b>
+        </div>
+        <div className="reward-sticky-rows">
+          {rows.map((row) => {
+            const pct = grandTotal ? Math.round((row.total / grandTotal) * 100) : 0;
+            return (
+              <div className="reward-sticky-row" key={row.key}>
+                <span className="lab">{row.label}</span>
+                <div className="reward-bar"><i style={{ width: `${pct}%` }} /></div>
+                <span className="num">{formatNumber(row.total)}P · {pct}%</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
 
       <div className="reward-sim-inputs">
         <label>출석 / 회<input inputMode="numeric" onChange={(event) => setActField("attendancePoints", event.target.value)} value={act.attendancePoints} /></label>
@@ -1647,30 +1657,22 @@ function AdminRewardSimulatorPanel({ data, onSave }: { data: FinalUQuestConfig; 
         <label>AX / 건<input inputMode="numeric" onChange={(event) => setActField("axPoints", event.target.value)} value={act.axPoints} /></label>
       </div>
 
-      <table className="reward-sim-table">
-        <thead><tr><th>종목</th><th>단위</th><th>개수</th><th>합계</th><th>비중</th></tr></thead>
-        <tbody>
-          {rows.map((row) => {
-            const pct = grandTotal ? Math.round((row.total / grandTotal) * 100) : 0;
-            return (
-              <tr key={row.key}>
-                <td>{row.label}</td>
-                <td>{row.unit === null ? "—" : `${formatNumber(row.unit)}P`}</td>
-                <td>{row.count}</td>
-                <td>{formatNumber(row.total)}P</td>
-                <td><div className="reward-bar"><i style={{ width: `${pct}%` }} /></div><span>{pct}%</span></td>
-              </tr>
-            );
-          })}
-        </tbody>
-        <tfoot>
-          <tr><td><b>만점자 총액</b></td><td /><td /><td><b>{formatNumber(grandTotal)}P</b></td><td><b>100%</b></td></tr>
-        </tfoot>
-      </table>
-
       <div className="reward-badges">
-        {badgeGroup("성장배지 (누구나)", growBadges)}
-        {badgeGroup("🟣 희귀배지 (실력·수집)", rareBadges)}
+        {badgeCategories.map((category) => {
+          const list = data.badges.filter((badge) => badge.category === category).sort((a, b) => a.sortOrder - b.sortOrder);
+          if (list.length === 0) return null;
+          return (
+            <div className="reward-badge-group" key={category}>
+              <h4>{category === "rare" ? "🟣 " : ""}{badgeCategoryLabel(category)}</h4>
+              {list.map((badge) => (
+                <label className="reward-badge-row" key={badge.id}>
+                  <span>{badge.name}</span>
+                  <input inputMode="numeric" onChange={(event) => setBadge(badge.id, event.target.value)} value={badgePoints[badge.id] ?? 0} />
+                </label>
+              ))}
+            </div>
+          );
+        })}
       </div>
 
       <button className="reward-apply" onClick={apply} type="button">적용 — 실제 보상에 반영</button>

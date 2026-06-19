@@ -3177,14 +3177,18 @@
 .reward-sim-inputs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
 .reward-sim-inputs label{display:flex;flex-direction:column;gap:5px;font-size:11.5px;font-weight:800;color:var(--uplus-deep)}
 .reward-sim-inputs input{border:1.5px solid #e7d9ec;border-radius:10px;padding:9px 11px;font-family:inherit;font-size:14px;font-weight:800;text-align:right}
-.reward-sim-table{width:100%;border-collapse:collapse;margin-top:16px;font-size:12px}
-.reward-sim-table th{text-align:left;color:var(--uplus-sub);font-weight:900;padding:6px 6px;border-bottom:1.5px solid #efe7f7}
-.reward-sim-table td{padding:8px 6px;border-bottom:1px solid #f3eef8;font-weight:800;vertical-align:middle}
-.reward-sim-table tfoot td{border-bottom:0;border-top:2px solid #efe7f7;font-size:13px}
-.reward-bar{display:inline-block;width:70px;height:7px;border-radius:6px;background:#f0e6f5;overflow:hidden;vertical-align:middle;margin-right:6px}
+.reward-sticky{position:sticky;top:0;z-index:6;background:#fff;border:1.5px solid #efe7f7;border-radius:14px;padding:11px 12px;margin:12px 0 4px;box-shadow:0 8px 16px rgba(15,23,42,.1)}
+.reward-sticky-total{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:9px}
+.reward-sticky-total span{font-size:12px;font-weight:900;color:var(--uplus-sub)}
+.reward-sticky-total b{font-size:21px;font-weight:1000;color:var(--uplus-deep);letter-spacing:-.5px}
+.reward-sticky-rows{display:grid;gap:5px}
+.reward-sticky-row{display:grid;grid-template-columns:80px 1fr auto;align-items:center;gap:8px;font-size:10.5px;font-weight:800}
+.reward-sticky-row .lab{color:var(--uplus-deep);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.reward-sticky-row .num{color:var(--uplus-sub);white-space:nowrap}
+.reward-bar{height:7px;border-radius:6px;background:#f0e6f5;overflow:hidden}
 .reward-bar i{display:block;height:100%;background:linear-gradient(90deg,#ff8fc4,#cf3a86)}
-.reward-badges{margin-top:18px;display:grid;gap:14px}
-.reward-badge-group h4{font-size:12.5px;font-weight:1000;color:var(--uplus-deep);margin-bottom:8px}
+.reward-badges{margin-top:18px;display:grid;gap:16px}
+.reward-badge-group h4{font-size:12.5px;font-weight:1000;color:var(--uplus-deep);margin-bottom:8px;padding-bottom:6px;border-bottom:2px solid #f0e6f5}
 .reward-badge-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid #f3eef8;font-size:12.5px;font-weight:800}
 .reward-badge-row input{width:96px;border:1.5px solid #e7d9ec;border-radius:9px;padding:7px 10px;font-family:inherit;font-size:13px;font-weight:800;text-align:right}
 .reward-apply{margin-top:18px;width:100%;border:0;font-family:inherit;font-size:15px;font-weight:1000;padding:15px;border-radius:14px;cursor:pointer;background:var(--uplus);color:#fff;box-shadow:0 10px 20px rgba(230,0,126,.25)}
