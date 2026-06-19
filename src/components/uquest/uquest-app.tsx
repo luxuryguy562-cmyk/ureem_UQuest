@@ -323,12 +323,16 @@ export function UQuestApp({ config }: { config: FinalUQuestConfig }) {
   }
 
   async function completeLearning(curriculum: FinalCurriculum) {
-    await runApiMutation(
+    const ok = await runApiMutation(
       "/api/rookie/learning-completions",
       { curriculumId: curriculum.id },
-      { title: "학습 완료", body: "학습 보상 300P가 지급됐고 해당 Day 퀴즈가 열렸습니다.", tone: "good" },
+      { title: "학습 완료", body: "학습을 마쳤어요. 이어서 퀴즈를 풀어보세요.", tone: "good" },
       activeUser.id
     );
+    if (ok) {
+      setSelectedCurriculumId(curriculum.id);
+      go("quiz");
+    }
   }
 
   async function submitQuiz(curriculum: FinalCurriculum) {
@@ -475,7 +479,6 @@ export function UQuestApp({ config }: { config: FinalUQuestConfig }) {
               completions={data.learningCompletions}
               curriculums={data.curriculums}
               onComplete={completeLearning}
-              onGo={go}
               onSelect={setSelectedCurriculumId}
               rookie={rookie}
               selectedId={selectedCurriculum.id}
@@ -828,8 +831,7 @@ function LearningView({
   today,
   attendedToday,
   onSelect,
-  onComplete,
-  onGo
+  onComplete
 }: {
   rookie: RookieSummary;
   curriculums: FinalCurriculum[];
@@ -839,7 +841,6 @@ function LearningView({
   attendedToday: boolean;
   onSelect: (id: string) => void;
   onComplete: (curriculum: FinalCurriculum) => void;
-  onGo: (screen: FinalScreenKey) => void;
 }) {
   const todayCur = curriculums.find((item) => item.dayNumber === rookie.curriculumDay) ?? curriculums[0];
   const learnedToday = completions.some((item) => item.userId === rookie.user.id && item.curriculumId === todayCur.id);
@@ -866,18 +867,7 @@ function LearningView({
         <p>{todayCur.description}</p>
         <div className="e5-tsteps">
           <button className="learn" disabled={!canLearn} onClick={() => onComplete(todayCur)} type="button">
-            {learnedToday ? "오늘 학습 완료 ✓" : !attendedToday ? "오늘 출석 먼저 🔒" : completedSomethingToday ? "내일 이어서" : "학습하기"}
-          </button>
-          <button
-            className={`quiz ${learnedToday ? "" : "lock"}`}
-            disabled={!learnedToday}
-            onClick={() => {
-              onSelect(todayCur.id);
-              onGo("quiz");
-            }}
-            type="button"
-          >
-            {learnedToday ? "퀴즈 풀기 →" : "학습 후 퀴즈 🔒"}
+            {learnedToday ? "오늘 학습 완료 ✓" : !attendedToday ? "오늘 출석 먼저 🔒" : completedSomethingToday ? "내일 이어서" : "학습하기 →"}
           </button>
         </div>
       </section>
