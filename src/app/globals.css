@@ -3189,6 +3189,39 @@
 .ax-example-empty{width:54px;height:54px;border-radius:10px;border:1.5px dashed #d9c9ea;display:flex;align-items:center;justify-content:center;text-align:center;font-size:9px;font-weight:800;color:var(--uplus-sub);padding:4px}
 .ax-example-upload{font-size:11px;font-weight:1000;color:#fff;background:var(--uplus);padding:8px 12px;border-radius:10px;cursor:pointer}
 .ax-example-upload input{display:none}
+/* AX 이력 (날짜별 묶음) */
+.e5-axsum{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:2px}
+.e5-axsum .b{border-radius:14px;padding:11px 8px;text-align:center;color:#fff;background:linear-gradient(160deg,#a78bfa,#7c3aed);box-shadow:0 8px 16px rgba(124,58,237,.22)}
+.e5-axsum .b:nth-child(2){background:linear-gradient(160deg,#ff9fcb,#cf3a86);box-shadow:0 8px 16px rgba(214,43,134,.2)}
+.e5-axsum .b .n{font-size:20px;font-weight:1000}
+.e5-axsum .b .l{font-size:10px;font-weight:800;opacity:.92;margin-top:2px}
+.e5-axempty{margin-top:12px;text-align:center;color:#94739a;font-size:12px;font-weight:700;padding:18px;background:#fff;border:1px solid #f0e8ef;border-radius:14px}
+.e5-axday{margin-top:9px;background:#fff;border:1px solid #f0e8ef;border-radius:15px;padding:11px 12px}
+.e5-axday .dh{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
+.e5-axday .dt{font-size:13px;font-weight:1000;color:#3a1226}
+.e5-axday .dp{font-size:12px;font-weight:1000;color:#cf3a86}
+.e5-axday .ditems{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.e5-axday .dit{border-radius:11px;padding:8px 5px;text-align:center;border:1.5px solid}
+.e5-axday .dit b{display:block;font-size:11px;font-weight:1000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.e5-axday .dit span{display:block;font-size:10px;margin-top:3px;font-weight:800}
+.e5-axday .dit.done{background:#f3eeff;border-color:#7c3aed;color:#5b21b6}
+.e5-axday .dit.miss{background:#f8fafc;border-color:#e2e8f0;color:#c0c7d1}
+/* 출석 이력 달력 */
+.e5-att .e5-axsum .b,.e5-att .e5-axsum .b:nth-child(2){background:linear-gradient(160deg,#ff9fcb,#cf3a86);box-shadow:0 8px 16px rgba(214,43,134,.2)}
+.e5-cal{margin-top:16px;background:#fff;border:1px solid #f0e8ef;border-radius:18px;padding:14px}
+.e5-cal .cal-h{display:flex;justify-content:center;margin-bottom:12px}
+.e5-cal .cal-h b{font-size:15px;font-weight:1000}
+.e5-cal .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;text-align:center}
+.e5-cal .dow{font-size:10px;font-weight:900;color:#94739a;padding-bottom:2px}
+.e5-cal .cell{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;border-radius:10px;color:#475569}
+.e5-cal .cell.empty{visibility:hidden}
+.e5-cal .cell.on{background:var(--uplus);color:#fff;box-shadow:0 4px 10px rgba(230,0,126,.3)}
+.e5-cal .cell.today{outline:2px solid var(--uplus);outline-offset:-2px;color:var(--uplus);font-weight:1000}
+.e5-cal .cal-legend{display:flex;gap:14px;margin-top:14px;font-size:11px;font-weight:800;color:#475569;justify-content:center}
+.e5-cal .cal-legend i{display:inline-block;width:13px;height:13px;border-radius:5px;vertical-align:-2px;margin-right:4px}
+.e5-cal .cal-legend i.on{background:var(--uplus)}
+.e5-cal .cal-legend i.td{outline:2px solid var(--uplus);outline-offset:-2px;background:#fff}
+.e5-cal .cal-legend i.off{background:#eef1f6}
 
 /* 보상 경제 시뮬레이터 (관리자) — e5 변수 미적용 영역이라 색상 고정 */
 .reward-sim h3{font-size:16px;font-weight:1000;letter-spacing:-.3px}

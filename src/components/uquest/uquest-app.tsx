@@ -505,6 +505,7 @@ export function UQuestApp({ config }: { config: FinalUQuestConfig }) {
           {visibleScreen === "profile" ? <ProfileView data={data} onGo={go} rookie={rookie} /> : null}
           {visibleScreen === "shop" ? <ShopView coupons={data.coupons} onCancel={cancelCouponRequest} onRedeem={redeemCoupon} requests={data.couponRequests} rookie={rookie} today={data.today} /> : null}
           {visibleScreen === "points" ? <PointHistoryView data={data} rookie={rookie} /> : null}
+          {visibleScreen === "attendance" ? <AttendanceView data={data} rookie={rookie} /> : null}
         </main>
       ) : null}
 
@@ -1048,6 +1049,19 @@ function AxView({
     );
   }
 
+  // 내 AX 이력: 날짜별로 묶어 3개 항목 완료 여부 표시.
+  const mine = submissions.filter((item) => item.userId === rookie.user.id);
+  const doneByDate = new Map<string, Set<string>>();
+  const ptsByDate = new Map<string, number>();
+  for (const item of mine) {
+    const day = item.createdAt.slice(0, 10);
+    if (!doneByDate.has(day)) doneByDate.set(day, new Set());
+    doneByDate.get(day)!.add(item.categoryId);
+    ptsByDate.set(day, (ptsByDate.get(day) ?? 0) + item.rewardPoints);
+  }
+  const histDates = [...doneByDate.keys()].sort().reverse();
+  const totalAxPoints = mine.reduce((sum, item) => sum + item.rewardPoints, 0);
+
   // 목록 화면: 항목별 "활동하기" 버튼 하나.
   return (
     <div className="e5-screen e5-ax">
@@ -1092,6 +1106,39 @@ function AxView({
           );
         })}
       </div>
+
+      <div className="e5-sec e5-sec-row">
+        <h3>내 AX 이력</h3>
+      </div>
+      <div className="e5-axsum">
+        <div className="b"><div className="n">{mine.length}</div><div className="l">총 인증</div></div>
+        <div className="b"><div className="n">{formatNumber(totalAxPoints)}</div><div className="l">적립 P</div></div>
+        <div className="b"><div className="n">{histDates.length}</div><div className="l">활동일</div></div>
+      </div>
+
+      {histDates.length === 0 ? (
+        <div className="e5-axempty">아직 AX 인증 기록이 없어요. 위에서 활동을 인증해보세요.</div>
+      ) : (
+        histDates.map((day) => {
+          const done = doneByDate.get(day) ?? new Set<string>();
+          return (
+            <div className="e5-axday" key={day}>
+              <div className="dh">
+                <span className="dt">{day.slice(5).replace("-", ".")}{day === today ? " · 오늘" : ""}</span>
+                <span className="dp">+{formatNumber(ptsByDate.get(day) ?? 0)}P · {done.size}/{categories.length}</span>
+              </div>
+              <div className="ditems">
+                {categories.map((category) => (
+                  <div className={`dit ${done.has(category.id) ? "done" : "miss"}`} key={category.id}>
+                    <b>{category.title}</b>
+                    <span>{done.has(category.id) ? "✓ 완료" : "미완료"}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })
+      )}
     </div>
   );
 }
@@ -1126,6 +1173,69 @@ function BadgeView({ rookie, badges }: { rookie: RookieSummary; badges: FinalBad
         </div>
       ))}
     </section>
+  );
+}
+
+function AttendanceView({ data, rookie }: { data: FinalUQuestConfig; rookie: RookieSummary }) {
+  const mine = data.attendances.filter((item) => item.userId === rookie.user.id).map((item) => item.attendanceDate);
+  const attended = new Set(mine);
+  const today = data.today;
+  const [year, month] = today.split("-").map(Number);
+  const firstDow = toDateOnly(`${year}-${String(month).padStart(2, "0")}-01`).getDay();
+  const daysInMonth = new Date(year, month, 0).getDate();
+
+  const sorted = [...mine].sort();
+  let longest = 0;
+  let run = 0;
+  let prev: string | null = null;
+  for (const day of sorted) {
+    run = prev && diffDays(prev, day) === 1 ? run + 1 : 1;
+    longest = Math.max(longest, run);
+    prev = day;
+  }
+
+  const cells: ({ d: number; ds: string } | null)[] = [];
+  for (let i = 0; i < firstDow; i += 1) cells.push(null);
+  for (let d = 1; d <= daysInMonth; d += 1) {
+    cells.push({ d, ds: `${year}-${String(month).padStart(2, "0")}-${String(d).padStart(2, "0")}` });
+  }
+
+  return (
+    <div className="e5-screen e5-att">
+      <div className="e5-st">
+        <h1>출석 이력</h1>
+        <p className="e5-st-p">온보딩 시작 후 30일 · 쉬는 날은 건너뛰어도 진도 유지</p>
+      </div>
+
+      <div className="e5-axsum">
+        <div className="b"><div className="n">{mine.length}</div><div className="l">총 출석</div></div>
+        <div className="b"><div className="n">{longest}</div><div className="l">최장 연속</div></div>
+        <div className="b"><div className="n">D+{rookie.currentDay}</div><div className="l">진행</div></div>
+      </div>
+
+      <section className="e5-cal">
+        <div className="cal-h"><b>{year}년 {month}월</b></div>
+        <div className="cal-grid">
+          {["일", "월", "화", "수", "목", "금", "토"].map((w) => (
+            <div className="dow" key={w}>{w}</div>
+          ))}
+          {cells.map((cell, index) =>
+            cell === null ? (
+              <div className="cell empty" key={`e${index}`} />
+            ) : (
+              <div className={`cell ${attended.has(cell.ds) ? "on" : ""} ${cell.ds === today ? "today" : ""}`} key={cell.ds}>
+                {cell.d}
+              </div>
+            )
+          )}
+        </div>
+        <div className="cal-legend">
+          <span><i className="on" />출석함</span>
+          <span><i className="td" />오늘</span>
+          <span><i className="off" />미출석/휴무</span>
+        </div>
+      </section>
+    </div>
   );
 }
 
@@ -1193,6 +1303,7 @@ function ProfileView({
 
       <div className="e5-sec">내 활동</div>
       <div className="e5-menu">
+        <button onClick={() => onGo("attendance")} type="button"><span className="mi">📅</span><span className="mt">출석 이력</span><span className="chev">›</span></button>
         <button onClick={() => onGo("points")} type="button"><span className="mi">🧾</span><span className="mt">포인트 이력</span><span className="chev">›</span></button>
         <button onClick={() => onGo("shop")} type="button"><span className="mi">🎟️</span><span className="mt">쿠폰 · 상점</span><span className="chev">›</span></button>
         <button onClick={() => onGo("badges")} type="button"><span className="mi">🏅</span><span className="mt">배지 도감</span><span className="chev">›</span></button>

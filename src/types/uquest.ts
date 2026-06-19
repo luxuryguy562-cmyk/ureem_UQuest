@@ -1,6 +1,6 @@
 export type FinalRole = "rookie" | "manager" | "admin";
 export type FinalUserStatus = "pending" | "active" | "rejected" | "completed" | "inactive";
-export type FinalScreenKey = "home" | "learn" | "quiz" | "ax" | "badges" | "profile" | "shop" | "points" | "manager" | "admin";
+export type FinalScreenKey = "home" | "learn" | "quiz" | "ax" | "badges" | "profile" | "shop" | "points" | "attendance" | "manager" | "admin";
 export type QuizTier = "Unranked" | "Bronze" | "Silver" | "Gold" | "Platinum" | "Diamond";
 export type AxLevel = "Explorer" | "User" | "Expert" | "Master";
 export type BadgeCategory = "attendance" | "quiz" | "tier" | "ax" | "rare";
