@@ -3223,6 +3223,13 @@
 .e5-cal .cal-legend i.on{background:var(--uplus)}
 .e5-cal .cal-legend i.td{outline:2px solid var(--uplus);outline-offset:-2px;background:#fff}
 .e5-cal .cal-legend i.off{background:#eef1f6}
+/* 학습 내용 화면 */
+.e5-study-eb{display:inline-block;background:#fff0f7;color:var(--uplus-deep);font-size:11px;font-weight:1000;padding:5px 11px;border-radius:999px;margin-top:8px}
+.e5-study .e5-st h1{margin-top:8px}
+.e5-studybody{background:#fff;border:1px solid #f3e6ef;border-radius:18px;padding:18px 16px;margin-top:14px;box-shadow:0 8px 18px rgba(120,0,60,.06)}
+.e5-studybody p{font-size:14px;line-height:1.75;color:#2a1622;font-weight:600}
+.e5-studybody p + p{margin-top:12px}
+.e5-studygo{margin-top:18px;width:100%;border:0;font-family:inherit;font-size:16px;font-weight:1000;padding:17px;border-radius:16px;cursor:pointer;background:var(--uplus);color:#fff;box-shadow:0 12px 24px rgba(230,0,126,.28)}
 
 /* 보상 경제 시뮬레이터 (관리자) — e5 변수 미적용 영역이라 색상 고정 */
 .reward-sim h3{font-size:16px;font-weight:1000;letter-spacing:-.3px}

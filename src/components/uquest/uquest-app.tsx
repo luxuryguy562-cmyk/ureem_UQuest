@@ -478,12 +478,18 @@ export function UQuestApp({ config }: { config: FinalUQuestConfig }) {
               attendedToday={data.attendances.some((item) => item.userId === rookie.user.id && item.attendanceDate === data.today)}
               completions={data.learningCompletions}
               curriculums={data.curriculums}
-              onComplete={completeLearning}
+              onStudy={(curriculum) => {
+                setSelectedCurriculumId(curriculum.id);
+                go("study");
+              }}
               onSelect={setSelectedCurriculumId}
               rookie={rookie}
               selectedId={selectedCurriculum.id}
               today={data.today}
             />
+          ) : null}
+          {visibleScreen === "study" ? (
+            <StudyView curriculum={selectedCurriculum} onBack={() => go("learn")} onComplete={completeLearning} />
           ) : null}
           {visibleScreen === "quiz" ? (
             <QuizView
@@ -832,7 +838,7 @@ function LearningView({
   today,
   attendedToday,
   onSelect,
-  onComplete
+  onStudy
 }: {
   rookie: RookieSummary;
   curriculums: FinalCurriculum[];
@@ -841,7 +847,7 @@ function LearningView({
   today: string;
   attendedToday: boolean;
   onSelect: (id: string) => void;
-  onComplete: (curriculum: FinalCurriculum) => void;
+  onStudy: (curriculum: FinalCurriculum) => void;
 }) {
   const todayCur = curriculums.find((item) => item.dayNumber === rookie.curriculumDay) ?? curriculums[0];
   const learnedToday = completions.some((item) => item.userId === rookie.user.id && item.curriculumId === todayCur.id);
@@ -867,7 +873,7 @@ function LearningView({
         <h2>{todayCur.title}</h2>
         <p>{todayCur.description}</p>
         <div className="e5-tsteps">
-          <button className="learn" disabled={!canLearn} onClick={() => onComplete(todayCur)} type="button">
+          <button className="learn" disabled={!canLearn} onClick={() => onStudy(todayCur)} type="button">
             {learnedToday ? "오늘 학습 완료 ✓" : !attendedToday ? "오늘 출석 먼저 🔒" : completedSomethingToday ? "내일 이어서" : "학습하기 →"}
           </button>
         </div>
@@ -986,6 +992,34 @@ function QuizView({
           </button>
         </>
       ) : null}
+    </div>
+  );
+}
+
+function StudyView({
+  curriculum,
+  onBack,
+  onComplete
+}: {
+  curriculum: FinalCurriculum;
+  onBack: () => void;
+  onComplete: (curriculum: FinalCurriculum) => void;
+}) {
+  const paragraphs = (curriculum.description ?? "").split("\n").filter((line) => line.trim().length > 0);
+
+  return (
+    <div className="e5-screen e5-study">
+      <div className="e5-st">
+        <button className="e5-back" onClick={onBack} type="button">← 학습</button>
+        <span className="e5-study-eb">📘 DAY {curriculum.dayNumber} 학습</span>
+        <h1>{curriculum.title}</h1>
+      </div>
+
+      <section className="e5-studybody">
+        {paragraphs.length > 0 ? paragraphs.map((line, index) => <p key={index}>{line}</p>) : <p>학습 내용이 아직 등록되지 않았어요.</p>}
+      </section>
+
+      <button className="e5-studygo" onClick={() => onComplete(curriculum)} type="button">퀴즈로 가기 →</button>
     </div>
   );
 }
@@ -1905,7 +1939,7 @@ function AdminCurriculumPanel({
             </label>
           </div>
           <label>
-            내용
+            학습 내용 (신입의 학습 화면에 표시)
             <textarea onChange={(event) => updateDraft({ description: event.currentTarget.value })} value={draft.description} />
           </label>
           <label className="toggle-row">
