@@ -801,6 +801,8 @@ function isBadgeEarned(badgeId: string, summary: RookieSummary, user: FinalUser,
 }
 
 function addPoint(data: FinalUQuestConfig, userId: string, amount: number, type: FinalPointHistory["type"], reason: string): FinalUQuestConfig {
+  // 0포인트 보상(예: 학습 0P)은 이력을 남기지 않는다. (DB의 amount_nonzero 제약 + 불필요한 0건 방지)
+  if (amount === 0) return data;
   const balanceAfter = data.pointHistories.filter((history) => history.userId === userId).reduce((sum, history) => sum + history.amount, 0) + amount;
   if (balanceAfter < 0) throw new UQuestDomainError("INSUFFICIENT_POINTS", "포인트가 부족합니다.");
 
