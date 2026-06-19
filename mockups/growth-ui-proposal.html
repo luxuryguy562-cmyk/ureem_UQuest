@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>U-Quest 성장 UI 가안</title>
+<style>
+  :root{ --uplus:#e6007e; --deep:#a0125f; --sub:#9a7d92; }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; background:#eef1f6; color:#241019; padding:24px 12px 60px; }
+  .wrap{ max-width:380px; margin:0 auto; }
+  h2.sec{ font-size:14px; font-weight:1000; color:#475569; margin:26px 4px 10px; }
+  .note{ font-size:12px; color:#64748b; margin:0 4px 14px; line-height:1.6; }
+
+  /* ===== Hero ===== */
+  .hero{ position:relative; border-radius:26px; padding:16px 16px 14px;
+    background:linear-gradient(165deg,#ff9ecb 0%,#e85ba6 55%,#d6488f 100%);
+    box-shadow:0 18px 40px rgba(214,43,134,.32); overflow:hidden; }
+  .hero::after{ content:""; position:absolute; width:200px; height:200px; right:-60px; top:-80px;
+    border-radius:50%; background:radial-gradient(circle,rgba(255,255,255,.22),transparent 65%); }
+  .ptag{ display:inline-block; background:rgba(255,255,255,.28); color:#fff; font-size:11px; font-weight:1000;
+    padding:5px 11px; border-radius:999px; backdrop-filter:blur(4px); }
+  .tier-top{ position:absolute; right:14px; top:14px; width:46px; height:46px; object-fit:contain;
+    filter:drop-shadow(0 6px 10px rgba(80,0,40,.35)); z-index:3; }
+
+  /* scene with floating robot */
+  .scene{ position:relative; height:208px; margin-top:6px; }
+  .floor{ position:absolute; left:50%; bottom:14px; width:190px; height:26px; transform:translateX(-50%);
+    background:radial-gradient(ellipse at center,rgba(90,0,48,.28),transparent 70%); border-radius:50%; }
+  .char{ position:absolute; left:50%; bottom:14px; height:196px; transform:translateX(-52%); z-index:2;
+    filter:drop-shadow(0 12px 14px rgba(80,0,40,.25)); }
+  .robot{ position:absolute; right:34px; top:6px; width:84px; z-index:3; animation:float 3.2s ease-in-out infinite;
+    filter:drop-shadow(0 10px 10px rgba(60,0,40,.28)); }
+  .robot-shadow{ position:absolute; right:52px; top:96px; width:48px; height:10px; z-index:2;
+    background:radial-gradient(ellipse,rgba(70,0,40,.30),transparent 70%); border-radius:50%;
+    animation:floorpulse 3.2s ease-in-out infinite; }
+  @keyframes float{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-12px); } }
+  @keyframes floorpulse{ 0%,100%{ transform:scale(1); opacity:.32; } 50%{ transform:scale(.82); opacity:.18; } }
+
+  /* ===== 3 growth gauges ===== */
+  .gauges{ background:rgba(255,255,255,.96); border-radius:18px; padding:10px; margin-top:4px;
+    box-shadow:0 8px 18px rgba(120,0,60,.16); display:grid; gap:4px; }
+  .gauge{ display:grid; grid-template-columns:38px 1fr; gap:10px; align-items:center; padding:7px 6px; }
+  .gauge + .gauge{ border-top:1px solid #f3e6ef; }
+  .gauge-ic{ width:38px; height:38px; border-radius:11px; object-fit:contain; background:#fff5fa; padding:3px;
+    border:1px solid #f6d9e8; }
+  .gauge-top{ display:flex; align-items:baseline; gap:6px; }
+  .gauge-top b{ font-size:13px; font-weight:1000; color:#3a1226; }
+  .gauge-top .role{ font-size:10px; font-weight:800; color:var(--sub); }
+  .gauge-top .lv{ margin-left:auto; font-size:12px; font-weight:1000; color:var(--uplus); }
+  .bar{ height:8px; border-radius:6px; background:#f0e1ea; overflow:hidden; margin-top:6px; }
+  .bar i{ display:block; height:100%; border-radius:6px; background:linear-gradient(90deg,#ff8fc4,#cf3a86); }
+
+  /* ===== MY card ===== */
+  .mycard{ background:#fff; border:1px solid #efe3ec; border-radius:22px; padding:16px;
+    box-shadow:0 12px 28px rgba(120,0,60,.10); }
+  .my-head{ display:flex; align-items:center; gap:12px; }
+  .my-head .nm{ font-size:17px; font-weight:1000; }
+  .my-head .role{ font-size:12px; color:var(--sub); font-weight:800; }
+  .my-stage{ position:relative; height:188px; margin-top:8px; border-radius:18px;
+    background:linear-gradient(180deg,#fff4f9,#ffe6f1); overflow:hidden; }
+  .my-stage .floor{ bottom:12px; }
+  .my-stage .char{ bottom:12px; height:176px; }
+  .my-stage .robot{ right:30px; top:8px; width:78px; }
+  .my-stage .robot-shadow{ right:46px; top:92px; }
+  .badge-note{ font-size:11px; color:#64748b; margin-top:10px; font-weight:700; }
+
+  .label-row{ display:flex; align-items:center; gap:6px; font-size:11px; font-weight:900; color:#fff;
+    margin-top:10px; opacity:.95; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h2 class="sec">🏠 홈 화면 가안</h2>
+  <p class="note">로봇이 캐릭터 <b>우측 상단에 둥둥 떠다니고</b>(그림자로 부유감), 아래엔 <b>캐릭터·로봇·티어</b> 각각 레벨+게이지.</p>
+
+  <div class="hero">
+    <span class="ptag">✨ 나의 성장 파트너</span>
+    <img class="tier-top" src="https://ureem-u-quest-w65z.vercel.app/assets/uquest/generated/tiers/tier_unranked.png" alt="티어" />
+    <div class="scene">
+      <div class="floor"></div>
+      <div class="robot-shadow"></div>
+      <img class="char" src="https://ureem-u-quest-w65z.vercel.app/assets/uquest/generated/characters/male_lv1.png" alt="캐릭터" />
+      <img class="robot" src="https://ureem-u-quest-w65z.vercel.app/assets/uquest/generated/ax-robots/ax_robot_explorer.png" alt="AX 로봇" />
+    </div>
+
+    <div class="gauges">
+      <div class="gauge">
+        <img class="gauge-ic" src="https://ureem-u-quest-w65z.vercel.app/assets/uquest/generated/characters/male_lv1.png" />
+        <div>
+          <div class="gauge-top"><b>캐릭터</b><span class="role">성실</span><span class="lv">Lv.1</span></div>
+          <div class="bar"><i style="width:8%"></i></div>
+        </div>
+      </div>
+      <div class="gauge">
+        <img class="gauge-ic" src="https://ureem-u-quest-w65z.vercel.app/assets/uquest/generated/ax-robots/ax_robot_explorer.png" />
+        <div>
+          <div class="gauge-top"><b>AX 로봇</b><span class="role">실행</span><span class="lv">Explorer</span></div>
+          <div class="bar"><i style="width:25%"></i></div>
+        </div>
+      </div>
+      <div class="gauge">
+        <img class="gauge-ic" src="https://ureem-u-quest-w65z.vercel.app/assets/uquest/generated/tiers/tier_unranked.png" />
+        <div>
+          <div class="gauge-top"><b>퀴즈 티어</b><span class="role">지식</span><span class="lv">Unranked</span></div>
+          <div class="bar"><i style="width:0%"></i></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="sec">👤 내정보(MY) 가안</h2>
+  <p class="note">기존엔 캐릭터만 → <b>로봇도 함께</b>(우상단 부유), 아래 같은 3게이지.</p>
+
+  <div class="mycard">
+    <div class="my-head">
+      <img src="https://ureem-u-quest-w65z.vercel.app/assets/uquest/generated/characters/male_lv1.png" style="width:46px;height:46px;border-radius:13px;object-fit:contain;background:#fff5fa;border:1px solid #f6d9e8;padding:3px;" />
+      <div>
+        <div class="nm">데모신입</div>
+        <div class="role">신입사원 · 입사일 2026.06.18</div>
+      </div>
+    </div>
+
+    <div class="my-stage scene">
+      <div class="floor"></div>
+      <div class="robot-shadow"></div>
+      <img class="char" src="https://ureem-u-quest-w65z.vercel.app/assets/uquest/generated/characters/male_lv1.png" alt="캐릭터" />
+      <img class="robot" src="https://ureem-u-quest-w65z.vercel.app/assets/uquest/generated/ax-robots/ax_robot_explorer.png" alt="AX 로봇" />
+    </div>
+
+    <div class="gauges" style="margin-top:12px;box-shadow:none;border:1px solid #f3e6ef;">
+      <div class="gauge">
+        <img class="gauge-ic" src="https://ureem-u-quest-w65z.vercel.app/assets/uquest/generated/characters/male_lv1.png" />
+        <div>
+          <div class="gauge-top"><b>캐릭터</b><span class="role">성실</span><span class="lv">Lv.1</span></div>
+          <div class="bar"><i style="width:8%"></i></div>
+        </div>
+      </div>
+      <div class="gauge">
+        <img class="gauge-ic" src="https://ureem-u-quest-w65z.vercel.app/assets/uquest/generated/ax-robots/ax_robot_explorer.png" />
+        <div>
+          <div class="gauge-top"><b>AX 로봇</b><span class="role">실행</span><span class="lv">Explorer</span></div>
+          <div class="bar"><i style="width:25%"></i></div>
+        </div>
+      </div>
+      <div class="gauge">
+        <img class="gauge-ic" src="https://ureem-u-quest-w65z.vercel.app/assets/uquest/generated/tiers/tier_unranked.png" />
+        <div>
+          <div class="gauge-top"><b>퀴즈 티어</b><span class="role">지식</span><span class="lv">Unranked</span></div>
+          <div class="bar"><i style="width:0%"></i></div>
+        </div>
+      </div>
+    </div>
+    <div class="badge-note">🎖 수료 시 최종 레벨·티어·로봇이 훈장으로 고정됩니다.</div>
+  </div>
+
+</div>
+</body>
+</html>
