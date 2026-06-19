@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { findLoginUser } from "@/lib/uquest-auth";
+import { signSession } from "@/lib/uquest-session";
 import { publicUser, readJson } from "@/lib/uquest-api";
 import { getMutableUQuestConfig } from "@/lib/uquest-repository";
 
@@ -19,7 +20,7 @@ export async function POST(request: Request) {
   }
 
   const response = NextResponse.json({ user: publicUser(user), status: user.status });
-  response.cookies.set("uquest_user_id", user.id, {
+  response.cookies.set("uquest_user_id", signSession(user.id), {
     httpOnly: true,
     sameSite: "lax",
     path: "/"

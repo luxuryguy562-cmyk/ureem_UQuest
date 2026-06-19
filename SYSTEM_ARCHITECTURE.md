@@ -63,6 +63,7 @@ U-Quest는 관리자 설정값을 기반으로 사용자 화면을 구성한다.
 ## 현재 구현된 서버 경계
 
 - 로그인/회원가입/로그아웃은 Next API에서 처리한다.
+- 세션 쿠키 `uquest_user_id` 는 유저 UUID 를 그대로 담지 않고 서버가 HMAC 서명한 `userId.signature` 토큰으로 발급한다. 서버는 서명이 유효한 쿠키만 신원으로 신뢰한다(`src/lib/uquest-session.ts`). 서명 비밀키는 이미 가진 `SUPABASE_SERVICE_ROLE_KEY` 를 재사용하므로 운영자가 새 비밀키를 등록할 필요가 없고, 프로덕션에서 키가 없으면 fail-closed 로 세션 발급을 거부한다. → 타인의 UUID 를 알아도 쿠키를 위조해 점장·관리자로 위장할 수 없다.
 - 신입의 출석, 학습, 퀴즈, AX 인증, 쿠폰 교환 요청은 서버 도메인 규칙을 통과해야 저장된다.
 - 점장은 담당 매장 신입만 조회한다.
 - 본사 관리자는 회원 승인/반려와 쿠폰 발송 처리를 수행한다.
@@ -232,3 +233,7 @@ U-Quest는 관리자 설정값을 기반으로 사용자 화면을 구성한다.
 
 - U-Quest 환경 격리 헌법을 추가했다. 이 환경은 `luxuryguy562-cmyk/ureem_UQuest` 레포와 `uquest`(`ofeqiqauhvcovtzjangm`) 프로젝트만 사용하며, `Cashflow`/`pongdang`/`ureem` 등 다른 환경의 레포·프로젝트로 넘어가지 않는다. Supabase 연결은 코드(`assertUQuestProject`)에서 fail-closed로 차단한다.
 - 저장 모델을 단일 JSON 스냅샷에서 정규화 테이블로 전환했다. `uquest-repository.ts` 가 조립 읽기 + 변경분 기록(diff) 방식으로 동작하고, 식별자를 uuid로 통일했다(배지는 code 유지). `supabase/seed.sql` 로 운영 기초 데이터를 시드한다.
+
+### 2026-06-19
+
+- 세션 쿠키에 HMAC 서명을 도입했다. 기존에는 쿠키에 유저 UUID 가 서명 없이 들어가 타인의 UUID 만 알면 점장·관리자로 위장할 수 있었다. 이제 로그인/회원가입은 `SUPABASE_SERVICE_ROLE_KEY` 로 서명한 토큰을 발급하고, `getRequesterId`·`/api/me` 는 서명이 유효한 쿠키만 신뢰한다(`src/lib/uquest-session.ts`). 운영자 추가 작업은 없으며, 서명 없는 옛 쿠키는 무효가 되어 사용자는 한 번 재로그인한다. 실제 DB 상대로 서명 쿠키 통과·raw UUID 차단·로그인 발급을 검증했다.

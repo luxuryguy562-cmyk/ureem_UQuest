@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { UQuestDomainError, getUser, isUQuestDomainError, type RookieSummary } from "@/lib/uquest-domain";
 import { getMutableUQuestConfig, saveMutableUQuestConfig } from "@/lib/uquest-repository";
+import { verifySession } from "@/lib/uquest-session";
 import type { FinalUQuestConfig, FinalUser } from "@/types/uquest";
 
 export type UQuestRequesterKind = "rookie" | "manager" | "admin";
@@ -68,7 +69,8 @@ export function publicSummary(summary: RookieSummary): RookieSummary {
 
 function getRequesterId(request: Request, config: FinalUQuestConfig, kind: UQuestRequesterKind) {
   const url = new URL(request.url);
-  const cookieUserId = readCookie(request, "uquest_user_id");
+  // 서명된 쿠키만 신뢰한다. 서명이 없거나 틀리면(옛 쿠키·위조) 로그인 안 한 것으로 본다.
+  const cookieUserId = verifySession(readCookie(request, "uquest_user_id"));
   if (cookieUserId) return cookieUserId;
 
   if (process.env.NODE_ENV === "production") {
