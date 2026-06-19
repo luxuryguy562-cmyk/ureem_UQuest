@@ -3151,8 +3151,8 @@
 .e5-qsubmit:disabled{background:#e7dde2;color:#a98da0;box-shadow:none;cursor:default}
 
 /* AX */
-.e5-axhero{position:relative;border-radius:24px;overflow:hidden;padding:16px;color:#fff;background:radial-gradient(60% 70% at 80% 30%,rgba(255,255,255,.32),transparent 60%),linear-gradient(160deg,#a06bff,#7c3aed 60%,#5b21b6);box-shadow:0 16px 32px rgba(91,33,182,.3);display:flex;align-items:center;gap:14px}
-.e5-axhero img{height:100px;width:auto;flex:none;filter:drop-shadow(0 10px 12px rgba(40,10,80,.4));animation:e5bob 3s ease-in-out infinite}
+.e5-axhero{position:relative;border-radius:20px;overflow:hidden;padding:13px 15px;color:#fff;background:radial-gradient(60% 70% at 80% 30%,rgba(255,255,255,.32),transparent 60%),linear-gradient(160deg,#a06bff,#7c3aed 60%,#5b21b6);box-shadow:0 14px 28px rgba(91,33,182,.28);display:flex;align-items:center;gap:12px}
+.e5-axhero img{height:82px;width:auto;flex:none;filter:drop-shadow(0 10px 12px rgba(40,10,80,.4));animation:e5bob 3s ease-in-out infinite}
 .e5-axhero .info{flex:1}
 .e5-axhero .lv{display:inline-block;background:rgba(255,255,255,.22);font-weight:1000;font-size:12px;padding:5px 11px;border-radius:14px}
 .e5-axhero h2{font-size:19px;margin:8px 0 3px}
@@ -3160,21 +3160,20 @@
 .e5-axhero .axbar{height:9px;border-radius:9px;background:rgba(255,255,255,.28);overflow:hidden;margin-top:11px}
 .e5-axhero .axbar>i{display:block;height:100%;border-radius:9px;background:#fff}
 .e5-axhero .axbar-l{display:flex;justify-content:space-between;font-size:11px;font-weight:800;opacity:.92;margin-top:6px}
-.e5-axgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.e5-axcard{background:#fff;border:1px solid #efe7f7;border-radius:18px;padding:13px;box-shadow:0 10px 24px rgba(190,20,110,.08)}
-.e5-axcard .ty{display:inline-block;font-size:10px;font-weight:1000;color:var(--ax);background:#f1ebff;padding:3px 9px;border-radius:10px}
-.e5-axcard .nm{font-size:14px;font-weight:800;letter-spacing:-.2px;margin-top:8px}
-.e5-axcard .rew{font-size:11.5px;font-weight:1000;color:var(--uplus-gold);margin-top:4px}
-.e5-axcard .cnt{font-size:11px;color:var(--uplus-sub);font-weight:800;margin-top:6px}
-.e5-axcard .up{display:flex;gap:6px;margin-top:10px}
-.e5-axcard .up label{flex:1;text-align:center;font-size:11.5px;font-weight:1000;padding:9px 6px;border-radius:11px;cursor:pointer;background:var(--uplus);color:#fff;box-shadow:0 6px 12px rgba(230,0,126,.22)}
-.e5-axcard .up label:last-child{background:#f3ebf0;color:var(--uplus-deep);box-shadow:none}
-.e5-axcard .up label.disabled{opacity:.5;cursor:default}
-.e5-axcard .up input{display:none}
+.e5-axgrid{display:grid;grid-template-columns:1fr;gap:8px}
+.e5-axcard{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#fff;border:1px solid #efe7f7;border-radius:14px;padding:11px 14px;box-shadow:0 6px 16px rgba(190,20,110,.07)}
+.e5-axcard .axc-info{min-width:0}
+.e5-axcard .nm{font-size:14px;font-weight:1000;letter-spacing:-.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.e5-axcard .axc-sub{font-size:11.5px;font-weight:800;color:var(--uplus-sub);margin-top:3px}
+.e5-axgo{flex:none;border:0;font-family:inherit;font-size:12.5px;font-weight:1000;padding:10px 16px;border-radius:11px;cursor:pointer;background:var(--uplus);color:#fff;box-shadow:0 6px 12px rgba(230,0,126,.22)}
+.e5-axgo:disabled,.e5-axgo.done{opacity:.55;cursor:default;box-shadow:none;background:#f3ebf0;color:var(--uplus-deep)}
+/* AX 탭 간격 촘촘하게 */
+.e5-ax .e5-st{padding-bottom:6px}
+.e5-ax .e5-st-p{margin-top:4px}
+.e5-ax .e5-axhero{margin-top:8px}
+.e5-ax .e5-sec{margin:14px 2px 8px}
 
-/* AX 활동하기 버튼 + 상세(예시+촬영) */
-.e5-axgo{margin-top:10px;width:100%;border:0;font-family:inherit;font-size:12.5px;font-weight:1000;padding:10px;border-radius:11px;cursor:pointer;background:var(--uplus);color:#fff;box-shadow:0 6px 12px rgba(230,0,126,.22)}
-.e5-axgo:disabled{opacity:.5;cursor:default;box-shadow:none}
+/* AX 상세(예시+촬영) */
 .e5-back{align-self:flex-start;background:none;border:0;font-family:inherit;font-size:13px;font-weight:900;color:var(--uplus-sub);cursor:pointer;padding:0 0 4px}
 .e5-axexample{background:#fff;border:1px solid #efe7f7;border-radius:18px;padding:14px;box-shadow:0 10px 24px rgba(190,20,110,.08)}
 .e5-axexample .cap{font-size:11px;font-weight:1000;color:var(--ax);background:#f1ebff;display:inline-block;padding:3px 10px;border-radius:10px}

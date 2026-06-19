@@ -1160,14 +1160,15 @@ function AxView({
       <div className="e5-axgrid">
         {categories.map((category) => {
           const count = submissions.filter((submission) => submission.userId === rookie.user.id && submission.categoryId === category.id).length;
+          const catDoneToday = submissions.some((submission) => submission.userId === rookie.user.id && submission.categoryId === category.id && submission.createdAt.startsWith(today));
           return (
             <div className="e5-axcard" key={category.id}>
-              <div className="ty">{category.type}</div>
-              <div className="nm">{category.title}</div>
-              <div className="rew">+{formatNumber(category.rewardPoints)}P</div>
-              <div className="cnt">{count}회 인증</div>
-              <button className="e5-axgo" disabled={inactive} onClick={() => setActiveId(category.id)} type="button">
-                {axDoneToday ? "오늘 완료 ✓" : "활동하기"}
+              <div className="axc-info">
+                <div className="nm">{category.title}</div>
+                <div className="axc-sub">+{formatNumber(category.rewardPoints)}P · {count}회 인증</div>
+              </div>
+              <button className={`e5-axgo ${catDoneToday ? "done" : ""}`} disabled={inactive || catDoneToday} onClick={() => setActiveId(category.id)} type="button">
+                {catDoneToday ? "오늘 완료 ✓" : "활동하기"}
               </button>
             </div>
           );
