@@ -165,6 +165,8 @@ async function assembleConfigFromDb(supabase: Supabase, today: string): Promise<
     id: r.id,
     name: r.name,
     code: r.code,
+    district: r.district ?? undefined,
+    team: r.team ?? undefined,
     isActive: r.is_active
   }));
 
@@ -605,6 +607,29 @@ async function persistDeltas(supabase: Supabase, before: FinalUQuestConfig, next
         "ax_categories.update"
       );
     }
+  }
+
+  // 6-3) 매장 추가/수정 (관리자 CSV 임포트)
+  const beforeStores = byId(before.stores);
+  const newStores: FinalStore[] = [];
+  for (const store of next.stores) {
+    const prev = beforeStores.get(store.id);
+    if (!prev) {
+      newStores.push(store);
+    } else if (prev.name !== store.name || prev.district !== store.district || prev.team !== store.team || prev.isActive !== store.isActive) {
+      await throwOnError(
+        supabase.from("stores").update({ name: store.name, district: store.district ?? null, team: store.team ?? null, is_active: store.isActive }).eq("id", store.id),
+        "stores.update"
+      );
+    }
+  }
+  if (newStores.length > 0) {
+    await throwOnError(
+      supabase.from("stores").insert(
+        newStores.map((store) => ({ id: store.id, code: store.code, name: store.name, district: store.district ?? null, team: store.team ?? null, is_active: store.isActive }))
+      ),
+      "stores.insert"
+    );
   }
 
   // 7) 알림 / 감사 로그 (append-only)

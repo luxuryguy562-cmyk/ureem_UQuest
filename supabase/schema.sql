@@ -84,10 +84,14 @@ create table if not exists public.stores (
   id uuid primary key default gen_random_uuid(),
   name text not null,
   code text not null unique,
+  district text,
+  team text,
   is_active boolean not null default true,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+alter table public.stores add column if not exists district text;
+alter table public.stores add column if not exists team text;
 
 create table if not exists public.users (
   id uuid primary key default gen_random_uuid(),

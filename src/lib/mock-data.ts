@@ -141,8 +141,8 @@ export const finalFallbackAppConfig: FinalUQuestConfig = {
     axPoints: 200
   },
   stores: [
-    { id: "store-gangnam", name: "강남점", code: "GN", isActive: true },
-    { id: "store-jamsil", name: "잠실점", code: "JS", isActive: true }
+    { id: "store-gangnam", name: "강남점", code: "GN", district: "서울담당", team: "데모team", isActive: true },
+    { id: "store-jamsil", name: "잠실점", code: "JS", district: "서울담당", team: "데모team", isActive: true }
   ],
   users: [
     {

@@ -10,6 +10,8 @@ export interface FinalStore {
   id: string;
   name: string;
   code: string;
+  district?: string;
+  team?: string;
   isActive: boolean;
 }
 

@@ -13,6 +13,7 @@ import type {
   FinalCurriculum,
   FinalRole,
   FinalScreenKey,
+  FinalStore,
   FinalUQuestConfig,
   FinalUser,
   FinalUserStatus,
@@ -434,6 +435,15 @@ export function UQuestApp({ config }: { config: FinalUQuestConfig }) {
     );
   }
 
+  async function importStores(rows: { district: string; team: string; name: string }[]) {
+    await runApiMutation(
+      "/api/admin/stores",
+      { stores: rows },
+      { title: "매장 적용", body: `매장 ${rows.length}건을 반영했습니다.`, tone: "good" },
+      currentUser.id
+    );
+  }
+
   async function updateAxExample(category: FinalAxCategory, file: File) {
     const body = new FormData();
     body.append("image", file);
@@ -524,6 +534,7 @@ export function UQuestApp({ config }: { config: FinalUQuestConfig }) {
           onUpdateCurriculum={updateCurriculumSettings}
           onUpdateRewardConfig={updateRewardConfig}
           onUpdateAxExample={updateAxExample}
+          onImportStores={importStores}
           onReject={rejectUser}
           onSendCoupon={sendCouponRequest}
         />
@@ -556,12 +567,14 @@ function AuthView({
 }) {
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [message, setMessage] = useState<string | null>(null);
+  const [district, setDistrict] = useState("");
+  const [team, setTeam] = useState("");
   const [form, setForm] = useState({
     name: "",
     phone: "",
     loginId: "",
     password: "",
-    storeId: stores[0]?.id ?? "",
+    storeId: "",
     hireDate: new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Seoul" }).format(new Date()),
     avatarGender: "male" as "male" | "female"
   });
@@ -569,6 +582,11 @@ function AuthView({
   function update(field: keyof typeof form, value: string) {
     setForm((current) => ({ ...current, [field]: value }));
   }
+
+  const hierStores = stores.filter((store) => store.district && store.team && store.isActive);
+  const districts = [...new Set(hierStores.map((store) => store.district as string))];
+  const teamOptions = [...new Set(hierStores.filter((store) => store.district === district).map((store) => store.team as string))];
+  const storeOptions = hierStores.filter((store) => store.district === district && store.team === team);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -630,9 +648,28 @@ function AuthView({
               <input autoComplete="tel" onChange={(event) => update("phone", event.currentTarget.value)} value={form.phone} />
             </label>
             <label>
+              담당
+              <select value={district} onChange={(event) => { setDistrict(event.currentTarget.value); setTeam(""); update("storeId", ""); }}>
+                <option value="">담당 선택</option>
+                {districts.map((item) => (
+                  <option key={item} value={item}>{item}</option>
+                ))}
+              </select>
+            </label>
+            <label>
+              팀장
+              <select value={team} disabled={!district} onChange={(event) => { setTeam(event.currentTarget.value); update("storeId", ""); }}>
+                <option value="">{district ? "팀장 선택" : "담당 먼저 선택"}</option>
+                {teamOptions.map((item) => (
+                  <option key={item} value={item}>{item}</option>
+                ))}
+              </select>
+            </label>
+            <label>
               매장
-              <select onChange={(event) => update("storeId", event.currentTarget.value)} value={form.storeId}>
-                {stores.map((store) => (
+              <select value={form.storeId} disabled={!team} onChange={(event) => update("storeId", event.currentTarget.value)}>
+                <option value="">{team ? "매장 선택" : "팀장 먼저 선택"}</option>
+                {storeOptions.map((store) => (
                   <option key={store.id} value={store.id}>{store.name}</option>
                 ))}
               </select>
@@ -1622,7 +1659,8 @@ function AdminView({
   onCancelCoupon,
   onUpdateCurriculum,
   onUpdateRewardConfig,
-  onUpdateAxExample
+  onUpdateAxExample,
+  onImportStores
 }: {
   data: FinalUQuestConfig;
   onApprove: (userId: string) => void;
@@ -1632,8 +1670,9 @@ function AdminView({
   onUpdateCurriculum: (curriculumId: string, draft: CurriculumDraft) => void;
   onUpdateRewardConfig: (values: RewardConfigDraft) => void;
   onUpdateAxExample: (category: FinalAxCategory, file: File) => void;
+  onImportStores: (rows: { district: string; team: string; name: string }[]) => void;
 }) {
-  const [tab, setTab] = useState<"dashboard" | "members" | "curriculum" | "ax" | "coupons" | "rewards" | "validation">("dashboard");
+  const [tab, setTab] = useState<"dashboard" | "members" | "curriculum" | "ax" | "coupons" | "rewards" | "stores" | "validation">("dashboard");
   const rookies = data.users.filter((user) => user.role === "rookie");
   const pending = rookies.filter((user) => user.status === "pending").length;
   const completed = rookies.filter((user) => user.status === "completed").length;
@@ -1651,6 +1690,7 @@ function AdminView({
           ["ax", "AX"],
           ["coupons", "쿠폰"],
           ["rewards", "보상"],
+          ["stores", "매장"],
           ["validation", "검증"]
         ].map(([id, label]) => (
           <button className={tab === id ? "active" : ""} key={id} onClick={() => setTab(id as typeof tab)} type="button">
@@ -1708,11 +1748,68 @@ function AdminView({
       {tab === "curriculum" ? <AdminCurriculumPanel curriculums={data.curriculums} onSave={onUpdateCurriculum} quizzes={data.quizzes} /> : null}
       {tab === "ax" ? <AdminAxPanel categories={data.axCategories} onUploadExample={onUpdateAxExample} /> : null}
       {tab === "rewards" ? <AdminRewardSimulatorPanel data={data} onSave={onUpdateRewardConfig} /> : null}
+      {tab === "stores" ? <AdminStorePanel data={data} onImport={onImportStores} /> : null}
       {tab === "coupons" ? (
         <AdminCouponPanel coupons={data.coupons} requests={data.couponRequests} users={data.users} onCancel={onCancelCoupon} onSend={onSendCoupon} />
       ) : null}
       {tab === "validation" ? <ValidationPanel data={data} /> : null}
     </main>
+  );
+}
+
+function parseStoreCsv(text: string): { district: string; team: string; name: string }[] {
+  return text
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0)
+    .map((line) => line.split(/[\s,]+/).filter(Boolean))
+    .filter((tokens) => tokens.length >= 3)
+    .map((tokens) => ({ district: tokens[0], team: tokens[1], name: tokens[2] }))
+    .filter((row) => row.district !== "담당" && row.name !== "매장");
+}
+
+function AdminStorePanel({ data, onImport }: { data: FinalUQuestConfig; onImport: (rows: { district: string; team: string; name: string }[]) => void }) {
+  const [csv, setCsv] = useState("");
+  const parsed = parseStoreCsv(csv);
+  const parsedDistricts = new Set(parsed.map((row) => row.district)).size;
+
+  const active = data.stores.filter((store) => store.district && store.team);
+  const groups = new Map<string, Map<string, FinalStore[]>>();
+  for (const store of active) {
+    const district = store.district as string;
+    const team = store.team as string;
+    if (!groups.has(district)) groups.set(district, new Map());
+    const teams = groups.get(district)!;
+    if (!teams.has(team)) teams.set(team, []);
+    teams.get(team)!.push(store);
+  }
+
+  return (
+    <section className="u-card store-admin">
+      <h3>매장 관리</h3>
+      <p className="store-help">엑셀의 <b>담당 · 팀장 · 매장</b> 3열을 복사해 아래에 붙여넣고 적용하세요. 매장명이 식별자라 같은 이름은 갱신됩니다.</p>
+      <textarea
+        className="store-csv"
+        value={csv}
+        onChange={(event) => setCsv(event.target.value)}
+        placeholder={"청주담당  원준기team  복대\n청주담당  원준기team  강터\n충북담당  고준team  오창\n..."}
+      />
+      <div className="store-parsed">{parsed.length > 0 ? `인식됨 — 담당 ${parsedDistricts}개 · 매장 ${parsed.length}개` : "붙여넣으면 인식 결과가 표시됩니다."}</div>
+      <button className="reward-apply" disabled={parsed.length === 0} onClick={() => onImport(parsed)} type="button">적용 ({parsed.length}개 매장)</button>
+
+      <div className="store-sec">현재 등록 ({active.length}개 매장)</div>
+      {[...groups.entries()].map(([district, teams]) => (
+        <div className="store-group" key={district}>
+          <h4>{district}</h4>
+          {[...teams.entries()].map(([team, stores]) => (
+            <div className="store-team" key={team}>
+              <span className="tm">{team}</span>
+              <span className="st">{stores.map((store) => store.name).join(" · ")}</span>
+            </div>
+          ))}
+        </div>
+      ))}
+    </section>
   );
 }
 

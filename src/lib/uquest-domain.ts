@@ -699,6 +699,51 @@ export function updateAxCategoryExample(config: FinalUQuestConfig, adminId: stri
   };
 }
 
+export type StoreImportInput = { stores: { district?: string; team?: string; name: string }[] };
+
+export function importStores(config: FinalUQuestConfig, adminId: string, input: StoreImportInput): FinalUQuestConfig {
+  const data = normalizeConfig(config);
+  const admin = getUser(data, adminId);
+  requireRole(admin, ["admin"]);
+
+  const rows = (input.stores ?? [])
+    .map((row) => ({ district: (row.district ?? "").trim(), team: (row.team ?? "").trim(), name: (row.name ?? "").trim() }))
+    .filter((row) => row.name.length > 0);
+  if (rows.length === 0) throw new UQuestDomainError("INVALID_INPUT", "유효한 매장 행이 없습니다. (담당/팀장/매장 형식)");
+
+  const byCode = new Map(data.stores.map((store) => [store.code, store]));
+  const stores = [...data.stores];
+  for (const row of rows) {
+    const code = row.name;
+    const existing = byCode.get(code);
+    if (existing) {
+      const index = stores.findIndex((store) => store.id === existing.id);
+      stores[index] = { ...existing, name: row.name, district: row.district || undefined, team: row.team || undefined, isActive: true };
+    } else {
+      const store = { id: randomUUID(), name: row.name, code, district: row.district || undefined, team: row.team || undefined, isActive: true };
+      stores.push(store);
+      byCode.set(code, store);
+    }
+  }
+
+  return {
+    ...data,
+    stores,
+    adminAuditLogs: [
+      ...data.adminAuditLogs,
+      {
+        id: createId("audit"),
+        actorId: adminId,
+        action: "import_stores",
+        targetType: "store",
+        targetId: "",
+        reason: `매장 ${rows.length}건 임포트`,
+        createdAt: nowIso(data.today)
+      }
+    ]
+  };
+}
+
 export function isUQuestDomainError(error: unknown): error is UQuestDomainError {
   return error instanceof UQuestDomainError;
 }
