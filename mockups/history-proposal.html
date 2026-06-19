@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>U-Quest 이력 화면 가안</title>
+<style>
+  :root{ --uplus:#e6007e; --deep:#a0125f; --sub:#9a7d92; }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; background:#eef1f6; color:#241019; padding:24px 12px 60px; }
+  .wrap{ max-width:380px; margin:0 auto; }
+  h2.sec{ font-size:14px; font-weight:1000; color:#475569; margin:26px 4px 8px; }
+  .flow{ font-size:12px; color:#475569; background:#fff; border:1px solid #e6ebf2; border-radius:12px; padding:10px 12px; margin:0 4px 14px; line-height:1.7; font-weight:700; }
+  .card{ background:#fff; border:1px solid #efe3ec; border-radius:20px; padding:15px; box-shadow:0 10px 24px rgba(120,0,60,.08); }
+  .st h1{ font-size:22px; font-weight:1000; }
+  .st p{ font-size:12px; color:var(--sub); font-weight:700; margin-top:2px; }
+
+  /* AX 활동 카드(요약) */
+  .axgrid{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:12px; }
+  .axc{ background:#faf6ff; border:1px solid #eee0fb; border-radius:14px; padding:10px 8px; text-align:center; }
+  .axc .nm{ font-size:11.5px; font-weight:1000; margin-top:4px; }
+  .axc .go{ margin-top:7px; font-size:10.5px; font-weight:1000; color:#fff; background:var(--uplus); border-radius:8px; padding:6px; }
+
+  .seclabel{ font-size:13px; font-weight:1000; margin:18px 2px 8px; display:flex; justify-content:space-between; align-items:center; }
+  .seclabel span{ font-size:11px; color:var(--sub); font-weight:800; }
+
+  /* 이력 리스트 */
+  .hist{ display:grid; gap:8px; }
+  .hrow{ display:flex; align-items:center; gap:11px; background:#fff; border:1px solid #f0e8ef; border-radius:13px; padding:9px 11px; }
+  .hthumb{ width:42px; height:42px; border-radius:10px; flex:none; background:linear-gradient(135deg,#e9d5ff,#c4b5fd); display:flex; align-items:center; justify-content:center; font-size:18px; }
+  .hbody{ flex:1; min-width:0; }
+  .hbody .t{ font-size:13px; font-weight:1000; }
+  .hbody .d{ font-size:11px; color:var(--sub); font-weight:700; margin-top:1px; }
+  .hpt{ font-size:12.5px; font-weight:1000; color:var(--uplus); }
+
+  /* 출석 달력 */
+  .att-sum{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:12px; }
+  .att-sum .b{ background:linear-gradient(160deg,#ff9fcb,#cf3a86); color:#fff; border-radius:14px; padding:11px 8px; text-align:center; box-shadow:0 8px 16px rgba(214,43,134,.22); }
+  .att-sum .b .n{ font-size:20px; font-weight:1000; }
+  .att-sum .b .l{ font-size:10px; font-weight:800; opacity:.92; margin-top:2px; }
+  .cal{ margin-top:16px; }
+  .cal-h{ display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+  .cal-h b{ font-size:14px; font-weight:1000; }
+  .cal-grid{ display:grid; grid-template-columns:repeat(7,1fr); gap:5px; text-align:center; }
+  .cal-grid .dow{ font-size:10px; font-weight:900; color:var(--sub); padding-bottom:2px; }
+  .cell{ aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; border-radius:10px; color:#475569; }
+  .cell.empty{ visibility:hidden; }
+  .cell.on{ background:var(--uplus); color:#fff; box-shadow:0 4px 10px rgba(230,0,126,.3); }
+  .cell.today{ outline:2px solid var(--uplus); outline-offset:-2px; color:var(--uplus); font-weight:1000; }
+  .cell.off{ color:#cbd5e1; }
+  .legend{ display:flex; gap:14px; margin-top:14px; font-size:11px; font-weight:800; color:#475569; }
+  .legend i{ display:inline-block; width:13px; height:13px; border-radius:5px; vertical-align:-2px; margin-right:4px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ================= AX 이력 ================= -->
+  <h2 class="sec">🤖 AX 탭 — 활동 + 이력 (학습탭과 동일 패턴)</h2>
+  <p class="flow">플로우: 하단 탭 <b>AX</b> → 위쪽엔 활동 카드(활동하기) · <b>그 아래에 "내 AX 이력"</b> 리스트가 같이 보임. (학습 이력이 학습탭에 있는 것과 똑같이)</p>
+
+  <div class="card">
+    <div class="st"><h1>AX 인증</h1><p>현장에서 AI 도구 쓰고 인증 · 하루 1회</p></div>
+    <div class="axgrid">
+      <div class="axc"><div>🤖</div><div class="nm">AI 헬프데스크</div><div class="go">활동하기</div></div>
+      <div class="axc"><div>💬</div><div class="nm">스마트CS</div><div class="go">활동하기</div></div>
+      <div class="axc"><div>📱</div><div class="nm">요금시뮬</div><div class="go">활동하기</div></div>
+    </div>
+
+    <div class="seclabel">내 AX 인증 이력 <span>총 6건</span></div>
+    <div class="hist">
+      <div class="hrow"><div class="hthumb">🖼️</div><div class="hbody"><div class="t">AI 헬프데스크</div><div class="d">06.19 (오늘) 14:22</div></div><div class="hpt">+200P</div></div>
+      <div class="hrow"><div class="hthumb">🖼️</div><div class="hbody"><div class="t">스마트CS</div><div class="d">06.19 (오늘) 11:05</div></div><div class="hpt">+200P</div></div>
+      <div class="hrow"><div class="hthumb">🖼️</div><div class="hbody"><div class="t">요금시뮬레이터</div><div class="d">06.18 16:40</div></div><div class="hpt">+200P</div></div>
+      <div class="hrow"><div class="hthumb">🖼️</div><div class="hbody"><div class="t">AI 헬프데스크</div><div class="d">06.18 10:12</div></div><div class="hpt">+200P</div></div>
+    </div>
+    <p style="font-size:11px;color:var(--sub);font-weight:700;margin-top:10px;text-align:center;">사진 썸네일을 누르면 크게 보기</p>
+  </div>
+
+  <!-- ================= 출석 이력 ================= -->
+  <h2 class="sec">📅 출석 이력 — 달력</h2>
+  <p class="flow">플로우: 하단 탭 <b>MY</b> → "내 활동"의 <b>📅 출석 이력</b> → 달력 화면. (출석은 매일이라 달력이 한눈에 들어옴 · 연속 출석도 보임)</p>
+
+  <div class="card">
+    <div class="st"><h1>출석 이력</h1><p>온보딩 시작 후 30일 · 데모신입</p></div>
+
+    <div class="att-sum">
+      <div class="b"><div class="n">12</div><div class="l">총 출석</div></div>
+      <div class="b"><div class="n">5</div><div class="l">최장 연속</div></div>
+      <div class="b"><div class="n">D+2</div><div class="l">진행</div></div>
+    </div>
+
+    <div class="cal">
+      <div class="cal-h"><b>2026년 6월</b></div>
+      <div class="cal-grid">
+        <div class="dow">일</div><div class="dow">월</div><div class="dow">화</div><div class="dow">수</div><div class="dow">목</div><div class="dow">금</div><div class="dow">토</div>
+        <div class="cell empty"></div><div class="cell off">1</div><div class="cell on">2</div><div class="cell on">3</div><div class="cell on">4</div><div class="cell on">5</div><div class="cell off">6</div>
+        <div class="cell off">7</div><div class="cell on">8</div><div class="cell on">9</div><div class="cell off">10</div><div class="cell on">11</div><div class="cell on">12</div><div class="cell off">13</div>
+        <div class="cell off">14</div><div class="cell on">15</div><div class="cell on">16</div><div class="cell on">17</div><div class="cell on">18</div><div class="cell today">19</div><div class="cell off">20</div>
+        <div class="cell off">21</div><div class="cell">22</div><div class="cell">23</div><div class="cell">24</div><div class="cell">25</div><div class="cell">26</div><div class="cell off">27</div>
+        <div class="cell off">28</div><div class="cell">29</div><div class="cell">30</div><div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div>
+      </div>
+      <div class="legend"><span><i style="background:var(--uplus)"></i>출석함</span><span><i style="outline:2px solid var(--uplus);background:#fff"></i>오늘</span><span><i style="background:#eef1f6"></i>미출석/휴무</span></div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
