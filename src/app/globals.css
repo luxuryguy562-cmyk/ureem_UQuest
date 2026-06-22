@@ -3212,10 +3212,10 @@
 .e5-axshoot.disabled{opacity:.5;cursor:default;box-shadow:none;background:#f3ebf0;color:var(--uplus-deep)}
 .e5-axshoot input{display:none}
 .e5-axexample .img img{max-width:100%;max-height:100%;border-radius:10px;object-fit:contain}
-.ax-example{margin-top:10px;display:flex;align-items:center;gap:10px}
+.ax-example{margin-top:10px;display:flex;flex-direction:column;align-items:flex-start;gap:8px}
 .ax-example img{width:54px;height:54px;border-radius:10px;object-fit:cover;border:1px solid #efe7f7}
 .ax-example-empty{width:54px;height:54px;border-radius:10px;border:1.5px dashed #d9c9ea;display:flex;align-items:center;justify-content:center;text-align:center;font-size:9px;font-weight:800;color:var(--uplus-sub);padding:4px}
-.ax-example-upload{font-size:11px;font-weight:1000;color:#fff;background:var(--uplus);padding:8px 12px;border-radius:10px;cursor:pointer}
+.ax-example-upload{font-size:11px;font-weight:1000;color:#fff;background:var(--uplus);padding:8px 12px;border-radius:10px;cursor:pointer;white-space:nowrap}
 .ax-example-upload input{display:none}
 /* AX 이력 (날짜별 묶음) */
 .e5-axsum{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:2px}
