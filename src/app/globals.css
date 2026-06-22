@@ -952,6 +952,9 @@
   pointer-events:none;
   cursor:wait;
 }
+.final-shell[data-pending="true"] .admin-tabs-final button,
+.final-shell[data-pending="true"] .coupon-subtabs button,
+.final-shell[data-pending="true"] .bottom-nav button { opacity:1; pointer-events:auto; cursor:pointer; }
 .auth-shell {
   display:flex;
   align-items:center;
@@ -3373,7 +3376,7 @@
 
 /* === 쿠폰 관리 패널 === */
 .coupon-subtabs{display:flex;gap:6px;margin-bottom:14px}
-.coupon-subtabs button{flex:1;border:1.5px solid #e2e8f0;background:#f8fafc;color:#64748b;font-family:inherit;font-weight:800;font-size:12.5px;padding:9px 0;border-radius:11px;cursor:pointer}
+.coupon-subtabs button{flex:1;border:1.5px solid #d8b4fe;background:#ede9f5;color:#7c3aed;font-family:inherit;font-weight:800;font-size:12.5px;padding:9px 0;border-radius:11px;cursor:pointer}
 .coupon-subtabs button.active{background:var(--uplus);color:#fff;border-color:var(--uplus)}
 .coupon-manage-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .coupon-manage-header .section-label{font-size:13px;font-weight:1000;color:#334155}
@@ -3392,3 +3395,9 @@
 .request-row.status-sent{opacity:0.65}
 .request-row.status-canceled{opacity:0.45}
 .req-expiry{display:block;font-size:11px;color:#94a3b8;margin-top:2px}
+
+/* === 쿠폰 수정 바텀시트 === */
+.coupon-sheet-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.45);z-index:500;display:flex;align-items:flex-end}
+.coupon-edit-sheet{background:#fff;border-radius:20px 20px 0 0;padding:20px 16px 28px;width:100%;max-height:85%;overflow-y:auto}
+.sheet-handle{width:40px;height:4px;border-radius:2px;background:#e2e8f0;margin:0 auto 16px}
+.sheet-title{font-size:15px;font-weight:1000;color:#1e293b;margin-bottom:14px}
