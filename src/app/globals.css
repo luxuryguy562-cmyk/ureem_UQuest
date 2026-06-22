@@ -3416,279 +3416,329 @@
 }
 
 /* =====================================================================
-   DIABLO DARK THEME OVERRIDE
-   흰색 배경 → 다크 + 마젠타핑크 → 앰버 골드
+   DIABLO DARK THEME OVERRIDE  v2
+   목업 HTML 기준으로 색상/글로우 동기화
    ===================================================================== */
 
 /* 기본 배경 */
-body { background: #0e0a04; color: #f0d8a8; }
+body { background: #0e0a08; color: #e0c080; }
 .phone {
-  background: #150f07;
-  border-color: #3a2c14;
-  box-shadow: 0 20px 60px rgba(0,0,0,.7);
+  background: #1c1008;
+  border: 1px solid #5a2010;
+  box-shadow: 0 0 60px rgba(220,60,20,.5), 0 0 120px rgba(180,30,10,.25);
 }
 
 /* Final Shell 변수 + 배경 */
 .final-shell {
-  --ink: #f0d8a8;
-  --muted: #9a8060;
-  --line: #3a2c14;
-  --soft: #1e1408;
-  background: #150f07;
+  --ink: #e0c080;
+  --muted: #8a4828;
+  --line: #3a1408;
+  --soft: #180a06;
+  background: #1c1008;
 }
 
-/* 하단 네비 */
-.final-bottom-nav { background: #150f07; }
-.final-bottom-nav button { color: #5a4030; }
-.final-bottom-nav button.active { color: #e8a020; }
+/* 상단 헤더 */
+.final-topbar,
+.e5-home .e5-hello,
+.e5-screen .e5-st {
+  background: linear-gradient(180deg, #2a1408 0%, #1c1008 100%);
+}
+
+/* 하단 네비 — 위로 붉은 글로우 */
+.final-bottom-nav {
+  background: linear-gradient(180deg, #1c1008 0%, #2a1408 100%);
+  border-top: 1px solid #3a1408;
+  box-shadow: 0 -4px 28px rgba(220,60,20,.3);
+}
+.final-bottom-nav button { color: #4a1e10; }
+.final-bottom-nav button.active {
+  color: #e8a020;
+  filter: drop-shadow(0 0 5px rgba(232,160,32,.8));
+}
 
 /* E5 브랜드 컬러 오버라이드 */
 .e5-home,
 .e5-screen {
   --uplus: #e8a020;
-  --uplus-deep: #c07010;
-  --uplus-sub: #8a7050;
-  --uplus-gold: #f0a000;
-  --uplus-good: #40c878;
-  color: #f0d8a8;
+  --uplus-deep: #a02010;
+  --uplus-sub: #8a4828;
+  --uplus-gold: #e8a020;
+  --uplus-good: #5a9a30;
+  color: #e0c080;
 }
 
-/* 홈 히어로 카드 (마젠타 그라데이션 → 다크 파이어) */
+/* ===== 홈 히어로 영역 ===== */
 .e5-hero {
-  background:
-    radial-gradient(56% 64% at 47% 46%, rgba(255,200,50,.06), rgba(200,80,0,.06) 52%, transparent 72%),
-    linear-gradient(162deg, #4a2808 0%, #3a1a04 52%, #2a1002 100%);
-  box-shadow: 0 16px 34px rgba(80,30,0,.6);
+  background: linear-gradient(180deg, #2a1408 0%, #201006 50%, #1c1008 100%);
+  box-shadow: 0 16px 34px rgba(80,20,0,.7);
 }
-.e5-hero::after { box-shadow: inset 0 0 60px rgba(0,0,0,.55); }
-.e5-floor { background: radial-gradient(50% 60% at 50% 50%, rgba(255,200,80,.1), transparent 70%); }
-.e5-floor::after { background: rgba(0,0,0,.5); }
+.e5-hero::after { box-shadow: none; }
+/* 캐릭터 발밑 붉은 글로우 */
+.e5-floor {
+  background: radial-gradient(ellipse at 50% 100%, rgba(220,60,20,.3) 0%, transparent 70%);
+}
+.e5-floor::after { background: rgba(180,20,0,.35); filter: blur(6px); }
 
 /* 포인트 뱃지 */
 .e5-points {
-  background: #231808;
-  border-color: #5a3a10;
+  background: #180a06;
+  border-color: #5a2010;
   color: #e8a020;
-  box-shadow: 0 8px 18px rgba(0,0,0,.45);
+  text-shadow: 0 0 10px rgba(232,160,32,.6);
+  box-shadow: 0 8px 18px rgba(0,0,0,.5);
 }
 
-/* 스탯 */
-.e5-stats { background: rgba(26,16,6,.95); box-shadow: 0 8px 18px rgba(0,0,0,.4); }
-.e5-stat + .e5-stat { border-left-color: #3a2c14; }
-.e5-stat-tx .v { color: #f0d8a8; }
+/* 스탯 바 */
+.e5-stats { background: rgba(24,10,6,.96); box-shadow: 0 8px 18px rgba(0,0,0,.45); }
+.e5-stat + .e5-stat { border-left-color: #3a1408; }
+.e5-stat-tx .v { color: #e0c080; }
+
+/* 스탯 타일 (Lv / 퀴즈 등) */
+.e5-stat {
+  background: #180a06;
+  border: 1px solid #3a1408;
+}
 
 /* 섹션 카운터 뱃지 */
-.e5-cnt { color: #e8a020; background: #3a2010; }
+.e5-cnt { color: #ee2244; background: #2a0e06; }
 
 /* 진행 바 트랙 */
-.e5-topbar { background: #3a2010; }
+.e5-topbar { background: #200e06; border: 1px solid #3a1408; border-radius: 8px; }
+.e5-topbar > i {
+  background: linear-gradient(90deg, #a02010, #e8a020);
+  box-shadow: 0 0 8px rgba(232,160,32,.7);
+}
+
+/* 이름/레벨 텍스트 글로우 */
+.e5-hello h1 em { text-shadow: 0 0 14px rgba(232,160,32,.6); }
+.e5-st h1 { color: #e8a020; text-shadow: 0 0 16px rgba(232,160,32,.5); }
 
 /* 미션 카드 */
-.e5-mission { background: #1e1408; border-color: #3a2c14; box-shadow: 0 10px 24px rgba(0,0,0,.3); }
-.e5-mic { background: #3a2010; }
-.e5-go.ghost { background: #2a1c08; color: #6a5030; }
+.e5-mission {
+  background: #180a06;
+  border-color: #3a1408;
+  box-shadow: 0 10px 24px rgba(0,0,0,.35);
+  position: relative;
+  overflow: hidden;
+}
+.e5-mission::before {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  background: linear-gradient(180deg, #ee2244, #a01a28);
+}
+.e5-mic { background: #280e06; }
+.e5-mt { color: #e0c080; }
+.e5-mr { color: #e8a020; }
+.e5-go.ghost { background: #200e06; color: #6a3018; box-shadow: none; }
 
 /* 수련 카드 */
 .e5-tcard {
-  background: linear-gradient(162deg, #4a2808 0%, #3a1a04 52%, #2a1002 100%);
-  box-shadow: 0 16px 32px rgba(80,30,0,.5);
+  background: linear-gradient(162deg, #3a1a08 0%, #2a1004 52%, #200c02 100%);
+  box-shadow: 0 16px 32px rgba(80,20,0,.55);
 }
-.e5-tcard::after { background: radial-gradient(circle, rgba(255,200,100,.07), transparent 65%); }
-.e5-tsteps .learn { background: #f0d8a8; color: #2a1000; }
-.e5-tsteps .learn:disabled { background: rgba(240,216,168,.35); color: #6a5030; }
+.e5-tcard::after { background: radial-gradient(circle, rgba(232,160,32,.08), transparent 65%); }
+.e5-tsteps .learn { background: #e0c080; color: #1a0800; }
+.e5-tsteps .learn:disabled { background: rgba(224,192,128,.35); color: #6a3018; }
 
 /* 수련 일차 */
-.e5-day { background: #1e1408; border-color: #3a2c14; box-shadow: 0 10px 24px rgba(0,0,0,.25); }
-.e5-day .info .t { color: #f0d8a8; }
-.e5-day .chev { color: #4a3020; }
-.e5-day.today .dn { background: #e8a020; box-shadow: 0 6px 14px rgba(200,120,0,.35); }
-.e5-day.done .dn { background: #1a3020; color: #40c878; }
-.e5-day.lock .dn, .e5-day.past .dn { background: #2a1c08; color: #5a4020; }
+.e5-day { background: #180a06; border-color: #3a1408; box-shadow: 0 8px 20px rgba(0,0,0,.3); }
+.e5-day .info .t { color: #e0c080; }
+.e5-day .chev { color: #4a1e10; }
+.e5-day.today .dn { background: #e8a020; box-shadow: 0 6px 14px rgba(232,160,32,.35); }
+.e5-day.done .dn { background: #1a2a10; color: #5a9a30; }
+.e5-day.lock .dn, .e5-day.past .dn { background: #200e06; color: #4a2010; }
 
 /* 퀴즈 일차 탭 */
-.e5-qday { background: #1e1408; border-color: #3a2c14; }
-.e5-qday b { color: #f0d8a8; }
-.e5-qday.on { border-color: #e8a020; background: #2a1808; }
-.e5-qday.on b { color: #e8a020; }
-.e5-qlock { background: #2a1c08; border-color: #5a4010; color: #c09040; }
+.e5-qday { background: #180a06; border-color: #3a1408; }
+.e5-qday b { color: #e0c080; }
+.e5-qday.on { border-color: #e8a020; background: #2a1006; }
+.e5-qday.on b { color: #e8a020; text-shadow: 0 0 10px rgba(232,160,32,.6); }
+.e5-qlock { background: #200e06; border-color: #5a3010; color: #a06020; }
 
 /* 퀴즈 카드 */
-.e5-qcard { background: #1e1408; border-color: #3a2c14; box-shadow: 0 10px 24px rgba(0,0,0,.25); }
-.e5-qcard h2 { color: #f0d8a8; }
+.e5-qcard { background: #180a06; border-color: #3a1408; box-shadow: 0 10px 24px rgba(0,0,0,.3); }
+.e5-qcard h2 { color: #e0c080; }
+.e5-qcard .e5-qn { color: #ee2244; }
 
 /* 퀴즈 옵션 */
-.e5-opt { background: #1e1408; border-color: #3a2c14; color: #f0d8a8; }
-.e5-opt .k { background: #2a1c08; color: #8a7050; }
-.e5-opt.sel { border-color: #e8a020; background: #2a1808; }
+.e5-opt { background: #180a06; border: 2px solid #3a1408; color: #e0c080; }
+.e5-opt .k { background: #200e06; color: #8a4828; }
+.e5-opt.sel { border-color: #e8a020; background: #2a1006; }
 .e5-opt.sel .k { background: #e8a020; color: #1a0800; }
-.e5-opt.correct { border-color: #40c878; background: #0a1e10; }
-.e5-opt.correct .k { background: #40c878; color: #0a1000; }
-.e5-opt.wrong { border-color: #ee4444; background: #1e0a0a; }
-.e5-opt.wrong .k { background: #ee4444; color: #fff; }
-.e5-explain { background: #1a1008; color: #9a8060; }
+.e5-opt.correct { border-color: #5a9a30; background: #0a1a06; }
+.e5-opt.correct .k { background: #5a9a30; color: #0a1000; }
+.e5-opt.wrong { border-color: #ee2244; background: #1e0606; }
+.e5-opt.wrong .k { background: #ee2244; color: #fff; }
+.e5-explain { background: #130806; color: #8a4828; }
 
 /* AX */
 .e5-axhero {
-  background: radial-gradient(60% 70% at 80% 30%, rgba(200,180,255,.12), transparent 60%),
+  background: radial-gradient(60% 70% at 80% 30%, rgba(180,150,255,.12), transparent 60%),
     linear-gradient(160deg, #2a1848 0%, #1e1030 60%, #140a20 100%);
 }
-.e5-axcard { background: #1e1408; border-color: #3a2c14; box-shadow: 0 6px 16px rgba(0,0,0,.3); }
-.e5-axcard .nm { color: #f0d8a8; }
-.e5-axexample { background: #1e1408; border-color: #3a2c14; }
-.e5-axday { background: #1e1408; border-color: #3a2c14; }
-.e5-axday .dt { color: #f0d8a8; }
-.e5-axempty { background: #1e1408; border-color: #3a2c14; color: #6a5030; }
+.e5-axcard { background: #180a06; border-color: #3a1408; box-shadow: 0 6px 16px rgba(0,0,0,.35); }
+.e5-axcard .nm { color: #e0c080; }
+.e5-axexample { background: #180a06; border-color: #3a1408; }
+.e5-axday { background: #180a06; border-color: #3a1408; }
+.e5-axday .dt { color: #e0c080; }
+.e5-axday .dp { color: #e8a020; }
+.e5-axempty { background: #180a06; border-color: #3a1408; color: #5a2010; }
 
 /* 달력 */
-.e5-cal { background: #1e1408; border-color: #3a2c14; }
-.e5-cal .cell { color: #9a8060; }
-.e5-cal .cell.on { background: #e8a020; box-shadow: 0 4px 10px rgba(200,120,0,.35); }
-.e5-cal .cal-legend i.off { background: #2a1c08; }
-.e5-cal .cal-legend i.td { background: #1e1408; }
+.e5-cal { background: #180a06; border-color: #3a1408; }
+.e5-cal .cell { color: #8a4828; }
+.e5-cal .cell.on { background: #e8a020; box-shadow: 0 4px 10px rgba(232,160,32,.35); }
+.e5-cal .cal-legend i.off { background: #200e06; }
+.e5-cal .cal-legend i.td { background: #180a06; }
 
-/* 상점 잔액 (마젠타 그라데이션 → 다크 앰버) */
+/* 상점 잔액 */
 .e5-balance {
-  background: linear-gradient(160deg, #4a2808 0%, #3a1a04 52%, #2a1002 100%);
-  box-shadow: 0 16px 32px rgba(80,30,0,.5);
+  background: linear-gradient(160deg, #3a1a08 0%, #2a1004 52%, #200c02 100%);
+  box-shadow: 0 16px 32px rgba(80,20,0,.55);
 }
-.e5-balance::after { background: radial-gradient(circle, rgba(255,200,100,.07), transparent 65%); }
+.e5-balance::after { background: radial-gradient(circle, rgba(232,160,32,.07), transparent 65%); }
 
 /* 쿠폰 */
-.e5-coupon { background: #1e1408; border-color: #3a2c14; box-shadow: 0 10px 24px rgba(0,0,0,.25); }
-.e5-coupon .thumb { background: linear-gradient(160deg, #2a1808, #3a2010); }
-.e5-coupon .nm { color: #f0d8a8; }
-.e5-coupon.off .buy { background: #3a2c14; color: #6a5030; }
-.e5-locknote { background: #2a1c08; border-color: #5a4010; }
-.e5-locknote .t { color: #c09040; }
-.e5-locknote.danger { background: #2a0808; border-color: #5a2010; }
-.e5-locknote.danger .t { color: #ee6644; }
+.e5-coupon { background: #180a06; border-color: #3a1408; box-shadow: 0 8px 20px rgba(0,0,0,.3); }
+.e5-coupon .thumb { background: linear-gradient(160deg, #2a1006, #3a1408); }
+.e5-coupon .nm { color: #e0c080; }
+.e5-coupon.off .buy { background: #3a1408; color: #5a2010; }
+.e5-locknote { background: #200e06; border-color: #5a3010; }
+.e5-locknote .t { color: #a06020; }
+.e5-locknote.danger { background: #1e0606; border-color: #5a1010; }
+.e5-locknote.danger .t { color: #ee4444; }
 
 /* MY 프로필 히어로 */
 .e5-phero {
   background: radial-gradient(56% 64% at 28% 46%, rgba(255,200,50,.07), transparent 70%),
-    linear-gradient(162deg, #4a2808, #3a1a04);
-  box-shadow: 0 16px 32px rgba(80,30,0,.5);
+    linear-gradient(162deg, #3a1a08, #2a1004);
+  box-shadow: 0 16px 32px rgba(80,20,0,.55);
 }
-.e5-phero .tier { background: rgba(240,216,168,.95); color: #3a1a00; }
-.e5-g3 { background: #1e1408; border-color: #3a2c14; box-shadow: 0 10px 24px rgba(0,0,0,.25); }
-.e5-g3 .s + .s { border-left-color: #3a2c14; }
-.e5-g3 .s .v { color: #f0d8a8; }
-.e5-badges { background: #1e1408; border-color: #3a2c14; }
-.e5-bg span { color: #8a7050; }
-.e5-bg.got span { color: #f0d8a8; }
+.e5-phero .tier { background: rgba(224,192,128,.95); color: #2a1000; }
+.e5-g3 { background: #180a06; border-color: #3a1408; box-shadow: 0 8px 20px rgba(0,0,0,.3); }
+.e5-g3 .s + .s { border-left-color: #3a1408; }
+.e5-g3 .s .v { color: #e0c080; }
+.e5-badges { background: #180a06; border-color: #3a1408; }
+.e5-bg span { color: #7a3828; }
+.e5-bg.got span { color: #e0c080; }
 
 /* MY 메뉴 */
-.e5-menu { background: #1e1408; border-color: #3a2c14; }
-.e5-menu button { background: #1e1408; border-bottom-color: #3a2c14; }
-.e5-menu .mi { background: #3a2010; }
-.e5-menu .mt { color: #f0d8a8; }
-.e5-menu .chev { color: #4a3020; }
+.e5-menu { background: #180a06; border-color: #3a1408; }
+.e5-menu button { background: #180a06; border-bottom-color: #3a1408; }
+.e5-menu .mi { background: #280e06; }
+.e5-menu .mt { color: #e0c080; }
+.e5-menu .chev { color: #4a1e10; }
 
 /* 온보딩 */
 .e5-welcome {
-  background: linear-gradient(160deg, #4a2808, #3a1a04);
-  box-shadow: 0 16px 32px rgba(80,30,0,.5);
+  background: linear-gradient(160deg, #3a1a08, #2a1004);
+  box-shadow: 0 16px 32px rgba(80,20,0,.55);
 }
-.e5-welcome button { background: #f0d8a8; color: #2a1000; }
-.e5-restnote { background: #0a1e10; border-color: #204030; color: #40c878; }
+.e5-welcome button { background: #e0c080; color: #1a0800; }
+.e5-restnote { background: #0a1a06; border-color: #1e3010; color: #5a9a30; }
 
 /* 학습 본문 */
-.e5-studybody { background: #1e1408; border-color: #3a2c14; }
-.e5-studybody p { color: #f0d8a8; }
-.e5-study-eb { background: #3a2010; color: #e8a020; }
+.e5-studybody { background: #180a06; border-color: #3a1408; }
+.e5-studybody p { color: #e0c080; }
+.e5-study-eb { background: #280e06; color: #e8a020; }
 
 /* ===== 공통 카드 / 컴포넌트 ===== */
 
 /* 퀘스트 패널 */
-.quest-panel { background: linear-gradient(135deg, #1a0e04, #2a1808 56%, #0e1a0a); }
+.quest-panel { background: linear-gradient(135deg, #1a0a04, #2a1406 56%, #0e1804); }
 
 /* 프로필 */
 .profile-stage-scene {
   background:
-    radial-gradient(circle at 34% 90%, rgba(200,120,0,.07), transparent 30%),
-    radial-gradient(circle at 83% 75%, rgba(40,180,80,.05), transparent 22%),
-    linear-gradient(180deg, #1e1408, #150f07);
-  border-color: #3a2c14;
+    radial-gradient(circle at 34% 90%, rgba(220,60,20,.1), transparent 30%),
+    radial-gradient(circle at 83% 75%, rgba(80,160,40,.06), transparent 22%),
+    linear-gradient(180deg, #1c1008, #140a04);
+  border-color: #3a1408;
 }
-.profile-mini-avatar { background: linear-gradient(135deg, #231808, #1a1008); border-color: #3a2c14; }
-.profile-actions span { background: #231808; border-color: #3a2c14; color: #f0d8a8; }
-.profile-summary-main span { background: #2a1808; color: #e8a020; }
+.profile-mini-avatar { background: linear-gradient(135deg, #1c1008, #140a04); border-color: #3a1408; }
+.profile-actions span { background: #1c1008; border-color: #3a1408; color: #e0c080; }
+.profile-summary-main span { background: #280e06; color: #e8a020; }
 
 /* AX 히어로 카드 */
-.ax-hero { background: linear-gradient(135deg, #1a1030, #1e1408); border-color: #3a2c14; }
+.ax-hero { background: linear-gradient(135deg, #1a1030, #180a06); border-color: #3a1408; }
 
 /* 카드들 */
-.ax-card, .coupon-card { background: #1e1408; border-color: #3a2c14; }
-.ax-card span, .coupon-card span { background: #2a1808; color: #e8a020; }
-.metric-tile { background: #1e1408; border-color: #3a2c14; }
-.badge-grid > div { background: #1e1408; border-color: #3a2c14; }
-.badge-grid > div.acquired { background: #2a1808; border-color: #5a3a10; }
-.recent-badge-strip > div { background: #1e1408; border-color: #3a2c14; }
-.recent-badge-strip > div.next { background: #150f07; }
-.question-card { background: #1e1408; border-color: #3a2c14; }
-.option-list button { background: #1e1408; border-color: #3a2c14; color: #f0d8a8; }
-.option-list button span { background: #3a2c14; color: #9a8060; }
-.option-list button.selected { border-color: #e8a020; background: #2a1808; }
-.detail-panel { background: #1e1408; border-color: #3a2c14; }
-.policy-box { background: #1e1408; border-color: #3a2c14; }
-.admin-tabs-final button { background: #1e1408; border-color: #3a2c14; color: #6a5030; }
-.admin-tabs-final button.active { background: #3a2c14; color: #f0d8a8; }
-.day-list button, .horizontal-days button { background: #1e1408; border-color: #3a2c14; color: #f0d8a8; }
-.day-list button.selected, .horizontal-days button.selected { border-color: #e8a020; background: #2a1808; }
-.day-list button.done { background: #0a1a10; border-color: #204030; }
-.day-list button.locked { background: #150f07; border-color: #2a1c08; }
-.admin-day-list button { background: #1e1408; border-color: #3a2c14; }
-.admin-day-list button.selected { border-color: #e8a020; background: #2a1808; }
-.employee-card-final { background: #1e1408; border-color: #3a2c14; }
-.employee-meta span { background: #2a1c08; color: #9a8060; }
+.ax-card, .coupon-card { background: #180a06; border-color: #3a1408; }
+.ax-card span, .coupon-card span { background: #280e06; color: #e8a020; }
+.metric-tile { background: #180a06; border-color: #3a1408; }
+.badge-grid > div { background: #180a06; border-color: #3a1408; }
+.badge-grid > div.acquired { background: #2a1006; border-color: #5a2010; }
+.recent-badge-strip > div { background: #180a06; border-color: #3a1408; }
+.recent-badge-strip > div.next { background: #140a04; }
+.question-card { background: #180a06; border-color: #3a1408; }
+.option-list button { background: #180a06; border-color: #3a1408; color: #e0c080; }
+.option-list button span { background: #3a1408; color: #8a4828; }
+.option-list button.selected { border-color: #e8a020; background: #2a1006; }
+.detail-panel { background: #180a06; border-color: #3a1408; }
+.policy-box { background: #180a06; border-color: #3a1408; }
+.admin-tabs-final button { background: #180a06; border-color: #3a1408; color: #5a2010; }
+.admin-tabs-final button.active { background: #3a1408; color: #e0c080; }
+.day-list button, .horizontal-days button { background: #180a06; border-color: #3a1408; color: #e0c080; }
+.day-list button.selected, .horizontal-days button.selected { border-color: #e8a020; background: #2a1006; }
+.day-list button.done { background: #0a1a06; border-color: #1e3010; }
+.day-list button.locked { background: #140a04; border-color: #280e06; }
+.admin-day-list button { background: #180a06; border-color: #3a1408; }
+.admin-day-list button.selected { border-color: #e8a020; background: #2a1006; }
+.employee-card-final { background: #180a06; border-color: #3a1408; }
+.employee-meta span { background: #200e06; color: #8a4828; }
 .compact-list > div,
 .request-row,
 .admin-row-final,
-.ledger-list > div { background: #1e1408; border-color: #3a2c14; }
-.empty-state { background: #1e1408; border-color: #3a2c14; }
+.ledger-list > div { background: #180a06; border-color: #3a1408; }
+.empty-state { background: #180a06; border-color: #3a1408; }
 .readonly-note { background: #1a1030; border-color: #3a2060; color: #a080f0; }
-.back-pill { background: #2a1c08; color: #f0d8a8; }
-.quiz-editor-card { background: #1e1408; border-color: #3a2c14; }
+.back-pill { background: #200e06; color: #e0c080; }
+.quiz-editor-card { background: #180a06; border-color: #3a1408; }
 .curriculum-editor input,
 .curriculum-editor textarea,
 .curriculum-editor select,
 .quiz-editor-card input,
 .quiz-editor-card textarea,
-.quiz-editor-card select { background: #150f07; border-color: #3a2c14; color: #f0d8a8; }
-.toggle-row { background: #150f07; border-color: #3a2c14; }
-.primary-action { background: #e8a020; }
-.primary-action:disabled { background: #3a2c14; color: #6a5030; }
-.scene-progress { background: #2a1c08; }
-.mini-progress { background: #2a1c08; }
-.validation-list > div { background: #1e1408; border-color: #3a2c14; }
-.lock-panel { border-color: #5a3a10; background: #2a1808; color: #e8a020; }
-.lock-panel.danger { border-color: #5a2020; background: #2a0808; color: #ee6644; }
-.row-actions button.sub, .request-row button { background: #2a1c08; color: #9a8060; }
+.quiz-editor-card select { background: #140a04; border-color: #3a1408; color: #e0c080; }
+.toggle-row { background: #140a04; border-color: #3a1408; }
+.primary-action { background: linear-gradient(180deg, #4a1a08, #280e04); border: 1px solid #7a3010; color: #e8a020; box-shadow: 0 4px 14px rgba(220,60,20,.3); }
+.primary-action:disabled { background: #200e06; color: #5a2010; box-shadow: none; border-color: #3a1408; }
+.scene-progress { background: #200e06; border: 1px solid #3a1408; }
+.mini-progress { background: #200e06; }
+.mini-progress i { background: linear-gradient(90deg, #a02010, #e8a020); }
+.validation-list > div { background: #180a06; border-color: #3a1408; }
+.lock-panel { border-color: #5a2010; background: #2a1006; color: #e8a020; }
+.lock-panel.danger { border-color: #5a1010; background: #1e0606; color: #ee4444; }
+.row-actions button.sub, .request-row button { background: #200e06; color: #8a4828; }
+
+/* XP / 진행 바 글로우 */
+.scene-progress i { background: linear-gradient(90deg, #a02010, #e8a020); box-shadow: 0 0 8px rgba(232,160,32,.6); }
 
 /* 보상 시뮬레이터 */
-.reward-sticky { background: #1e1408; border-color: #3a2c14; }
-.reward-sticky-total b { color: #e8a020; }
-.reward-bar { background: #2a1c08; }
-.reward-badge-group h4 { border-bottom-color: #3a2c14; color: #f0d8a8; }
-.reward-badge-row { border-bottom-color: #3a2c14; }
-.reward-badge-row input { border-color: #3a2c14; background: #150f07; color: #f0d8a8; }
-.reward-sim-inputs input { border-color: #3a2c14; background: #1e1408; color: #f0d8a8; }
+.reward-sticky { background: #180a06; border-color: #3a1408; }
+.reward-sticky-total b { color: #e8a020; text-shadow: 0 0 10px rgba(232,160,32,.5); }
+.reward-bar { background: #200e06; }
+.reward-bar i { background: linear-gradient(90deg, #a02010, #e8a020); }
+.reward-badge-group h4 { border-bottom-color: #3a1408; color: #e0c080; }
+.reward-badge-row { border-bottom-color: #3a1408; }
+.reward-badge-row input { border-color: #3a1408; background: #140a04; color: #e0c080; }
+.reward-sim-inputs input { border-color: #3a1408; background: #180a06; color: #e0c080; }
 .reward-sim-inputs label { color: #e8a020; }
-.reward-apply { background: #e8a020; box-shadow: 0 10px 20px rgba(200,120,0,.3); }
+.reward-apply { background: linear-gradient(180deg, #4a1a08, #280e04); border: 1px solid #7a3010; color: #e8a020; box-shadow: 0 10px 20px rgba(220,60,20,.3); }
 
 /* 매장 관리 */
-.store-csv { border-color: #3a2c14; background: #1e1408; color: #f0d8a8; }
-.store-add input, .store-edit input { border-color: #3a2c14; background: #1e1408; color: #f0d8a8; }
-.store-group { border-color: #3a2c14; }
+.store-csv { border-color: #3a1408; background: #180a06; color: #e0c080; }
+.store-add input, .store-edit input { border-color: #3a1408; background: #180a06; color: #e0c080; }
+.store-group { border-color: #3a1408; }
 .store-group h4 { color: #e8a020; }
-.store-row .tg, .store-row .ed { border-color: #3a2c14; background: #1e1408; color: #9a8060; }
-.store-edit { border-bottom-color: #3a2c14; }
-.store-edit-act button.sub { background: #2a1c08; color: #9a8060; }
+.store-row .tg, .store-row .ed { border-color: #3a1408; background: #180a06; color: #8a4828; }
+.store-edit { border-bottom-color: #3a1408; }
+.store-edit-act button.sub { background: #200e06; color: #8a4828; }
 
 /* 쿠폰 관리 */
-.coupon-form, .coupon-edit-form { background: #231808; }
-.coupon-form input, .coupon-edit-form input { background: #150f07; border-color: #3a2c14; color: #f0d8a8; }
-.coupon-edit-sheet { background: #1e1408; }
-.coupon-card-edit button { border-color: #3a2c14; background: #1e1408; color: #9a8060; }
-.sheet-handle { background: #3a2c14; }
-.sheet-title { color: #f0d8a8; }
+.coupon-form, .coupon-edit-form { background: #1c1008; }
+.coupon-form input, .coupon-edit-form input { background: #140a04; border-color: #3a1408; color: #e0c080; }
+.coupon-edit-sheet { background: #180a06; }
+.coupon-card-edit button { border-color: #3a1408; background: #180a06; color: #8a4828; }
+.sheet-handle { background: #3a1408; }
+.sheet-title { color: #e0c080; }
