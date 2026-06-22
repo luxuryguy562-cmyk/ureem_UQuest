@@ -1147,9 +1147,9 @@
   cursor:pointer;
 }
 .final-screen {
-  height:calc(100% - 72px);
+  height:calc(100% - 54px);
   overflow:auto;
-  padding:12px 12px 104px;
+  padding:12px 12px 80px;
 }
 .role-screen { padding-bottom:24px; }
 .u-card {
@@ -2776,27 +2776,27 @@
   line-height:1.35;
 }
 .final-bottom-nav {
-  height:78px;
-  padding:8px 6px;
+  height:54px;
+  padding:0 4px;
   display:grid;
   grid-template-columns:repeat(5,minmax(0,1fr));
-  gap:4px;
+  gap:0;
 }
 .final-bottom-nav button {
   border:0;
-  border-radius:16px;
+  border-radius:0;
   background:transparent;
-  color:#c2a9b8;
+  color:#b0a0aa;
   display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:center;
-  gap:4px;
+  gap:2px;
   font-family:inherit;
   font-weight:1000;
+  padding:0;
 }
 .final-bottom-nav button.active {
-  background:#ffe9f3;
   color:#e6007e;
 }
 .final-bottom-nav .nav-ic {
@@ -2804,8 +2804,8 @@
   place-items:center;
 }
 .final-bottom-nav .nav-ic svg {
-  width:23px;
-  height:23px;
+  width:20px;
+  height:20px;
   fill:none;
   stroke:currentColor;
   stroke-width:2;
@@ -2813,7 +2813,7 @@
   stroke-linejoin:round;
 }
 .final-bottom-nav small {
-  font-size:11px;
+  font-size:10px;
   font-weight:900;
 }
 .final-modal.good { border-top:5px solid var(--green); }
