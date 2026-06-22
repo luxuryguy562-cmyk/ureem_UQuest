@@ -811,7 +811,7 @@ function AuthView({
 
         {message ? <div className="auth-message">{message}</div> : null}
         <button className="primary-action" type="submit">{mode === "login" ? "로그인" : "가입 요청"}</button>
-        {mode === "login" ? <small>테스트 계정: rookie.kim / manager.gn / admin.hq, 비밀번호 demo</small> : null}
+        {mode === "login" ? <small>테스트 계정: 신입 demo/demo · 관리자 admin/admin</small> : null}
       </form>
 
       {picker ? (
