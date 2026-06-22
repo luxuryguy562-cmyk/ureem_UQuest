@@ -3377,7 +3377,7 @@
 /* === 쿠폰 관리 패널 === */
 .coupon-subtabs{display:flex;gap:6px;margin-bottom:14px}
 .coupon-subtabs button{flex:1;border:1.5px solid #d8b4fe;background:#ede9f5;color:#7c3aed;font-family:inherit;font-weight:800;font-size:12.5px;padding:9px 0;border-radius:11px;cursor:pointer}
-.coupon-subtabs button.active{background:var(--uplus);color:#fff;border-color:var(--uplus)}
+.coupon-subtabs button.active{background:#7c3aed;color:#fff;border-color:#7c3aed}
 .coupon-manage-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .coupon-manage-header .section-label{font-size:13px;font-weight:1000;color:#334155}
 .add-btn{border:0;background:var(--uplus);color:#fff;font-family:inherit;font-weight:1000;font-size:12px;padding:7px 14px;border-radius:10px;cursor:pointer}
