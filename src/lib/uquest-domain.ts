@@ -699,6 +699,69 @@ export function updateAxCategoryExample(config: FinalUQuestConfig, adminId: stri
   };
 }
 
+export type CouponInput = {
+  name?: string;
+  description?: string;
+  actualPrice?: number;
+  requiredPoints?: number;
+  stockQuantity?: number | null;
+  isPublished?: boolean;
+};
+
+export function createCoupon(config: FinalUQuestConfig, adminId: string, input: CouponInput): FinalUQuestConfig {
+  const data = normalizeConfig(config);
+  const admin = getUser(data, adminId);
+  requireRole(admin, ["admin"]);
+
+  const name = sanitizeText(input.name ?? "");
+  const description = sanitizeText(input.description ?? "");
+  const actualPrice = Math.max(0, Math.floor(Number(input.actualPrice ?? 0)));
+  const requiredPoints = Math.max(1, Math.floor(Number(input.requiredPoints ?? 1)));
+  const stockQuantity = input.stockQuantity === null ? null : input.stockQuantity !== undefined ? Math.max(0, Math.floor(Number(input.stockQuantity))) : null;
+  const isPublished = input.isPublished ?? true;
+
+  if (!name) throw new UQuestDomainError("INVALID_INPUT", "쿠폰 이름을 입력해야 합니다.");
+  if (!description) throw new UQuestDomainError("INVALID_INPUT", "쿠폰 설명을 입력해야 합니다.");
+
+  const coupon = { id: createId("coupon"), name, description, actualPrice, requiredPoints, stockQuantity, isPublished };
+
+  return {
+    ...data,
+    coupons: [...data.coupons, coupon],
+    adminAuditLogs: [
+      ...data.adminAuditLogs,
+      { id: createId("audit"), actorId: adminId, action: "create_coupon", targetType: "coupon", targetId: coupon.id, reason: `쿠폰 추가: ${name}`, createdAt: nowIso(data.today) }
+    ]
+  };
+}
+
+export function updateCoupon(config: FinalUQuestConfig, adminId: string, couponId: string, input: CouponInput): FinalUQuestConfig {
+  const data = normalizeConfig(config);
+  const admin = getUser(data, adminId);
+  requireRole(admin, ["admin"]);
+
+  const target = data.coupons.find((c) => c.id === couponId);
+  if (!target) throw new UQuestDomainError("NOT_FOUND", "쿠폰을 찾을 수 없습니다.", 404);
+
+  const name = sanitizeText(input.name ?? target.name);
+  const description = sanitizeText(input.description ?? target.description);
+  const actualPrice = input.actualPrice !== undefined ? Math.max(0, Math.floor(Number(input.actualPrice))) : target.actualPrice;
+  const requiredPoints = input.requiredPoints !== undefined ? Math.max(1, Math.floor(Number(input.requiredPoints))) : target.requiredPoints;
+  const stockQuantity = input.stockQuantity !== undefined ? (input.stockQuantity === null ? null : Math.max(0, Math.floor(Number(input.stockQuantity)))) : target.stockQuantity;
+  const isPublished = input.isPublished !== undefined ? input.isPublished : target.isPublished;
+
+  if (!name) throw new UQuestDomainError("INVALID_INPUT", "쿠폰 이름을 입력해야 합니다.");
+
+  return {
+    ...data,
+    coupons: data.coupons.map((c) => c.id === couponId ? { ...c, name, description, actualPrice, requiredPoints, stockQuantity, isPublished } : c),
+    adminAuditLogs: [
+      ...data.adminAuditLogs,
+      { id: createId("audit"), actorId: adminId, action: "update_coupon", targetType: "coupon", targetId: couponId, reason: `쿠폰 수정: ${name}`, createdAt: nowIso(data.today) }
+    ]
+  };
+}
+
 export type StoreImportInput = { stores: { district?: string; team?: string; name: string }[] };
 
 export function importStores(config: FinalUQuestConfig, adminId: string, input: StoreImportInput): FinalUQuestConfig {

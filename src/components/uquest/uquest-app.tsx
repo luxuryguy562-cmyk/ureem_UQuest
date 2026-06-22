@@ -402,6 +402,24 @@ export function UQuestApp({ config }: { config: FinalUQuestConfig }) {
     );
   }
 
+  async function createCoupon(body: Record<string, unknown>) {
+    await runApiMutation(
+      "/api/admin/coupons",
+      body,
+      { title: "쿠폰 추가", body: "새 쿠폰이 등록됐습니다.", tone: "good" },
+      currentUser.id
+    );
+  }
+
+  async function updateCoupon(couponId: string, body: Record<string, unknown>) {
+    await runApiMutation(
+      `/api/admin/coupons/${couponId}`,
+      body,
+      { title: "쿠폰 수정", body: "쿠폰 정보가 저장됐습니다.", tone: "good" },
+      currentUser.id
+    );
+  }
+
   async function sendCouponRequest(requestId: string) {
     await runApiMutation(
       `/api/admin/coupon-requests/${requestId}/send`,
@@ -565,6 +583,8 @@ export function UQuestApp({ config }: { config: FinalUQuestConfig }) {
           data={data}
           onApprove={approveUser}
           onCancelCoupon={cancelCouponRequest}
+          onCreateCoupon={createCoupon}
+          onUpdateCoupon={updateCoupon}
           onUpdateCurriculum={updateCurriculumSettings}
           onUpdateRewardConfig={updateRewardConfig}
           onUpdateAxExample={updateAxExample}
@@ -1724,6 +1744,8 @@ function AdminView({
   onReject,
   onSendCoupon,
   onCancelCoupon,
+  onCreateCoupon,
+  onUpdateCoupon,
   onUpdateCurriculum,
   onUpdateRewardConfig,
   onUpdateAxExample,
@@ -1735,6 +1757,8 @@ function AdminView({
   onReject: (userId: string) => void;
   onSendCoupon: (requestId: string) => void;
   onCancelCoupon: (requestId: string, reason: string) => void;
+  onCreateCoupon: (body: Record<string, unknown>) => void;
+  onUpdateCoupon: (couponId: string, body: Record<string, unknown>) => void;
   onUpdateCurriculum: (curriculumId: string, draft: CurriculumDraft) => void;
   onUpdateRewardConfig: (values: RewardConfigDraft) => void;
   onUpdateAxExample: (category: FinalAxCategory, file: File) => void;
@@ -1819,7 +1843,7 @@ function AdminView({
       {tab === "rewards" ? <AdminRewardSimulatorPanel data={data} onSave={onUpdateRewardConfig} /> : null}
       {tab === "stores" ? <AdminStorePanel data={data} onImport={onImportStores} onUpdateStore={onUpdateStore} /> : null}
       {tab === "coupons" ? (
-        <AdminCouponPanel coupons={data.coupons} requests={data.couponRequests} users={data.users} onCancel={onCancelCoupon} onSend={onSendCoupon} />
+        <AdminCouponPanel coupons={data.coupons} requests={data.couponRequests} users={data.users} onCancel={onCancelCoupon} onSend={onSendCoupon} onCreate={onCreateCoupon} onUpdate={onUpdateCoupon} />
       ) : null}
       {tab === "validation" ? <ValidationPanel data={data} /> : null}
     </main>
@@ -2261,51 +2285,172 @@ function AdminAxPanel({ categories, onUploadExample }: { categories: FinalAxCate
   );
 }
 
+type CouponDraft = { name: string; description: string; actualPrice: string; requiredPoints: string; stockQuantity: string; isPublished: boolean };
+const emptyCouponDraft = (): CouponDraft => ({ name: "", description: "", actualPrice: "0", requiredPoints: "", stockQuantity: "", isPublished: true });
+
 function AdminCouponPanel({
   coupons,
   requests,
   users,
   onSend,
-  onCancel
+  onCancel,
+  onCreate,
+  onUpdate
 }: {
   coupons: FinalCoupon[];
   requests: FinalCouponRequest[];
   users: FinalUser[];
   onSend: (requestId: string) => void;
   onCancel: (requestId: string, reason: string) => void;
+  onCreate: (body: Record<string, unknown>) => void;
+  onUpdate: (couponId: string, body: Record<string, unknown>) => void;
 }) {
+  const [subTab, setSubTab] = useState<"manage" | "requests">("manage");
+  const [adding, setAdding] = useState(false);
+  const [draft, setDraft] = useState<CouponDraft>(emptyCouponDraft());
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editDraft, setEditDraft] = useState<CouponDraft>(emptyCouponDraft());
+
+  function startEdit(coupon: FinalCoupon) {
+    setEditingId(coupon.id);
+    setEditDraft({
+      name: coupon.name,
+      description: coupon.description,
+      actualPrice: String(coupon.actualPrice),
+      requiredPoints: String(coupon.requiredPoints),
+      stockQuantity: coupon.stockQuantity === null ? "" : String(coupon.stockQuantity),
+      isPublished: coupon.isPublished
+    });
+  }
+
+  function submitCreate(e: FormEvent) {
+    e.preventDefault();
+    onCreate({
+      name: draft.name,
+      description: draft.description,
+      actualPrice: Number(draft.actualPrice),
+      requiredPoints: Number(draft.requiredPoints),
+      stockQuantity: draft.stockQuantity === "" ? null : Number(draft.stockQuantity),
+      isPublished: draft.isPublished
+    });
+    setAdding(false);
+    setDraft(emptyCouponDraft());
+  }
+
+  function submitEdit(e: FormEvent) {
+    e.preventDefault();
+    if (!editingId) return;
+    onUpdate(editingId, {
+      name: editDraft.name,
+      description: editDraft.description,
+      actualPrice: Number(editDraft.actualPrice),
+      requiredPoints: Number(editDraft.requiredPoints),
+      stockQuantity: editDraft.stockQuantity === "" ? null : Number(editDraft.stockQuantity),
+      isPublished: editDraft.isPublished
+    });
+    setEditingId(null);
+  }
+
+  const statusLabel = (s: string) => s === "requested" ? "발송 대기" : s === "sent" ? "발송 완료" : "취소됨";
+
   return (
     <section className="u-card">
-      <div className="request-list">
-        <h3>교환 요청</h3>
-        {requests.map((request) => {
-          const user = users.find((item) => item.id === request.userId);
-          const coupon = coupons.find((item) => item.id === request.couponId);
+      <div className="coupon-subtabs">
+        <button className={subTab === "manage" ? "active" : ""} onClick={() => setSubTab("manage")} type="button">쿠폰 관리</button>
+        <button className={subTab === "requests" ? "active" : ""} onClick={() => setSubTab("requests")} type="button">
+          교환 요청 {requests.filter((r) => r.status === "requested").length > 0 ? `(${requests.filter((r) => r.status === "requested").length})` : ""}
+        </button>
+      </div>
 
-          return (
-            <div className="request-row" key={request.id}>
-              <div>
-                <strong>{coupon?.name ?? "쿠폰"}</strong>
-                <span>{user?.name ?? "-"} · {request.status} · {formatNumber(request.requiredPoints)}P{request.expiresAt ? ` · 만료일 ${formatDate(request.expiresAt.slice(0, 10))}` : ""}</span>
-              </div>
-              <div className="row-actions">
-                {request.status === "requested" ? <button onClick={() => onSend(request.id)} type="button">발송완료</button> : null}
-                {request.status === "requested" ? <button className="sub" onClick={() => onCancel(request.id, "관리자 취소")} type="button">취소</button> : null}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-      <div className="coupon-grid">
-        {coupons.map((coupon) => (
-          <div className="coupon-card" key={coupon.id}>
-            <span>{coupon.stockQuantity === null ? "무제한" : `재고 ${coupon.stockQuantity}`}</span>
-            <strong>{coupon.name}</strong>
-            <p>{coupon.description}</p>
-            <em>{formatKrw(coupon.actualPrice)} · {formatNumber(coupon.requiredPoints)}P</em>
+      {subTab === "manage" ? (
+        <>
+          <div className="coupon-manage-header">
+            <span className="section-label">쿠폰 목록</span>
+            <button className="add-btn" onClick={() => { setAdding(true); setEditingId(null); }} type="button">+ 추가</button>
           </div>
-        ))}
-      </div>
+
+          {adding ? (
+            <form className="coupon-form" onSubmit={submitCreate}>
+              <div className="coupon-form-title">새 쿠폰</div>
+              <input placeholder="쿠폰 이름" required value={draft.name} onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))} />
+              <input placeholder="쿠폰 설명" required value={draft.description} onChange={(e) => setDraft((d) => ({ ...d, description: e.target.value }))} />
+              <div className="coupon-form-row">
+                <input placeholder="실제 금액 (₩)" type="number" min="0" value={draft.actualPrice} onChange={(e) => setDraft((d) => ({ ...d, actualPrice: e.target.value }))} />
+                <input placeholder="필요 포인트 (P)" type="number" min="1" required value={draft.requiredPoints} onChange={(e) => setDraft((d) => ({ ...d, requiredPoints: e.target.value }))} />
+              </div>
+              <input placeholder="재고 (빈칸=무제한)" type="number" min="0" value={draft.stockQuantity} onChange={(e) => setDraft((d) => ({ ...d, stockQuantity: e.target.value }))} />
+              <label className="coupon-form-check">
+                <input checked={draft.isPublished} type="checkbox" onChange={(e) => setDraft((d) => ({ ...d, isPublished: e.target.checked }))} />
+                공개 (신입 상점에 표시)
+              </label>
+              <div className="coupon-form-actions">
+                <button type="submit">저장</button>
+                <button type="button" onClick={() => { setAdding(false); setDraft(emptyCouponDraft()); }}>취소</button>
+              </div>
+            </form>
+          ) : null}
+
+          <div className="coupon-grid">
+            {coupons.map((coupon) => (
+              <div className="coupon-card" key={coupon.id}>
+                {editingId === coupon.id ? (
+                  <form className="coupon-edit-form" onSubmit={submitEdit}>
+                    <input placeholder="쿠폰 이름" required value={editDraft.name} onChange={(e) => setEditDraft((d) => ({ ...d, name: e.target.value }))} />
+                    <input placeholder="쿠폰 설명" value={editDraft.description} onChange={(e) => setEditDraft((d) => ({ ...d, description: e.target.value }))} />
+                    <div className="coupon-form-row">
+                      <input placeholder="금액 (₩)" type="number" min="0" value={editDraft.actualPrice} onChange={(e) => setEditDraft((d) => ({ ...d, actualPrice: e.target.value }))} />
+                      <input placeholder="포인트 (P)" type="number" min="1" required value={editDraft.requiredPoints} onChange={(e) => setEditDraft((d) => ({ ...d, requiredPoints: e.target.value }))} />
+                    </div>
+                    <input placeholder="재고 (빈칸=무제한)" type="number" min="0" value={editDraft.stockQuantity} onChange={(e) => setEditDraft((d) => ({ ...d, stockQuantity: e.target.value }))} />
+                    <label className="coupon-form-check">
+                      <input checked={editDraft.isPublished} type="checkbox" onChange={(e) => setEditDraft((d) => ({ ...d, isPublished: e.target.checked }))} />
+                      공개
+                    </label>
+                    <div className="coupon-form-actions">
+                      <button type="submit">저장</button>
+                      <button type="button" onClick={() => setEditingId(null)}>취소</button>
+                    </div>
+                  </form>
+                ) : (
+                  <>
+                    <span>{coupon.stockQuantity === null ? "무제한" : `재고 ${coupon.stockQuantity}`}{coupon.isPublished ? "" : " · 비공개"}</span>
+                    <strong>{coupon.name}</strong>
+                    <p>{coupon.description}</p>
+                    <em>{formatKrw(coupon.actualPrice)} · {formatNumber(coupon.requiredPoints)}P</em>
+                    <div className="coupon-card-edit">
+                      <button onClick={() => startEdit(coupon)} type="button">수정</button>
+                    </div>
+                  </>
+                )}
+              </div>
+            ))}
+          </div>
+        </>
+      ) : null}
+
+      {subTab === "requests" ? (
+        <div className="request-list">
+          {requests.length === 0 ? <EmptyState text="교환 요청이 없습니다." /> : null}
+          {[...requests].sort((a, b) => b.requestedAt.localeCompare(a.requestedAt)).map((request) => {
+            const user = users.find((item) => item.id === request.userId);
+            const coupon = coupons.find((item) => item.id === request.couponId);
+            return (
+              <div className={`request-row status-${request.status}`} key={request.id}>
+                <div>
+                  <strong>{coupon?.name ?? "쿠폰"}</strong>
+                  <span>{user?.name ?? "-"} · {statusLabel(request.status)} · {formatNumber(request.requiredPoints)}P</span>
+                  {request.expiresAt ? <span className="req-expiry">만료 {formatDate(request.expiresAt.slice(0, 10))}</span> : null}
+                  {request.cancelReason ? <span className="req-expiry">사유: {request.cancelReason}</span> : null}
+                </div>
+                <div className="row-actions">
+                  {request.status === "requested" ? <button onClick={() => onSend(request.id)} type="button">발송완료</button> : null}
+                  {request.status === "requested" ? <button className="sub" onClick={() => onCancel(request.id, "관리자 취소")} type="button">취소</button> : null}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ) : null}
     </section>
   );
 }

@@ -542,13 +542,37 @@ async function persistDeltas(supabase: Supabase, before: FinalUQuestConfig, next
     );
   }
 
-  // 5) 쿠폰 재고 변경 (발송 처리)
+  // 5) 쿠폰 추가/수정 (관리자 + 발송 처리로 인한 재고 변경 포함)
   const beforeCoupons = byId(before.coupons);
+  const newCoupons = next.coupons.filter((c) => !beforeCoupons.has(c.id));
+  if (newCoupons.length > 0) {
+    await throwOnError(
+      supabase.from("coupons").insert(
+        newCoupons.map((c) => ({
+          id: c.id,
+          name: c.name,
+          description: c.description,
+          actual_price: c.actualPrice,
+          required_points: c.requiredPoints,
+          stock_quantity: c.stockQuantity ?? null,
+          is_published: c.isPublished
+        }))
+      ),
+      "coupons.insert"
+    );
+  }
   for (const c of next.coupons) {
     const prev = beforeCoupons.get(c.id);
-    if (prev && prev.stockQuantity !== c.stockQuantity) {
+    if (prev && couponFieldChanged(prev, c)) {
       await throwOnError(
-        supabase.from("coupons").update({ stock_quantity: c.stockQuantity }).eq("id", c.id),
+        supabase.from("coupons").update({
+          name: c.name,
+          description: c.description,
+          actual_price: c.actualPrice,
+          required_points: c.requiredPoints,
+          stock_quantity: c.stockQuantity ?? null,
+          is_published: c.isPublished
+        }).eq("id", c.id),
         "coupons.update"
       );
     }
@@ -774,6 +798,17 @@ function userChanged(a: FinalUser, b: FinalUser): boolean {
     a.completedAt !== b.completedAt ||
     a.inactiveAt !== b.inactiveAt ||
     a.exp !== b.exp
+  );
+}
+
+function couponFieldChanged(a: FinalCoupon, b: FinalCoupon): boolean {
+  return (
+    a.name !== b.name ||
+    a.description !== b.description ||
+    a.actualPrice !== b.actualPrice ||
+    a.requiredPoints !== b.requiredPoints ||
+    a.stockQuantity !== b.stockQuantity ||
+    a.isPublished !== b.isPublished
   );
 }
 
