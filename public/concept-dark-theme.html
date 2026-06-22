@@ -7,30 +7,29 @@
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    background: #111;
+    background: #0a0a0a;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 32px;
-    padding: 32px 16px;
+    gap: 40px;
+    padding: 40px 16px;
     min-height: 100vh;
   }
 
   h2 {
     text-align: center;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 900;
-    letter-spacing: 2px;
-    margin-bottom: 12px;
+    letter-spacing: 3px;
+    margin-bottom: 14px;
     text-transform: uppercase;
   }
 
-  /* ── 공통 폰 프레임 ── */
   .phone {
     width: 320px;
-    height: 680px;
-    border-radius: 24px;
+    height: 700px;
+    border-radius: 26px;
     overflow: hidden;
     position: relative;
     flex-shrink: 0;
@@ -39,110 +38,108 @@
   /* ════════════════════════════════
      DIABLO 스타일
   ════════════════════════════════ */
-  .diablo-label { color: #c41e3a; }
+  .diablo-label { color: #c8860a; text-shadow: 0 0 12px rgba(200,134,10,0.5); }
   .diablo {
     background: #0d0804;
-    border: 1px solid #4a1a08;
-    box-shadow: 0 0 40px rgba(180, 30, 20, 0.4), inset 0 0 80px rgba(0,0,0,0.6);
+    border: 1px solid #3a1208;
+    box-shadow: 0 0 60px rgba(180,30,20,0.5), 0 0 120px rgba(180,30,20,0.2);
   }
   .diablo .header {
-    background: linear-gradient(180deg, #1a0c06 0%, #0d0804 100%);
-    border-bottom: 1px solid #4a1a08;
+    background: linear-gradient(180deg, #1e0e06 0%, #0d0804 100%);
+    border-bottom: 1px solid #3a1208;
     padding: 12px 14px;
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
-  .diablo .brand { font-size: 11px; font-weight: 900; color: #8b3a1a; letter-spacing: 3px; text-transform: uppercase; }
-  .diablo .username { font-size: 13px; font-weight: 900; color: #c8860a; }
-  .diablo .logout { font-size: 10px; color: #6b3020; border: 1px solid #4a1a08; background: transparent; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-family: inherit; }
+  .diablo .brand { font-size: 10px; font-weight: 900; color: #6b3020; letter-spacing: 4px; text-transform: uppercase; }
+  .diablo .username { font-size: 13px; font-weight: 900; color: #c8860a; text-shadow: 0 0 8px rgba(200,134,10,0.5); }
+  .diablo .logout { font-size: 9px; color: #5a2818; border: 1px solid #3a1208; background: transparent; padding: 4px 8px; border-radius: 3px; cursor: pointer; font-family: inherit; }
 
   .diablo .hero-area {
-    background: linear-gradient(180deg, #1a0c06 0%, #0d0804 60%);
-    padding: 16px;
-    border-bottom: 1px solid #2a0e04;
+    background: linear-gradient(180deg, #1e0e06 0%, #120806 50%, #0d0804 100%);
+    padding: 14px 16px 10px;
+    border-bottom: 1px solid #1e0804;
     position: relative;
-    overflow: hidden;
+    overflow: visible;
   }
   .diablo .hero-area::before {
     content: '';
     position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse at 50% 100%, rgba(180,30,20,0.15) 0%, transparent 70%);
+    bottom: 0; left: 0; right: 0;
+    height: 60px;
+    background: radial-gradient(ellipse at 50% 100%, rgba(200,30,20,0.2) 0%, transparent 70%);
   }
-  .diablo .hero-greeting {
-    font-size: 10px;
-    color: #6b3020;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 4px;
-  }
-  .diablo .hero-name {
-    font-size: 18px;
-    font-weight: 900;
-    color: #c8860a;
-    text-shadow: 0 0 12px rgba(200,134,10,0.5);
-    margin-bottom: 2px;
-  }
-  .diablo .hero-sub { font-size: 11px; color: #6b3020; }
+  .diablo .hero-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
+  .diablo .hero-greeting { font-size: 9px; color: #5a2818; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 3px; }
+  .diablo .hero-name { font-size: 17px; font-weight: 900; color: #c8860a; text-shadow: 0 0 14px rgba(200,134,10,0.6); }
+  .diablo .hero-sub { font-size: 10px; color: #6b3020; margin-top: 2px; }
+  .diablo .hero-rank { text-align: right; }
+  .diablo .rank-badge { font-size: 9px; color: #5a2818; letter-spacing: 1px; font-weight: 900; }
+  .diablo .rank-val { font-size: 20px; font-weight: 900; color: #c41e3a; text-shadow: 0 0 12px rgba(200,30,60,0.5); display: block; line-height: 1; }
 
   .diablo .character-box {
     display: flex;
     justify-content: center;
     align-items: flex-end;
-    height: 110px;
+    height: 155px;
     position: relative;
-    margin: 8px 0;
   }
-  .diablo .char-img {
-    width: 80px;
-    height: 80px;
-    background: radial-gradient(circle, #3a1a08 0%, #1a0804 100%);
-    border: 2px solid #4a1a08;
+  .diablo .char-glow {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 40px;
+    background: radial-gradient(ellipse, rgba(200,30,20,0.35) 0%, transparent 70%);
     border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 40px;
-    box-shadow: 0 0 24px rgba(180,30,20,0.4);
   }
-  .diablo .xp-bar-wrap { margin: 0 16px 12px; }
+
+  .diablo .xp-bar-wrap { margin: 4px 0 10px; }
   .diablo .xp-label { display: flex; justify-content: space-between; margin-bottom: 4px; }
-  .diablo .xp-label span { font-size: 10px; color: #6b3020; letter-spacing: 1px; font-weight: 900; }
+  .diablo .xp-label span { font-size: 9px; color: #5a2818; letter-spacing: 1px; font-weight: 900; text-transform: uppercase; }
   .diablo .xp-label em { font-style: normal; font-size: 10px; color: #c8860a; font-weight: 900; }
-  .diablo .xp-bar { height: 6px; background: #1a0804; border: 1px solid #3a1208; border-radius: 3px; }
-  .diablo .xp-bar-fill { height: 100%; width: 7%; background: linear-gradient(90deg, #8b1a08, #c8860a); border-radius: 2px; box-shadow: 0 0 8px rgba(200,134,10,0.5); }
+  .diablo .xp-bar { height: 5px; background: #180a04; border: 1px solid #2a0e04; border-radius: 3px; }
+  .diablo .xp-bar-fill { height: 100%; width: 7%; background: linear-gradient(90deg, #8b1a08, #c8860a); border-radius: 2px; box-shadow: 0 0 8px rgba(200,134,10,0.6); }
 
   .diablo .stats-row {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 6px;
-    margin: 0 16px 12px;
+    gap: 5px;
+    margin-bottom: 10px;
   }
   .diablo .stat {
-    background: #120804;
-    border: 1px solid #3a1208;
-    border-radius: 6px;
+    background: #100604;
+    border: 1px solid #2a0e04;
+    border-radius: 5px;
     padding: 6px 4px;
     text-align: center;
+    position: relative;
   }
-  .diablo .stat .s-val { font-size: 11px; font-weight: 900; color: #c8860a; display: block; }
-  .diablo .stat .s-lbl { font-size: 9px; color: #6b3020; letter-spacing: 1px; font-weight: 900; text-transform: uppercase; }
+  .diablo .stat::before { content: ''; position: absolute; top: 0; left: 25%; right: 25%; height: 1px; background: #c8860a; opacity: 0.25; }
+  .diablo .stat .s-val { font-size: 10px; font-weight: 900; color: #c8860a; display: block; }
+  .diablo .stat .s-lbl { font-size: 8px; color: #5a2818; letter-spacing: 1px; font-weight: 900; text-transform: uppercase; }
 
   .diablo .missions-title {
-    padding: 0 16px 8px;
-    font-size: 10px;
-    color: #6b3020;
+    padding: 10px 16px 8px;
+    font-size: 9px;
+    color: #5a2818;
     letter-spacing: 3px;
     font-weight: 900;
     text-transform: uppercase;
+    border-top: 1px solid #1e0804;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
+  .diablo .missions-title em { font-style: normal; color: #c41e3a; font-size: 10px; }
 
   .diablo .mission-list { padding: 0 12px; display: flex; flex-direction: column; gap: 6px; }
   .diablo .mission-item {
-    background: #120804;
+    background: #100604;
     border: 1px solid #2a0e04;
-    border-radius: 8px;
+    border-radius: 7px;
     padding: 10px 12px;
     display: flex;
     align-items: center;
@@ -150,8 +147,8 @@
     position: relative;
     overflow: hidden;
   }
-  .diablo .mission-item.done { border-color: #2a3a1a; opacity: 0.6; }
-  .diablo .mission-item.done::after { content: '✓'; position: absolute; right: 12px; color: #4a7c30; font-weight: 900; }
+  .diablo .mission-item.done { border-color: #1e2a10; opacity: 0.55; }
+  .diablo .mission-item.done::after { content: '✓'; position: absolute; right: 12px; color: #4a7c30; font-weight: 900; font-size: 13px; }
   .diablo .mission-item::before {
     content: '';
     position: absolute;
@@ -160,18 +157,19 @@
     background: linear-gradient(180deg, #c41e3a, #8b1a08);
   }
   .diablo .m-name { font-size: 12px; font-weight: 900; color: #c8a060; }
-  .diablo .m-reward { font-size: 10px; color: #c8860a; font-weight: 900; }
+  .diablo .m-reward { font-size: 10px; color: #c8860a; font-weight: 900; margin-top: 2px; }
   .diablo .m-btn {
-    background: linear-gradient(180deg, #4a1a08, #2a0e04);
-    border: 1px solid #6b2a10;
+    background: linear-gradient(180deg, #3a1208, #200a04);
+    border: 1px solid #5a2010;
     color: #c8860a;
     font-size: 10px;
     font-weight: 900;
-    padding: 5px 10px;
+    padding: 6px 12px;
     border-radius: 4px;
     cursor: pointer;
     font-family: inherit;
     letter-spacing: 1px;
+    white-space: nowrap;
   }
 
   .diablo .bottom-nav {
@@ -179,10 +177,10 @@
     bottom: 0; left: 0; right: 0;
     height: 54px;
     background: linear-gradient(180deg, #0d0804 0%, #1a0c06 100%);
-    border-top: 1px solid #3a1208;
+    border-top: 1px solid #2a0e04;
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    box-shadow: 0 -4px 20px rgba(180,30,20,0.2);
+    box-shadow: 0 -4px 24px rgba(180,30,20,0.25);
   }
   .diablo .nav-btn {
     display: flex;
@@ -194,29 +192,29 @@
     border: 0;
     cursor: pointer;
   }
-  .diablo .nav-btn .n-ic { font-size: 18px; }
-  .diablo .nav-btn small { font-size: 9px; color: #4a1a08; font-weight: 900; letter-spacing: 0.5px; font-family: inherit; }
+  .diablo .nav-btn .n-ic { font-size: 17px; opacity: 0.4; }
+  .diablo .nav-btn small { font-size: 9px; color: #3a1208; font-weight: 900; letter-spacing: 0.5px; font-family: inherit; }
+  .diablo .nav-btn.active .n-ic { opacity: 1; filter: drop-shadow(0 0 4px rgba(200,134,10,0.8)); }
   .diablo .nav-btn.active small { color: #c8860a; }
-  .diablo .nav-btn.active .n-ic { filter: drop-shadow(0 0 4px #c8860a); }
 
   /* ════════════════════════════════
      STARCRAFT 스타일
   ════════════════════════════════ */
-  .sc-label { color: #00bfff; }
+  .sc-label { color: #00bfff; text-shadow: 0 0 12px rgba(0,191,255,0.5); }
   .starcraft {
     background: #04080f;
     border: 1px solid #0a2040;
-    box-shadow: 0 0 40px rgba(0,100,200,0.3), inset 0 0 80px rgba(0,0,0,0.6);
+    box-shadow: 0 0 60px rgba(0,100,200,0.4), 0 0 120px rgba(0,100,200,0.15);
   }
   .sc-scanline {
     position: absolute;
     inset: 0;
-    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,50,100,0.03) 2px, rgba(0,50,100,0.03) 4px);
+    background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,50,100,0.025) 3px, rgba(0,50,100,0.025) 4px);
     pointer-events: none;
-    z-index: 1;
+    z-index: 10;
   }
   .starcraft .header {
-    background: linear-gradient(180deg, #0a1828 0%, #04080f 100%);
+    background: linear-gradient(180deg, #0c1c30 0%, #04080f 100%);
     border-bottom: 1px solid #0a2040;
     padding: 12px 14px;
     display: flex;
@@ -225,71 +223,63 @@
     position: relative;
     z-index: 2;
   }
-  .starcraft .brand { font-size: 11px; font-weight: 900; color: #1a5080; letter-spacing: 3px; text-transform: uppercase; }
-  .starcraft .username { font-size: 13px; font-weight: 900; color: #00bfff; text-shadow: 0 0 8px rgba(0,191,255,0.5); }
-  .starcraft .logout { font-size: 10px; color: #1a5080; border: 1px solid #0a2040; background: transparent; padding: 4px 8px; border-radius: 2px; cursor: pointer; font-family: inherit; }
+  .starcraft .brand { font-size: 10px; font-weight: 900; color: #1a4060; letter-spacing: 4px; text-transform: uppercase; }
+  .starcraft .username { font-size: 13px; font-weight: 900; color: #00bfff; text-shadow: 0 0 8px rgba(0,191,255,0.6); }
+  .starcraft .logout { font-size: 9px; color: #1a4060; border: 1px solid #0a2040; background: transparent; padding: 4px 8px; border-radius: 2px; cursor: pointer; font-family: inherit; }
 
   .starcraft .hero-area {
-    background: linear-gradient(180deg, #0a1828 0%, #04080f 60%);
+    background: linear-gradient(180deg, #0c1c30 0%, #080f1e 50%, #04080f 100%);
     padding: 14px 16px 10px;
     border-bottom: 1px solid #0a1828;
     position: relative;
     z-index: 2;
-    overflow: hidden;
+    overflow: visible;
   }
   .starcraft .hero-area::before {
     content: '';
     position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse at 50% 100%, rgba(0,100,200,0.1) 0%, transparent 70%);
+    bottom: 0; left: 0; right: 0;
+    height: 60px;
+    background: radial-gradient(ellipse at 50% 100%, rgba(0,100,200,0.15) 0%, transparent 70%);
   }
-  .starcraft .hero-greeting { font-size: 10px; color: #1a5080; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; }
-  .starcraft .hero-name { font-size: 18px; font-weight: 900; color: #00bfff; text-shadow: 0 0 12px rgba(0,191,255,0.4); margin-bottom: 2px; }
-  .starcraft .hero-sub { font-size: 11px; color: #1a5080; }
+  .starcraft .hero-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
+  .starcraft .hero-greeting { font-size: 9px; color: #1a4060; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 3px; }
+  .starcraft .hero-name { font-size: 17px; font-weight: 900; color: #00bfff; text-shadow: 0 0 14px rgba(0,191,255,0.5); }
+  .starcraft .hero-sub { font-size: 10px; color: #1a5080; margin-top: 2px; }
+  .starcraft .hero-rank { text-align: right; }
+  .starcraft .rank-badge { font-size: 9px; color: #1a4060; letter-spacing: 1px; font-weight: 900; }
+  .starcraft .rank-val { font-size: 20px; font-weight: 900; color: #00bfff; text-shadow: 0 0 12px rgba(0,191,255,0.7); display: block; line-height: 1; }
 
   .starcraft .character-box {
     display: flex;
     justify-content: center;
-    align-items: center;
-    height: 100px;
-    position: relative;
-    margin: 6px 0;
-  }
-  .starcraft .char-img {
-    width: 80px;
-    height: 80px;
-    background: radial-gradient(circle, #0a2040 0%, #04080f 100%);
-    border: 1px solid #0a3060;
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 40px;
-    box-shadow: 0 0 20px rgba(0,100,200,0.3), inset 0 0 20px rgba(0,0,0,0.5);
+    align-items: flex-end;
+    height: 155px;
     position: relative;
   }
-  .starcraft .char-img::after {
-    content: '';
+  .starcraft .char-glow {
     position: absolute;
-    inset: -4px;
-    border: 1px solid rgba(0,191,255,0.2);
-    border-radius: 6px;
-    animation: pulse 2s infinite;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 40px;
+    background: radial-gradient(ellipse, rgba(0,100,200,0.35) 0%, transparent 70%);
+    border-radius: 50%;
   }
-  @keyframes pulse { 0%,100%{opacity:0.3} 50%{opacity:0.8} }
 
-  .starcraft .xp-bar-wrap { margin: 0 16px 10px; }
+  .starcraft .xp-bar-wrap { margin: 4px 0 10px; }
   .starcraft .xp-label { display: flex; justify-content: space-between; margin-bottom: 4px; }
-  .starcraft .xp-label span { font-size: 10px; color: #1a5080; letter-spacing: 1px; font-weight: 900; }
+  .starcraft .xp-label span { font-size: 9px; color: #1a4060; letter-spacing: 1px; font-weight: 900; text-transform: uppercase; }
   .starcraft .xp-label em { font-style: normal; font-size: 10px; color: #00bfff; font-weight: 900; }
   .starcraft .xp-bar { height: 5px; background: #04080f; border: 1px solid #0a2040; }
-  .starcraft .xp-bar-fill { height: 100%; width: 7%; background: linear-gradient(90deg, #0050a0, #00bfff); box-shadow: 0 0 6px rgba(0,191,255,0.6); }
+  .starcraft .xp-bar-fill { height: 100%; width: 7%; background: linear-gradient(90deg, #0040a0, #00bfff); box-shadow: 0 0 8px rgba(0,191,255,0.7); }
 
   .starcraft .stats-row {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 6px;
-    margin: 0 16px 10px;
+    gap: 5px;
+    margin-bottom: 10px;
   }
   .starcraft .stat {
     background: #040c18;
@@ -299,34 +289,39 @@
     text-align: center;
     position: relative;
   }
-  .starcraft .stat::before { content: ''; position: absolute; top: -1px; left: 20%; right: 20%; height: 1px; background: #00bfff; opacity: 0.4; }
-  .starcraft .stat .s-val { font-size: 11px; font-weight: 900; color: #00bfff; display: block; }
-  .starcraft .stat .s-lbl { font-size: 9px; color: #1a5080; letter-spacing: 1px; font-weight: 900; text-transform: uppercase; }
+  .starcraft .stat::before { content: ''; position: absolute; top: 0; left: 25%; right: 25%; height: 1px; background: #00bfff; opacity: 0.3; }
+  .starcraft .stat .s-val { font-size: 10px; font-weight: 900; color: #00bfff; display: block; }
+  .starcraft .stat .s-lbl { font-size: 8px; color: #1a4060; letter-spacing: 1px; font-weight: 900; text-transform: uppercase; }
 
   .starcraft .missions-title {
-    padding: 0 16px 8px;
-    font-size: 10px;
-    color: #1a5080;
+    padding: 10px 16px 8px;
+    font-size: 9px;
+    color: #1a4060;
     letter-spacing: 3px;
     font-weight: 900;
     text-transform: uppercase;
+    border-top: 1px solid #0a1828;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     position: relative;
     z-index: 2;
   }
+  .starcraft .missions-title em { font-style: normal; color: #00bfff; font-size: 10px; }
 
   .starcraft .mission-list { padding: 0 12px; display: flex; flex-direction: column; gap: 5px; position: relative; z-index: 2; }
   .starcraft .mission-item {
     background: #040c18;
     border: 1px solid #0a2040;
     border-radius: 2px;
-    padding: 9px 12px;
+    padding: 10px 12px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     position: relative;
     overflow: hidden;
   }
-  .starcraft .mission-item.done { opacity: 0.5; }
+  .starcraft .mission-item.done { opacity: 0.45; }
   .starcraft .mission-item.done::after { content: '✓'; position: absolute; right: 12px; color: #00bfff; font-weight: 900; }
   .starcraft .mission-item::before {
     content: '';
@@ -336,30 +331,31 @@
     background: linear-gradient(180deg, #00bfff, #0050a0);
   }
   .starcraft .m-name { font-size: 12px; font-weight: 900; color: #a0c8e0; }
-  .starcraft .m-reward { font-size: 10px; color: #00bfff; font-weight: 900; }
+  .starcraft .m-reward { font-size: 10px; color: #00bfff; font-weight: 900; margin-top: 2px; }
   .starcraft .m-btn {
     background: transparent;
     border: 1px solid #0a4080;
     color: #00bfff;
     font-size: 10px;
     font-weight: 900;
-    padding: 5px 10px;
+    padding: 6px 12px;
     border-radius: 2px;
     cursor: pointer;
     font-family: inherit;
     letter-spacing: 1px;
-    text-shadow: 0 0 6px rgba(0,191,255,0.5);
+    text-shadow: 0 0 6px rgba(0,191,255,0.6);
+    white-space: nowrap;
   }
 
   .starcraft .bottom-nav {
     position: absolute;
     bottom: 0; left: 0; right: 0;
     height: 54px;
-    background: linear-gradient(180deg, #04080f 0%, #0a1828 100%);
+    background: linear-gradient(180deg, #04080f 0%, #0c1c30 100%);
     border-top: 1px solid #0a2040;
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    box-shadow: 0 -4px 20px rgba(0,100,200,0.15);
+    box-shadow: 0 -4px 24px rgba(0,100,200,0.2);
     z-index: 2;
   }
   .starcraft .nav-btn {
@@ -372,14 +368,25 @@
     border: 0;
     cursor: pointer;
   }
-  .starcraft .nav-btn .n-ic { font-size: 18px; opacity: 0.3; }
-  .starcraft .nav-btn small { font-size: 9px; color: #1a5080; font-weight: 900; letter-spacing: 0.5px; font-family: inherit; }
+  .starcraft .nav-btn .n-ic { font-size: 17px; opacity: 0.3; }
+  .starcraft .nav-btn small { font-size: 9px; color: #1a4060; font-weight: 900; letter-spacing: 0.5px; font-family: inherit; }
+  .starcraft .nav-btn.active .n-ic { opacity: 1; filter: drop-shadow(0 0 4px rgba(0,191,255,0.8)); }
   .starcraft .nav-btn.active small { color: #00bfff; }
-  .starcraft .nav-btn.active .n-ic { opacity: 1; filter: drop-shadow(0 0 3px #00bfff); }
+
+  @keyframes eyeglow { 0%,100%{opacity:0.8} 50%{opacity:1} }
+  @keyframes visor { 0%,100%{opacity:0.85} 50%{opacity:1} }
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
+  @keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:0.9} }
+
+  .diablo .char-svg { animation: float 3s ease-in-out infinite; }
+  .starcraft .char-svg { animation: float 3.5s ease-in-out infinite; }
 </style>
 </head>
 <body>
 
+<!-- ══════════════════════════════════════
+     DIABLO 스타일
+══════════════════════════════════════ -->
 <div>
   <h2 class="diablo-label">⚔ DIABLO 스타일</h2>
   <div class="phone diablo">
@@ -388,13 +395,128 @@
       <span class="username">데모신입</span>
       <button class="logout">로그아웃</button>
     </div>
+
     <div class="hero-area">
-      <div class="hero-greeting">신규 용병 · 강남점</div>
-      <div class="hero-name">데모신입</div>
-      <div class="hero-sub">Day 2 / 20 · 어둠의 수련자</div>
-      <div class="character-box">
-        <div class="char-img">🧙</div>
+      <div class="hero-top">
+        <div>
+          <div class="hero-greeting">신규 용병 · 강남점</div>
+          <div class="hero-name">데모신입</div>
+          <div class="hero-sub">Day 2 / 20 · 어둠의 수련자</div>
+        </div>
+        <div class="hero-rank">
+          <div class="rank-badge">RANK</div>
+          <span class="rank-val">Lv.1</span>
+        </div>
       </div>
+
+      <!-- 디아블로 다크나이트 캐릭터 SVG -->
+      <div class="character-box">
+        <div class="char-glow"></div>
+        <svg class="char-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 155" width="112" height="148" overflow="visible">
+          <!-- Cape behind -->
+          <path d="M30 70 C14 90 10 128 20 150 L34 146 C24 126 27 93 36 80 Z" fill="#0a0402"/>
+          <path d="M90 70 C106 90 110 128 100 150 L86 146 C96 126 93 93 84 80 Z" fill="#0a0402"/>
+
+          <!-- Legs -->
+          <path d="M46 112 L42 150 L53 150 L56 112 Z" fill="#1a0808"/>
+          <path d="M74 112 L78 150 L67 150 L64 112 Z" fill="#1a0808"/>
+          <path d="M40 138 L56 138 L55 150 L41 150 Z" fill="#240e0e" stroke="#4a1a08" stroke-width="0.5"/>
+          <path d="M80 138 L64 138 L65 150 L79 150 Z" fill="#240e0e" stroke="#4a1a08" stroke-width="0.5"/>
+
+          <!-- Body -->
+          <path d="M30 70 L26 116 L94 116 L90 70 Z" fill="#1a0808"/>
+          <path d="M36 73 L36 112 L84 112 L84 73 Z" fill="#200c0c"/>
+          <path d="M36 73 L36 112 L84 112 L84 73 Z" fill="none" stroke="#3a1208" stroke-width="0.5"/>
+          <!-- Chest rune -->
+          <polygon points="60,80 62.5,87 70,87 64.5,91.5 67,99 60,94.5 53,99 55.5,91.5 50,87 57.5,87" fill="#c8860a" opacity="0.7"/>
+          <circle cx="60" cy="89" r="5" fill="#c41e3a"/>
+          <circle cx="60" cy="89" r="3" fill="#ff4060"/>
+          <circle cx="60" cy="89" r="8" fill="rgba(200,30,60,0.2)"/>
+          <!-- Torso lines -->
+          <line x1="36" y1="100" x2="84" y2="100" stroke="#2a0e08" stroke-width="0.8"/>
+          <line x1="36" y1="107" x2="84" y2="107" stroke="#2a0e08" stroke-width="0.5"/>
+
+          <!-- Left arm -->
+          <path d="M30 70 L20 68 L14 106 L30 112 L36 86 Z" fill="#180808"/>
+          <!-- Left shoulder (spiked pauldron) -->
+          <path d="M12 66 C8 54 20 48 32 54 L36 72 L20 76 Z" fill="#220c0c" stroke="#3a1208" stroke-width="1"/>
+          <line x1="10" y1="60" x2="4"  y2="50" stroke="#c8860a" stroke-width="2"   stroke-linecap="round"/>
+          <line x1="15" y1="55" x2="11" y2="44" stroke="#c8860a" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="21" y1="51" x2="20" y2="41" stroke="#c8860a" stroke-width="1.5" stroke-linecap="round"/>
+          <!-- Left hand -->
+          <rect x="10" y="103" width="14" height="9" rx="3" fill="#180808"/>
+
+          <!-- Right arm -->
+          <path d="M90 70 L100 68 L106 106 L90 112 L84 86 Z" fill="#180808"/>
+          <!-- Right shoulder (spiked pauldron) -->
+          <path d="M108 66 C112 54 100 48 88 54 L84 72 L100 76 Z" fill="#220c0c" stroke="#3a1208" stroke-width="1"/>
+          <line x1="110" y1="60" x2="116" y2="50" stroke="#c8860a" stroke-width="2"   stroke-linecap="round"/>
+          <line x1="105" y1="55" x2="109" y2="44" stroke="#c8860a" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="99"  y1="51" x2="100" y2="41" stroke="#c8860a" stroke-width="1.5" stroke-linecap="round"/>
+          <!-- Right hand with dark energy -->
+          <rect x="96" y="103" width="14" height="9" rx="3" fill="#180808"/>
+          <circle cx="109" cy="107" r="7"   fill="rgba(200,30,60,0.35)"/>
+          <circle cx="109" cy="107" r="4.5" fill="rgba(200,30,60,0.25)"/>
+
+          <!-- Sword between hands (vertical) -->
+          <rect x="57" y="110" width="6" height="44" rx="2" fill="#2a0c08"/>
+          <rect x="58.5" y="110" width="3" height="44" rx="1" fill="#c8860a" opacity="0.85"/>
+          <rect x="56" y="113" width="8" height="40" rx="4" fill="rgba(200,134,10,0.18)"/>
+          <!-- Crossguard -->
+          <rect x="49" y="110" width="22" height="5" rx="2" fill="#2a0e08" stroke="#c8860a" stroke-width="0.5"/>
+          <!-- Pommel -->
+          <circle cx="60" cy="110" r="6"   fill="#c8860a"/>
+          <circle cx="60" cy="110" r="3.5" fill="#ffcc44"/>
+          <circle cx="60" cy="110" r="9"   fill="rgba(200,134,10,0.3)"/>
+
+          <!-- Neck -->
+          <rect x="53" y="57" width="14" height="15" rx="4" fill="#180808"/>
+
+          <!-- HELMET -->
+          <path d="M36 51 C36 27 84 27 84 51 L83 65 L37 65 Z" fill="#1a0808"/>
+          <!-- Top spike -->
+          <path d="M56 27 L60 14 L64 27 Z" fill="#220e0e" stroke="#c8860a" stroke-width="0.5"/>
+          <!-- Side crests -->
+          <path d="M44 31 L40 20 L50 29 Z" fill="#1a0808"/>
+          <path d="M76 31 L80 20 L70 29 Z" fill="#1a0808"/>
+          <!-- Visor plate -->
+          <path d="M40 45 L80 45 L82 61 L38 61 Z" fill="#0d0404"/>
+          <!-- Glowing eyes (angled/menacing) -->
+          <path d="M42 50 L55 48 L55 54 L42 55 Z" fill="rgba(200,134,10,0.15)"/>
+          <path d="M78 50 L65 48 L65 54 L78 55 Z" fill="rgba(200,134,10,0.15)"/>
+          <path d="M44 50.5 L54 48.5 L54 53.5 L44 54.5 Z" fill="#c8860a" style="animation:eyeglow 2s ease-in-out infinite"/>
+          <path d="M76 50.5 L66 48.5 L66 53.5 L76 54.5 Z" fill="#c8860a" style="animation:eyeglow 2s ease-in-out infinite"/>
+          <path d="M46 51 L53 49 L53 53 L46 54 Z" fill="#fff8c0"/>
+          <path d="M74 51 L67 49 L67 53 L74 54 Z" fill="#fff8c0"/>
+          <!-- Eye glow halo -->
+          <ellipse cx="49" cy="52" rx="8" ry="4" fill="rgba(200,134,10,0.2)"/>
+          <ellipse cx="71" cy="52" rx="8" ry="4" fill="rgba(200,134,10,0.2)"/>
+          <!-- Nose bridge -->
+          <line x1="60" y1="48" x2="60" y2="60" stroke="#180808" stroke-width="2"/>
+          <!-- Cheek guards -->
+          <path d="M36 51 L40 47 L40 61 L36 65 Z" fill="#200c0c" stroke="#2a0e08" stroke-width="0.5"/>
+          <path d="M84 51 L80 47 L80 61 L84 65 Z" fill="#200c0c" stroke="#2a0e08" stroke-width="0.5"/>
+          <!-- Chin guard -->
+          <path d="M44 62 L76 62 L74 67 L46 67 Z" fill="#200c0c" stroke="#2a0e08" stroke-width="0.5"/>
+          <!-- Helmet amber accents -->
+          <path d="M41 31 C37 37 36 43 36 51" stroke="#c8860a" stroke-width="0.8" fill="none" opacity="0.4"/>
+          <path d="M79 31 C83 37 84 43 84 51" stroke="#c8860a" stroke-width="0.8" fill="none" opacity="0.4"/>
+          <!-- Top ridge line -->
+          <line x1="60" y1="27" x2="60" y2="51" stroke="#2a0e08" stroke-width="1.2"/>
+
+          <!-- Floating magic particles -->
+          <circle cx="18" cy="78"  r="2"   fill="#c41e3a" opacity="0.7" style="animation:pulse 2.2s ease-in-out infinite"/>
+          <circle cx="103" cy="84" r="1.5" fill="#c8860a" opacity="0.6" style="animation:pulse 1.8s ease-in-out infinite 0.5s"/>
+          <circle cx="14" cy="98"  r="1.5" fill="#c41e3a" opacity="0.5" style="animation:pulse 2.5s ease-in-out infinite 0.3s"/>
+          <circle cx="107" cy="98" r="2"   fill="#c8860a" opacity="0.5" style="animation:pulse 2s ease-in-out infinite 0.8s"/>
+          <circle cx="22" cy="118" r="1"   fill="#c41e3a" opacity="0.4"/>
+          <circle cx="94" cy="68"  r="1.5" fill="#c8860a" opacity="0.6" style="animation:pulse 1.6s ease-in-out infinite"/>
+          <!-- Magic wisps -->
+          <path d="M16 86 C20 82 18 78 22 74" stroke="rgba(200,30,60,0.35)"  stroke-width="1.5" fill="none"/>
+          <path d="M104 90 C100 86 102 82 98 78" stroke="rgba(200,134,10,0.35)" stroke-width="1.5" fill="none"/>
+        </svg>
+      </div>
+
       <div class="xp-bar-wrap">
         <div class="xp-label">
           <span>LEVEL 1 · 경험치</span>
@@ -402,13 +524,18 @@
         </div>
         <div class="xp-bar"><div class="xp-bar-fill"></div></div>
       </div>
+
       <div class="stats-row">
         <div class="stat"><span class="s-val">Lv.1</span><span class="s-lbl">등급</span></div>
         <div class="stat"><span class="s-val">Unranked</span><span class="s-lbl">퀴즈</span></div>
         <div class="stat"><span class="s-val">Explorer</span><span class="s-lbl">AX</span></div>
       </div>
     </div>
-    <div class="missions-title">오늘의 퀘스트 1/4</div>
+
+    <div class="missions-title">
+      <span>오늘의 퀘스트</span>
+      <em>1 / 4</em>
+    </div>
     <div class="mission-list">
       <div class="mission-item done">
         <div>
@@ -431,6 +558,7 @@
         <button class="m-btn">도전</button>
       </div>
     </div>
+
     <div class="bottom-nav">
       <button class="nav-btn active"><span class="n-ic">🏠</span><small>기지</small></button>
       <button class="nav-btn"><span class="n-ic">📖</span><small>수련</small></button>
@@ -441,6 +569,9 @@
   </div>
 </div>
 
+<!-- ══════════════════════════════════════
+     STARCRAFT 스타일
+══════════════════════════════════════ -->
 <div>
   <h2 class="sc-label">🚀 STARCRAFT 스타일</h2>
   <div class="phone starcraft">
@@ -450,13 +581,150 @@
       <span class="username">데모신입</span>
       <button class="logout">로그아웃</button>
     </div>
+
     <div class="hero-area">
-      <div class="hero-greeting">신규 대원 · 강남 지부</div>
-      <div class="hero-name">데모신입</div>
-      <div class="hero-sub">Day 2 / 20 · Ghost 훈련병</div>
-      <div class="character-box">
-        <div class="char-img">🤖</div>
+      <div class="hero-top">
+        <div>
+          <div class="hero-greeting">신규 대원 · 강남 지부</div>
+          <div class="hero-name">데모신입</div>
+          <div class="hero-sub">Day 2 / 20 · Ghost 훈련병</div>
+        </div>
+        <div class="hero-rank">
+          <div class="rank-badge">RANK</div>
+          <span class="rank-val">Lv.1</span>
+        </div>
       </div>
+
+      <!-- 스타크래프트 테란 마린 캐릭터 SVG -->
+      <div class="character-box">
+        <div class="char-glow"></div>
+        <svg class="char-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 155" width="112" height="148" overflow="visible">
+          <!-- Ground glow -->
+          <ellipse cx="60" cy="152" rx="38" ry="5" fill="rgba(0,100,200,0.35)"/>
+
+          <!-- Legs -->
+          <path d="M44 110 L39 150 L52 150 L55 110 Z" fill="#162030"/>
+          <path d="M76 110 L81 150 L68 150 L65 110 Z" fill="#162030"/>
+          <!-- Thigh armor -->
+          <rect x="38" y="110" width="18" height="15" rx="3" fill="#1c2c3c" stroke="#0a2040" stroke-width="0.5"/>
+          <rect x="64" y="110" width="18" height="15" rx="3" fill="#1c2c3c" stroke="#0a2040" stroke-width="0.5"/>
+          <!-- Knee servo -->
+          <circle cx="47" cy="127" r="5" fill="#0a1828" stroke="#0a4080" stroke-width="1"/>
+          <circle cx="47" cy="127" r="2" fill="#00bfff" opacity="0.7" style="animation:pulse 2s ease-in-out infinite"/>
+          <circle cx="73" cy="127" r="5" fill="#0a1828" stroke="#0a4080" stroke-width="1"/>
+          <circle cx="73" cy="127" r="2" fill="#00bfff" opacity="0.7" style="animation:pulse 2s ease-in-out infinite 0.5s"/>
+          <!-- Boot armor -->
+          <path d="M37 139 L56 139 L57 150 L36 150 Z" fill="#1a2a3a" stroke="#0a3060" stroke-width="0.5"/>
+          <path d="M83 139 L64 139 L63 150 L84 150 Z" fill="#1a2a3a" stroke="#0a3060" stroke-width="0.5"/>
+          <!-- Boot thruster glow -->
+          <ellipse cx="46" cy="150" rx="9" ry="2" fill="rgba(0,191,255,0.3)"/>
+          <ellipse cx="74" cy="150" rx="9" ry="2" fill="rgba(0,191,255,0.3)"/>
+
+          <!-- Body/torso (very bulky) -->
+          <path d="M24 66 L21 114 L99 114 L96 66 Z" fill="#162030"/>
+          <path d="M30 68 L30 110 L90 110 L90 68 Z" fill="#1c2c3c"/>
+          <path d="M30 68 L30 110 L90 110 L90 68 Z" fill="none" stroke="#0a2040" stroke-width="0.8"/>
+          <!-- Power core -->
+          <rect x="47" y="78" width="26" height="28" rx="4" fill="#0a1828" stroke="#0a4080" stroke-width="1"/>
+          <circle cx="60" cy="92" r="10" fill="#040c18" stroke="#00bfff" stroke-width="1.5"/>
+          <circle cx="60" cy="92" r="6.5" fill="#0030a0"/>
+          <circle cx="60" cy="92" r="3.5" fill="#0080ff"/>
+          <circle cx="60" cy="92" r="1.5" fill="#00bfff"/>
+          <circle cx="60" cy="92" r="13" fill="rgba(0,191,255,0.1)"/>
+          <!-- Core scan lines -->
+          <line x1="49" y1="87" x2="71" y2="87" stroke="rgba(0,191,255,0.15)" stroke-width="0.5"/>
+          <line x1="47" y1="92" x2="73" y2="92" stroke="rgba(0,191,255,0.15)" stroke-width="0.5"/>
+          <line x1="49" y1="97" x2="71" y2="97" stroke="rgba(0,191,255,0.15)" stroke-width="0.5"/>
+          <!-- Torso detail lines -->
+          <line x1="30" y1="106" x2="47" y2="106" stroke="#0a3060" stroke-width="0.5"/>
+          <line x1="73" y1="106" x2="90" y2="106" stroke="#0a3060" stroke-width="0.5"/>
+          <line x1="30" y1="75" x2="47" y2="75" stroke="#0a3060" stroke-width="0.5"/>
+          <line x1="73" y1="75" x2="90" y2="75" stroke="#0a3060" stroke-width="0.5"/>
+
+          <!-- Left arm with rifle -->
+          <path d="M21 66 L9 64 L4 106 L23 112 L30 82 Z" fill="#162030"/>
+          <path d="M11 68 L6 102 L22 108 L26 74 Z" fill="#1c2c3c" stroke="#0a2040" stroke-width="0.5"/>
+          <!-- Left gauntlet -->
+          <rect x="2" y="101" width="22" height="12" rx="4" fill="#1a2a3a" stroke="#0a3060" stroke-width="1"/>
+          <!-- Rifle (extends from gauntlet) -->
+          <rect x="0" y="103" width="34" height="7" rx="2" fill="#0a1828" stroke="#0a4080" stroke-width="0.5"/>
+          <!-- Rifle scope -->
+          <rect x="8" y="101" width="14" height="5" rx="1" fill="#0a2040" stroke="#0a4080" stroke-width="0.5"/>
+          <!-- Muzzle glow -->
+          <circle cx="2"  cy="106" r="4.5" fill="rgba(0,191,255,0.45)" style="animation:pulse 1.5s ease-in-out infinite"/>
+          <circle cx="2"  cy="106" r="2.5" fill="#00bfff" opacity="0.8"/>
+          <circle cx="-2" cy="106" r="3"   fill="rgba(0,191,255,0.25)"/>
+
+          <!-- Left shoulder pauldron (massive) -->
+          <path d="M7 62 C3 46 18 40 32 46 L36 68 L17 72 Z" fill="#1a2a3a" stroke="#0a3060" stroke-width="1"/>
+          <line x1="8"  y1="55" x2="22" y2="48" stroke="#0a4080" stroke-width="1"/>
+          <line x1="6"  y1="61" x2="20" y2="54" stroke="#0a3060" stroke-width="0.5"/>
+          <!-- Status light -->
+          <circle cx="12" cy="50" r="3" fill="#00bfff" opacity="0.85" style="animation:pulse 2.2s ease-in-out infinite"/>
+          <circle cx="12" cy="50" r="5" fill="rgba(0,191,255,0.2)"/>
+
+          <!-- Right arm -->
+          <path d="M99 66 L111 64 L116 106 L97 112 L90 82 Z" fill="#162030"/>
+          <path d="M109 68 L114 102 L98 108 L94 74 Z" fill="#1c2c3c" stroke="#0a2040" stroke-width="0.5"/>
+          <!-- Right gauntlet -->
+          <rect x="96" y="101" width="22" height="12" rx="4" fill="#1a2a3a" stroke="#0a3060" stroke-width="1"/>
+          <!-- Right fist power -->
+          <circle cx="114" cy="107" r="7" fill="rgba(0,100,200,0.3)"/>
+          <circle cx="114" cy="107" r="4" fill="rgba(0,191,255,0.15)"/>
+
+          <!-- Right shoulder pauldron -->
+          <path d="M113 62 C117 46 102 40 88 46 L84 68 L103 72 Z" fill="#1a2a3a" stroke="#0a3060" stroke-width="1"/>
+          <line x1="112" y1="55" x2="98" y2="48" stroke="#0a4080" stroke-width="1"/>
+          <line x1="114" y1="61" x2="100" y2="54" stroke="#0a3060" stroke-width="0.5"/>
+          <circle cx="108" cy="50" r="3" fill="#00bfff" opacity="0.85" style="animation:pulse 2.2s ease-in-out infinite 0.6s"/>
+          <circle cx="108" cy="50" r="5" fill="rgba(0,191,255,0.2)"/>
+
+          <!-- Neck collar -->
+          <rect x="50" y="55" width="20" height="13" rx="3" fill="#162030" stroke="#0a3060" stroke-width="0.8"/>
+
+          <!-- HELMET (Terran Marine signature) -->
+          <path d="M33 49 C33 24 87 24 87 49 L87 63 L33 63 Z" fill="#162030"/>
+          <!-- Helmet top block -->
+          <rect x="50" y="20" width="20" height="30" rx="3" fill="#1a2a3a" stroke="#0a3060" stroke-width="0.5"/>
+          <!-- Top ridge -->
+          <line x1="60" y1="20" x2="60" y2="49" stroke="#0a3060" stroke-width="1.2"/>
+          <!-- Visor housing -->
+          <path d="M37 43 L83 43 L85 61 L35 61 Z" fill="#040c18"/>
+          <!-- THE visor slit (iconic) -->
+          <rect x="37" y="47" width="46" height="11" rx="1" fill="rgba(0,191,255,0.05)"/>
+          <!-- Outer glow line -->
+          <line x1="37" y1="52" x2="83" y2="52" stroke="rgba(0,191,255,0.4)" stroke-width="6"/>
+          <!-- Main visor glow -->
+          <line x1="37" y1="52" x2="83" y2="52" stroke="#00bfff" stroke-width="3" style="animation:visor 2s ease-in-out infinite" opacity="0.9"/>
+          <!-- Visor highlight -->
+          <line x1="37" y1="52" x2="83" y2="52" stroke="#ffffff" stroke-width="1" opacity="0.35"/>
+          <!-- Visor reflection dots -->
+          <circle cx="44" cy="52" r="1" fill="rgba(255,255,255,0.2)"/>
+          <circle cx="52" cy="52" r="0.8" fill="rgba(255,255,255,0.15)"/>
+          <!-- Helmet side plates -->
+          <path d="M33 43 L33 63 L37 66 L37 43 Z" fill="#1c2c3c" stroke="#0a2040" stroke-width="0.5"/>
+          <path d="M87 43 L87 63 L83 66 L83 43 Z" fill="#1c2c3c" stroke="#0a2040" stroke-width="0.5"/>
+          <!-- Chin piece -->
+          <path d="M42 61 L78 61 L76 67 L44 67 Z" fill="#1c2c3c" stroke="#0a2040" stroke-width="0.5"/>
+          <!-- Antenna -->
+          <rect x="71" y="13" width="3" height="12" rx="1" fill="#0a3060"/>
+          <circle cx="72.5" cy="12" r="3"   fill="#00bfff" opacity="0.9" style="animation:pulse 1.8s ease-in-out infinite"/>
+          <circle cx="72.5" cy="12" r="5.5" fill="rgba(0,191,255,0.25)"/>
+          <!-- Helmet corner screws -->
+          <circle cx="38" cy="45" r="1.5" fill="#0a3060"/>
+          <circle cx="82" cy="45" r="1.5" fill="#0a3060"/>
+
+          <!-- Floating tech particles -->
+          <circle cx="14" cy="80"  r="2"   fill="#00bfff" opacity="0.5" style="animation:pulse 2.2s ease-in-out infinite"/>
+          <circle cx="108" cy="86" r="1.5" fill="#00bfff" opacity="0.4" style="animation:pulse 1.8s ease-in-out infinite 0.4s"/>
+          <circle cx="10" cy="100" r="1"   fill="#00bfff" opacity="0.35"/>
+          <circle cx="112" cy="74" r="1.5" fill="#00bfff" opacity="0.5" style="animation:pulse 2s ease-in-out infinite 0.9s"/>
+          <!-- Data stream -->
+          <path d="M11 82 L7 88 L11 94" stroke="rgba(0,191,255,0.3)" stroke-width="1" fill="none"/>
+          <path d="M109 88 L113 84 L109 80" stroke="rgba(0,191,255,0.3)" stroke-width="1" fill="none"/>
+        </svg>
+      </div>
+
       <div class="xp-bar-wrap">
         <div class="xp-label">
           <span>RANK 1 · EXP</span>
@@ -464,13 +732,18 @@
         </div>
         <div class="xp-bar"><div class="xp-bar-fill"></div></div>
       </div>
+
       <div class="stats-row">
         <div class="stat"><span class="s-val">Lv.1</span><span class="s-lbl">계급</span></div>
         <div class="stat"><span class="s-val">Unranked</span><span class="s-lbl">전략</span></div>
-        <div class="stat"><span class="s-val">Scout</span><span class="s-lbl">AI</span></div>
+        <div class="stat"><span class="s-val">Scout</span><span class="s-lbl">AX</span></div>
       </div>
     </div>
-    <div class="missions-title">임무 브리핑 1/4 완료</div>
+
+    <div class="missions-title">
+      <span>임무 브리핑</span>
+      <em>1 / 4 완료</em>
+    </div>
     <div class="mission-list">
       <div class="mission-item done">
         <div>
@@ -493,6 +766,7 @@
         <button class="m-btn">시작</button>
       </div>
     </div>
+
     <div class="bottom-nav">
       <button class="nav-btn active"><span class="n-ic">🏠</span><small>기지</small></button>
       <button class="nav-btn"><span class="n-ic">📡</span><small>훈련</small></button>
