@@ -25,7 +25,7 @@ export async function POST(request: Request) {
     const contentType = request.headers.get("content-type") ?? "";
     const body = contentType.includes("multipart/form-data") ? await readMultipartAxRequest(request, requester.id) : await readJson<AxRequest>(request);
     const next = certifyAx(config, requester.id, body.categoryId, body.evidenceName ?? "");
-    return ok({ config: await saveConfig(next) });
+    return ok({ config: await saveConfig(config, next) });
   } catch (error) {
     return fail(error);
   }

@@ -14,8 +14,8 @@ export async function getConfigAndRequester(request: Request, kind: UQuestReques
   return { config, requester };
 }
 
-export async function saveConfig(config: FinalUQuestConfig) {
-  return saveMutableUQuestConfig(config);
+export async function saveConfig(before: FinalUQuestConfig, next: FinalUQuestConfig) {
+  return saveMutableUQuestConfig(before, next);
 }
 
 export function ok(payload: unknown = {}) {

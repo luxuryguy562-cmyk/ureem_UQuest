@@ -170,6 +170,7 @@ export function UQuestApp({ config }: { config: FinalUQuestConfig }) {
   const [selectedCurriculumId, setSelectedCurriculumId] = useState(() => getCurrentCurriculumId(config, getUser(config, config.activeUserId)));
   const [quizDraft, setQuizDraft] = useState<Record<string, number>>({});
   const [toast, setToast] = useState<Toast | null>(null);
+  const [pending, setPending] = useState(false);
   const [authChecked, setAuthChecked] = useState(false);
   const [authUser, setAuthUser] = useState<FinalUser | null>(null);
 
@@ -225,6 +226,8 @@ export function UQuestApp({ config }: { config: FinalUQuestConfig }) {
     success: Toast,
     requesterId = currentUser.id
   ) {
+    if (pending) return false;
+    setPending(true);
     try {
       const response = await fetch(url, {
         method: "POST",
@@ -247,8 +250,6 @@ export function UQuestApp({ config }: { config: FinalUQuestConfig }) {
 
       if (payload.config) {
         const nextConfig = payload.config;
-        // 서버 config는 activeUserId를 '첫 active 신입'으로 다시 잡으므로, 로그인 세션의
-        // 사용자 식별자를 보존해 화면이 다른 사람(데모신입)으로 바뀌지 않게 한다.
         setData((current) => ({
           ...nextConfig,
           activeUserId: current.activeUserId,
@@ -261,6 +262,8 @@ export function UQuestApp({ config }: { config: FinalUQuestConfig }) {
     } catch {
       pushToast({ title: "요청 실패", body: "서버 요청 중 문제가 발생했습니다.", tone: "danger" });
       return false;
+    } finally {
+      setPending(false);
     }
   }
 
@@ -270,6 +273,8 @@ export function UQuestApp({ config }: { config: FinalUQuestConfig }) {
     success: Toast,
     requesterId = currentUser.id
   ) {
+    if (pending) return false;
+    setPending(true);
     try {
       const response = await fetch(url, {
         method: "POST",
@@ -291,8 +296,6 @@ export function UQuestApp({ config }: { config: FinalUQuestConfig }) {
 
       if (payload.config) {
         const nextConfig = payload.config;
-        // 서버 config는 activeUserId를 '첫 active 신입'으로 다시 잡으므로, 로그인 세션의
-        // 사용자 식별자를 보존해 화면이 다른 사람(데모신입)으로 바뀌지 않게 한다.
         setData((current) => ({
           ...nextConfig,
           activeUserId: current.activeUserId,
@@ -305,6 +308,8 @@ export function UQuestApp({ config }: { config: FinalUQuestConfig }) {
     } catch {
       pushToast({ title: "요청 실패", body: "서버 요청 중 문제가 발생했습니다.", tone: "danger" });
       return false;
+    } finally {
+      setPending(false);
     }
   }
 
@@ -495,7 +500,7 @@ export function UQuestApp({ config }: { config: FinalUQuestConfig }) {
   }
 
   return (
-    <div className="phone final-shell" data-source={data.source}>
+    <div className="phone final-shell" data-pending={pending} data-source={data.source}>
       <header className="final-header">
         <div className="brand-block">
           <span>U-Quest</span>

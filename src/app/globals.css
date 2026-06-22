@@ -947,6 +947,11 @@
   --red:#ef4444;
   background:#f4f7fb;
 }
+.final-shell[data-pending="true"] button {
+  opacity:0.6;
+  pointer-events:none;
+  cursor:wait;
+}
 .auth-shell {
   display:flex;
   align-items:center;

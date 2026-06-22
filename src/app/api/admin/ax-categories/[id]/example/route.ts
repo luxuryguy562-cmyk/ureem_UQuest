@@ -15,7 +15,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
 
     const imageUrl = await uploadAxEvidence(`ax-example/${id}`, file);
     const next = updateAxCategoryExample(config, requester.id, id, imageUrl);
-    return ok({ config: await saveConfig(next) });
+    return ok({ config: await saveConfig(config, next) });
   } catch (error) {
     return fail(error);
   }

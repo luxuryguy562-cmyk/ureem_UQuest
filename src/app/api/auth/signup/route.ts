@@ -19,7 +19,7 @@ export async function POST(request: Request) {
     const config = await getMutableUQuestConfig();
     const body = await readJson<SignupBody>(request);
     const next = createSignupUser(config, body);
-    const saved = await saveConfig(next);
+    const saved = await saveConfig(config, next);
     const user = saved.users[saved.users.length - 1];
     const response = NextResponse.json({ user: publicUser(user), status: "pending" });
     response.cookies.set("uquest_user_id", user.id, {

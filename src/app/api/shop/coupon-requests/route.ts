@@ -25,7 +25,7 @@ export async function POST(request: Request) {
     const { config, requester } = await getConfigAndRequester(request, "rookie");
     const body = await readJson<CouponRequestBody>(request);
     const next = redeemCoupon(config, requester.id, body.couponId);
-    return ok({ config: await saveConfig(next) });
+    return ok({ config: await saveConfig(config, next) });
   } catch (error) {
     return fail(error);
   }

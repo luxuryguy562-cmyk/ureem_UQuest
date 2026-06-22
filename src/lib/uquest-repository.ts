@@ -52,18 +52,16 @@ export async function getMutableUQuestConfig(): Promise<FinalUQuestConfig> {
   return getUQuestAppConfig();
 }
 
-export async function saveMutableUQuestConfig(next: FinalUQuestConfig): Promise<FinalUQuestConfig> {
+export async function saveMutableUQuestConfig(before: FinalUQuestConfig, next: FinalUQuestConfig): Promise<FinalUQuestConfig> {
   const supabase = createServerSupabaseClient();
 
   if (!supabase) {
-    // DB 미연결: 폴백 모드(메모리). 이전 동작 유지.
     return { ...next, source: "fallback" };
   }
 
-  const before = await assembleConfigFromDb(supabase, next.today);
   await persistDeltas(supabase, before, next);
 
-  return assembleConfigFromDb(supabase, next.today);
+  return { ...next, source: "supabase" };
 }
 
 export async function uploadAxEvidence(userId: string, file: File) {

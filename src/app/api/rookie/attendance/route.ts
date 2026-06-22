@@ -17,7 +17,7 @@ export async function POST(request: Request) {
   try {
     const { config, requester } = await getConfigAndRequester(request, "rookie");
     const next = claimAttendance(config, requester.id);
-    return ok({ config: await saveConfig(next) });
+    return ok({ config: await saveConfig(config, next) });
   } catch (error) {
     return fail(error);
   }

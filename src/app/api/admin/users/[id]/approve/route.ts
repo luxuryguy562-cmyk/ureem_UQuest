@@ -6,7 +6,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     const { id } = await context.params;
     const { config, requester } = await getConfigAndRequester(request, "admin");
     const next = approveUser(config, requester.id, id);
-    return ok({ config: await saveConfig(next) });
+    return ok({ config: await saveConfig(config, next) });
   } catch (error) {
     return fail(error);
   }
