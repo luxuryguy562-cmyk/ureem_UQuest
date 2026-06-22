@@ -254,9 +254,35 @@
   @keyframes pulse  { 0%,100%{opacity:0.4} 50%{opacity:1} }
   @keyframes float  { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
   @keyframes visor  { 0%,100%{opacity:0.85} 50%{opacity:1} }
-  @keyframes eyeglow{ 0%,100%{opacity:0.8} 40%{opacity:1} }
 
-  .char-svg { animation: float 3s ease-in-out infinite; }
+  .char-img {
+    height: 142px;
+    width: auto;
+    object-fit: contain;
+    position: relative;
+    z-index: 1;
+    animation: float 3s ease-in-out infinite;
+  }
+  /* 디아블로: 따뜻한 앰버/골드 톤 — 어두운 판타지 전사 느낌 */
+  .char-diablo {
+    filter:
+      sepia(0.65)
+      hue-rotate(330deg)
+      saturate(2)
+      brightness(0.7)
+      contrast(1.2)
+      drop-shadow(0 0 18px rgba(232,120,10,0.85))
+      drop-shadow(0 0 6px rgba(238,34,68,0.5));
+  }
+  /* 스타크래프트: 사이언 블루 — 이미 파란 로봇, 어둡게 + 글로우 */
+  .char-sc {
+    filter:
+      brightness(0.65)
+      saturate(1.8)
+      contrast(1.25)
+      drop-shadow(0 0 18px rgba(0,191,255,0.9))
+      drop-shadow(0 0 8px rgba(0,120,255,0.6));
+  }
 </style>
 </head>
 <body>
@@ -284,115 +310,12 @@
         </div>
       </div>
 
-      <!-- 실루엣 스타일 : 해골 리치 캐릭터 -->
+      <!-- 실제 캐릭터 이미지 + 다크 필터 -->
       <div class="character-box">
         <div class="char-glow"></div>
-        <svg class="char-svg" xmlns="http://www.w3.org/2000/svg"
-             viewBox="0 0 120 155" width="112" height="148" overflow="visible">
-          <defs>
-            <radialGradient id="daura" cx="50%" cy="55%" r="50%">
-              <stop offset="0%"   stop-color="#e8a020" stop-opacity="0.55"/>
-              <stop offset="45%"  stop-color="#ee2244" stop-opacity="0.25"/>
-              <stop offset="100%" stop-color="#ee2244" stop-opacity="0"/>
-            </radialGradient>
-          </defs>
-
-          <!-- 배경 오라 -->
-          <ellipse cx="60" cy="88" rx="52" ry="62" fill="url(#daura)"/>
-
-          <!-- 바닥 그림자 -->
-          <ellipse cx="60" cy="152" rx="44" ry="7" fill="rgba(238,34,68,0.4)"/>
-          <ellipse cx="60" cy="151" rx="28" ry="3" fill="rgba(238,34,68,0.25)"/>
-
-          <!-- 망토 (뒤) -->
-          <path d="M30 62 C14 82 10 124 17 152 L30 149 C22 126 26 90 35 74 Z" fill="#120806"/>
-          <path d="M90 62 C106 82 110 124 103 152 L90 149 C98 126 94 90 85 74 Z" fill="#120806"/>
-
-          <!-- 로브 몸통 -->
-          <path d="M36 62 L28 150 L92 150 L84 62 Z" fill="#160a06"/>
-          <!-- 로브 중앙 선 -->
-          <line x1="60" y1="67" x2="60" y2="150" stroke="#110806" stroke-width="3" opacity="0.5"/>
-
-          <!-- 후드 -->
-          <path d="M36 47 C36 14 84 14 84 47 L82 63 L38 63 Z" fill="#120808"/>
-          <!-- 후드 뾰족한 끝 -->
-          <path d="M55 14 L60 3 L65 14 Z" fill="#0e0604"/>
-
-          <!-- 두개골 (후드 안) -->
-          <ellipse cx="60" cy="44" rx="16" ry="17" fill="#0e0604"/>
-          <!-- 광대뼈 hint -->
-          <path d="M46 50 C44 46 46 42 50 42" stroke="#160a06" stroke-width="1.5" fill="none" opacity="0.5"/>
-          <path d="M74 50 C76 46 74 42 70 42" stroke="#160a06" stroke-width="1.5" fill="none" opacity="0.5"/>
-
-          <!-- 눈 (황금빛 발광) -->
-          <ellipse cx="53" cy="40" rx="5.5" ry="6.5" fill="rgba(240,200,40,0.3)"/>
-          <ellipse cx="67" cy="40" rx="5.5" ry="6.5" fill="rgba(240,200,40,0.3)"/>
-          <ellipse cx="53" cy="40" rx="4"   ry="5"   fill="#f0c840" style="animation:eyeglow 2s ease-in-out infinite"/>
-          <ellipse cx="67" cy="40" rx="4"   ry="5"   fill="#f0c840" style="animation:eyeglow 2s ease-in-out infinite 0.3s"/>
-          <ellipse cx="53" cy="40" rx="2.5" ry="3"   fill="#ffffff" opacity="0.9"/>
-          <ellipse cx="67" cy="40" rx="2.5" ry="3"   fill="#ffffff" opacity="0.9"/>
-          <!-- 눈 헤일로 -->
-          <ellipse cx="53" cy="40" rx="9"  ry="10"   fill="rgba(240,200,40,0.2)"/>
-          <ellipse cx="67" cy="40" rx="9"  ry="10"   fill="rgba(240,200,40,0.2)"/>
-
-          <!-- 코뼈 -->
-          <path d="M57 49 L60 53 L63 49" fill="#0a0402"/>
-
-          <!-- 이빨 -->
-          <rect x="51" y="55" width="3" height="5" rx="1" fill="#0a0402"/>
-          <rect x="56" y="55" width="3" height="6" rx="1" fill="#0a0402"/>
-          <rect x="61" y="55" width="3" height="6" rx="1" fill="#0a0402"/>
-          <rect x="66" y="55" width="3" height="5" rx="1" fill="#0a0402"/>
-
-          <!-- 왼팔 (지팡이 쥠) -->
-          <path d="M36 70 L22 96" stroke="#160a06" stroke-width="9" stroke-linecap="round"/>
-          <path d="M22 96 L18 120" stroke="#160a06" stroke-width="7" stroke-linecap="round"/>
-          <circle cx="22" cy="96" r="5" fill="#0e0604"/>
-
-          <!-- 지팡이 -->
-          <rect x="13" y="72" width="5" height="78" rx="2" fill="#1e1008"/>
-          <!-- 지팡이 보석 -->
-          <circle cx="15" cy="70" r="10"  fill="#120808" stroke="#e8a020" stroke-width="1.5"/>
-          <circle cx="15" cy="70" r="7"   fill="#c02820" opacity="0.85"/>
-          <circle cx="15" cy="70" r="4"   fill="#ff5030"/>
-          <circle cx="15" cy="70" r="1.8" fill="#ffcc80"/>
-          <!-- 보석 오라 -->
-          <circle cx="15" cy="70" r="14"  fill="rgba(232,160,32,0.35)"/>
-          <circle cx="15" cy="70" r="18"  fill="rgba(238,34,68,0.2)"/>
-
-          <!-- 오른팔 (어둠의 에너지) -->
-          <path d="M84 70 L98 100" stroke="#160a06" stroke-width="8" stroke-linecap="round"/>
-          <!-- 뼈 손가락 -->
-          <line x1="98" y1="100" x2="102" y2="112" stroke="#1a0c08" stroke-width="2.5" stroke-linecap="round"/>
-          <line x1="98" y1="98"  x2="104" y2="108" stroke="#1a0c08" stroke-width="2"   stroke-linecap="round"/>
-          <line x1="97" y1="101" x2="99"  y2="113" stroke="#1a0c08" stroke-width="2"   stroke-linecap="round"/>
-          <!-- 어둠 에너지 구 -->
-          <circle cx="100" cy="104" r="10" fill="rgba(238,34,68,0.35)"/>
-          <circle cx="100" cy="104" r="6"  fill="rgba(238,34,68,0.25)"/>
-          <circle cx="100" cy="104" r="3"  fill="rgba(238,34,68,0.5)"/>
-
-          <!-- 갈비뼈 hint (로브 위로 살짝) -->
-          <line x1="46" y1="78"  x2="56" y2="76"  stroke="#1e0e08" stroke-width="1.2" opacity="0.6"/>
-          <line x1="46" y1="86"  x2="56" y2="84"  stroke="#1e0e08" stroke-width="1"   opacity="0.4"/>
-          <line x1="46" y1="93"  x2="56" y2="91"  stroke="#1e0e08" stroke-width="1"   opacity="0.3"/>
-          <line x1="74" y1="78"  x2="64" y2="76"  stroke="#1e0e08" stroke-width="1.2" opacity="0.6"/>
-          <line x1="74" y1="86"  x2="64" y2="84"  stroke="#1e0e08" stroke-width="1"   opacity="0.4"/>
-          <line x1="74" y1="93"  x2="64" y2="91"  stroke="#1e0e08" stroke-width="1"   opacity="0.3"/>
-
-          <!-- 로브 찢어진 아랫단 -->
-          <path d="M28 150 L34 140 L40 150 L47 138 L55 150 L60 140 L65 150 L73 138 L80 150 L86 140 L92 150 Z" fill="#160a06"/>
-
-          <!-- 부유 파티클 -->
-          <circle cx="19" cy="84"  r="2.5" fill="#e8a020" opacity="0.85" style="animation:pulse 1.8s ease-in-out infinite"/>
-          <circle cx="106" cy="80" r="2"   fill="#ee2244" opacity="0.7"  style="animation:pulse 2.2s ease-in-out infinite 0.4s"/>
-          <circle cx="14"  cy="104" r="1.8" fill="#f0c840" opacity="0.65" style="animation:pulse 2.5s ease-in-out infinite 0.2s"/>
-          <circle cx="109" cy="98" r="2.2" fill="#e8a020" opacity="0.55" style="animation:pulse 2s ease-in-out infinite 0.7s"/>
-          <circle cx="24"  cy="126" r="1.2" fill="#ee2244" opacity="0.5" style="animation:pulse 1.6s ease-in-out infinite 1s"/>
-          <circle cx="100" cy="118" r="1.8" fill="#e8a020" opacity="0.6" style="animation:pulse 2.3s ease-in-out infinite 0.5s"/>
-          <!-- 불꽃 wisp -->
-          <path d="M17 90 C22 86 19 81 24 77" stroke="rgba(232,160,32,0.45)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          <path d="M107 86 C102 82 105 77 100 73" stroke="rgba(238,34,68,0.45)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-        </svg>
+        <img class="char-img char-diablo"
+             src="assets/uquest/generated/characters/male_lv3.png"
+             alt="캐릭터">
       </div>
 
       <div class="xp-bar-wrap">
@@ -459,127 +382,12 @@
         </div>
       </div>
 
-      <!-- 실루엣 스타일 : 테란 마린 -->
+      <!-- 실제 로봇 이미지 + 사이언 블루 필터 -->
       <div class="character-box">
         <div class="char-glow"></div>
-        <svg class="char-svg" xmlns="http://www.w3.org/2000/svg"
-             viewBox="0 0 120 155" width="112" height="148" overflow="visible">
-          <defs>
-            <radialGradient id="saura" cx="50%" cy="55%" r="50%">
-              <stop offset="0%"   stop-color="#00bfff" stop-opacity="0.4"/>
-              <stop offset="50%"  stop-color="#0060c0" stop-opacity="0.2"/>
-              <stop offset="100%" stop-color="#0060c0" stop-opacity="0"/>
-            </radialGradient>
-          </defs>
-
-          <!-- 배경 오라 -->
-          <ellipse cx="60" cy="88" rx="52" ry="62" fill="url(#saura)"/>
-
-          <!-- 바닥 그림자 -->
-          <ellipse cx="60" cy="152" rx="42" ry="6" fill="rgba(0,100,200,0.45)"/>
-          <ellipse cx="60" cy="151" rx="26" ry="3" fill="rgba(0,191,255,0.25)"/>
-
-          <!-- 다리 -->
-          <path d="M44 112 L39 150 L52 150 L55 112 Z" fill="#162030"/>
-          <path d="M76 112 L81 150 L68 150 L65 112 Z" fill="#162030"/>
-          <rect x="38" y="112" width="18" height="15" rx="3" fill="#1c2c3c" stroke="#0a2040" stroke-width="0.5"/>
-          <rect x="64" y="112" width="18" height="15" rx="3" fill="#1c2c3c" stroke="#0a2040" stroke-width="0.5"/>
-          <!-- 무릎 서보 -->
-          <circle cx="47" cy="129" r="5" fill="#0a1828" stroke="#0a4080" stroke-width="1"/>
-          <circle cx="47" cy="129" r="2" fill="#00bfff" opacity="0.7" style="animation:pulse 2s ease-in-out infinite"/>
-          <circle cx="73" cy="129" r="5" fill="#0a1828" stroke="#0a4080" stroke-width="1"/>
-          <circle cx="73" cy="129" r="2" fill="#00bfff" opacity="0.7" style="animation:pulse 2s ease-in-out infinite 0.5s"/>
-          <!-- 부츠 -->
-          <path d="M37 139 L56 139 L57 150 L36 150 Z" fill="#1a2a3a" stroke="#0a3060" stroke-width="0.5"/>
-          <path d="M83 139 L64 139 L63 150 L84 150 Z" fill="#1a2a3a" stroke="#0a3060" stroke-width="0.5"/>
-          <ellipse cx="46" cy="150" rx="9" ry="2" fill="rgba(0,191,255,0.35)"/>
-          <ellipse cx="74" cy="150" rx="9" ry="2" fill="rgba(0,191,255,0.35)"/>
-
-          <!-- 몸통 -->
-          <path d="M24 66 L21 114 L99 114 L96 66 Z" fill="#162030"/>
-          <path d="M30 68 L30 110 L90 110 L90 68 Z" fill="#1c2c3c"/>
-          <path d="M30 68 L30 110 L90 110 L90 68 Z" fill="none" stroke="#0a2040" stroke-width="0.8"/>
-          <!-- 파워 코어 -->
-          <rect x="47" y="78" width="26" height="28" rx="4" fill="#0a1828" stroke="#0a4080" stroke-width="1"/>
-          <circle cx="60" cy="92" r="10"  fill="#040c18" stroke="#00bfff" stroke-width="1.5"/>
-          <circle cx="60" cy="92" r="7"   fill="#003090"/>
-          <circle cx="60" cy="92" r="4"   fill="#0070e0"/>
-          <circle cx="60" cy="92" r="2"   fill="#00bfff"/>
-          <circle cx="60" cy="92" r="13"  fill="rgba(0,191,255,0.12)"/>
-          <!-- 스캔 라인 -->
-          <line x1="49" y1="87" x2="71" y2="87" stroke="rgba(0,191,255,0.15)" stroke-width="0.5"/>
-          <line x1="47" y1="92" x2="73" y2="92" stroke="rgba(0,191,255,0.15)" stroke-width="0.5"/>
-          <line x1="49" y1="97" x2="71" y2="97" stroke="rgba(0,191,255,0.15)" stroke-width="0.5"/>
-
-          <!-- 왼팔 + 라이플 -->
-          <path d="M21 66 L9 64 L4 106 L23 112 L30 82 Z" fill="#162030"/>
-          <path d="M11 68 L6 102 L22 108 L26 74 Z" fill="#1c2c3c" stroke="#0a2040" stroke-width="0.5"/>
-          <rect x="2"  y="101" width="22" height="12" rx="4" fill="#1a2a3a" stroke="#0a3060" stroke-width="1"/>
-          <!-- 라이플 -->
-          <rect x="0"  y="103" width="34" height="7" rx="2" fill="#0a1828" stroke="#0a4080" stroke-width="0.5"/>
-          <rect x="8"  y="101" width="14" height="5" rx="1" fill="#0a2040" stroke="#0a4080" stroke-width="0.5"/>
-          <!-- 총구 글로우 -->
-          <circle cx="2"  cy="106" r="5"   fill="rgba(0,191,255,0.5)" style="animation:pulse 1.5s ease-in-out infinite"/>
-          <circle cx="2"  cy="106" r="3"   fill="#00bfff" opacity="0.85"/>
-          <circle cx="-1" cy="106" r="3.5" fill="rgba(0,191,255,0.3)"/>
-
-          <!-- 왼쪽 견갑 -->
-          <path d="M7 62 C3 46 18 40 32 46 L36 68 L17 72 Z" fill="#1a2a3a" stroke="#0a3060" stroke-width="1"/>
-          <line x1="8"  y1="55" x2="22" y2="48" stroke="#0a4080" stroke-width="1"/>
-          <line x1="6"  y1="61" x2="20" y2="54" stroke="#0a3060" stroke-width="0.5"/>
-          <circle cx="12" cy="50" r="3"   fill="#00bfff" opacity="0.9" style="animation:pulse 2.2s ease-in-out infinite"/>
-          <circle cx="12" cy="50" r="5.5" fill="rgba(0,191,255,0.25)"/>
-
-          <!-- 오른팔 -->
-          <path d="M99 66 L111 64 L116 106 L97 112 L90 82 Z" fill="#162030"/>
-          <path d="M109 68 L114 102 L98 108 L94 74 Z" fill="#1c2c3c" stroke="#0a2040" stroke-width="0.5"/>
-          <rect x="96" y="101" width="22" height="12" rx="4" fill="#1a2a3a" stroke="#0a3060" stroke-width="1"/>
-          <circle cx="114" cy="107" r="8"  fill="rgba(0,100,200,0.35)"/>
-          <circle cx="114" cy="107" r="4.5" fill="rgba(0,191,255,0.2)"/>
-
-          <!-- 오른쪽 견갑 -->
-          <path d="M113 62 C117 46 102 40 88 46 L84 68 L103 72 Z" fill="#1a2a3a" stroke="#0a3060" stroke-width="1"/>
-          <line x1="112" y1="55" x2="98" y2="48" stroke="#0a4080" stroke-width="1"/>
-          <circle cx="108" cy="50" r="3"   fill="#00bfff" opacity="0.9" style="animation:pulse 2.2s ease-in-out infinite 0.6s"/>
-          <circle cx="108" cy="50" r="5.5" fill="rgba(0,191,255,0.25)"/>
-
-          <!-- 목 -->
-          <rect x="50" y="55" width="20" height="13" rx="3" fill="#162030" stroke="#0a3060" stroke-width="0.8"/>
-
-          <!-- 헬멧 (테란 마린 시그니처) -->
-          <path d="M33 49 C33 24 87 24 87 49 L87 63 L33 63 Z" fill="#162030"/>
-          <rect x="50" y="20" width="20" height="30" rx="3" fill="#1a2a3a" stroke="#0a3060" stroke-width="0.5"/>
-          <line x1="60" y1="20" x2="60" y2="49" stroke="#0a3060" stroke-width="1.2"/>
-          <!-- 바이저 -->
-          <path d="M37 43 L83 43 L85 61 L35 61 Z" fill="#040c18"/>
-          <!-- 시그니처 수평 바이저 슬릿 -->
-          <rect x="37" y="47" width="46" height="11" rx="1" fill="rgba(0,191,255,0.06)"/>
-          <line x1="37" y1="52" x2="83" y2="52" stroke="rgba(0,191,255,0.45)" stroke-width="7"/>
-          <line x1="37" y1="52" x2="83" y2="52" stroke="#00bfff" stroke-width="3" style="animation:visor 2s ease-in-out infinite" opacity="0.95"/>
-          <line x1="37" y1="52" x2="83" y2="52" stroke="#ffffff" stroke-width="1" opacity="0.35"/>
-          <!-- 바이저 반사 -->
-          <circle cx="44" cy="52" r="1.2" fill="rgba(255,255,255,0.25)"/>
-          <circle cx="53" cy="52" r="0.8" fill="rgba(255,255,255,0.18)"/>
-          <!-- 헬멧 사이드 플레이트 -->
-          <path d="M33 43 L33 63 L37 66 L37 43 Z" fill="#1c2c3c" stroke="#0a2040" stroke-width="0.5"/>
-          <path d="M87 43 L87 63 L83 66 L83 43 Z" fill="#1c2c3c" stroke="#0a2040" stroke-width="0.5"/>
-          <!-- 턱 -->
-          <path d="M42 61 L78 61 L76 67 L44 67 Z" fill="#1c2c3c" stroke="#0a2040" stroke-width="0.5"/>
-          <!-- 안테나 -->
-          <rect x="71" y="13" width="3" height="12" rx="1" fill="#0a3060"/>
-          <circle cx="72.5" cy="12" r="3"   fill="#00bfff" opacity="0.95" style="animation:pulse 1.8s ease-in-out infinite"/>
-          <circle cx="72.5" cy="12" r="5.5" fill="rgba(0,191,255,0.3)"/>
-          <circle cx="38" cy="45" r="1.5" fill="#0a3060"/>
-          <circle cx="82" cy="45" r="1.5" fill="#0a3060"/>
-
-          <!-- 파티클 -->
-          <circle cx="14" cy="80"  r="2"   fill="#00bfff" opacity="0.55" style="animation:pulse 2.2s ease-in-out infinite"/>
-          <circle cx="108" cy="86" r="1.8" fill="#00bfff" opacity="0.45" style="animation:pulse 1.8s ease-in-out infinite 0.4s"/>
-          <circle cx="10"  cy="102" r="1.2" fill="#00bfff" opacity="0.4"/>
-          <circle cx="112" cy="74" r="1.8" fill="#00bfff" opacity="0.55" style="animation:pulse 2s ease-in-out infinite 0.9s"/>
-          <path d="M11 82 L7 88 L11 94"   stroke="rgba(0,191,255,0.35)" stroke-width="1" fill="none"/>
-          <path d="M109 88 L113 84 L109 80" stroke="rgba(0,191,255,0.35)" stroke-width="1" fill="none"/>
-        </svg>
+        <img class="char-img char-sc"
+             src="assets/uquest/generated/ax-robots/ax_robot_expert.png"
+             alt="AX 로봇">
       </div>
 
       <div class="xp-bar-wrap">
