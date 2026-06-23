@@ -211,10 +211,17 @@ export function requireActiveRookie(user: FinalUser) {
   if (user.status === "inactive") throw new UQuestDomainError("ACCOUNT_INACTIVE", "비활성 계정입니다.", 403);
 }
 
+export const ATTENDANCE_LIMIT = 20;
+
 export function claimAttendance(config: FinalUQuestConfig, userId: string) {
   let data = normalizeConfig(config);
   const user = getUser(data, userId);
   requireActiveRookie(user);
+
+  const attendanceCount = data.attendances.filter((item) => item.userId === userId).length;
+  if (attendanceCount >= ATTENDANCE_LIMIT) {
+    throw new UQuestDomainError("ATTENDANCE_LIMIT_REACHED", `출석 체크는 최대 ${ATTENDANCE_LIMIT}일까지 가능합니다. 온보딩이 완료됐습니다.`);
+  }
 
   if (data.attendances.some((item) => item.userId === userId && item.attendanceDate === data.today)) {
     throw new UQuestDomainError("DUPLICATE_ATTENDANCE", "오늘 출석은 이미 완료했습니다.");

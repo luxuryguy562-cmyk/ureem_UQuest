@@ -878,7 +878,9 @@ function HomeView({
   onAttendance: () => void;
   onGo: (screen: FinalScreenKey) => void;
 }) {
-  const todayDone = data.attendances.some((item) => item.userId === rookie.user.id && item.attendanceDate === data.today);
+  const myAttendances = data.attendances.filter((item) => item.userId === rookie.user.id);
+  const attendanceLimitReached = myAttendances.length >= 20;
+  const todayDone = attendanceLimitReached || myAttendances.some((item) => item.attendanceDate === data.today);
   const todayCurriculum = data.curriculums.find((item) => item.dayNumber === rookie.curriculumDay) ?? data.curriculums[0];
   const learnedToday = data.learningCompletions.some((item) => item.userId === rookie.user.id && item.curriculumId === todayCurriculum.id);
   const quizDoneToday = data.quizSubmissions.some((item) => item.userId === rookie.user.id && item.curriculumId === todayCurriculum.id);
