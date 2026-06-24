@@ -895,7 +895,7 @@ function HomeView({
         <section className="e5-welcome">
           <div className="emoji">🚀</div>
           <h2>U-Quest 온보딩을 시작해요!</h2>
-          <p>출석을 찍으면 오늘부터 4주 온보딩이 시작됩니다. 매 근무일에 출석 → 학습 → 퀴즈를 진행하고, 쉬는 날은 건너뛰어도 진도가 사라지지 않아요.</p>
+          <p>출석을 찍으면 오늘부터 30일 온보딩이 시작됩니다. 30일 안에 출석·학습·퀴즈는 최대 20회, AX 인증은 매일 가능해요. 쉬는 날은 건너뛰어도 진도가 사라지지 않아요.</p>
           <button onClick={onAttendance} type="button">온보딩 시작하기 (출석)</button>
         </section>
       ) : null}
@@ -1690,7 +1690,7 @@ function ShopView({
       {!rookie.shopOpened ? (
         <div className="e5-locknote">
           <span className="i">🔒</span>
-          <span className="t">상점은 4주 온보딩 수료 후 열려요. 지금은 미리보기만 가능해요.</span>
+          <span className="t">상점은 30일 온보딩 수료 후 열려요. 지금은 미리보기만 가능해요.</span>
         </div>
       ) : null}
       {rookie.pointExpired ? (
