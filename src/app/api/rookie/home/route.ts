@@ -1,10 +1,22 @@
-import { ATTENDANCE_LIMIT, deriveRookieSummary, getCurrentCurriculum, requireRole } from "@/lib/uquest-domain";
-import { fail, getConfigAndRequester, ok, publicSummary, publicUser } from "@/lib/uquest-api";
+import { ATTENDANCE_LIMIT, deriveRookieSummary, getCurrentCurriculum, getUser, normalizeConfig, requireRole } from "@/lib/uquest-domain";
+import { fail, getConfigAndRequester, ok, publicSummary, publicUser, saveConfig } from "@/lib/uquest-api";
 
 export async function GET(request: Request) {
   try {
-    const { config, requester } = await getConfigAndRequester(request, "rookie");
-    requireRole(requester, ["rookie"]);
+    const { config: rawConfig, requester: rawRequester } = await getConfigAndRequester(request, "rookie");
+    requireRole(rawRequester, ["rookie"]);
+
+    // 30일 자동 수료 적용 후 상태가 바뀐 경우 DB에 즉시 반영
+    const config = normalizeConfig(rawConfig);
+    const statusChanged = config.users.some((u) => {
+      const before = rawConfig.users.find((b) => b.id === u.id);
+      return before && before.status !== u.status;
+    });
+    if (statusChanged) {
+      await saveConfig(rawConfig, config);
+    }
+
+    const requester = getUser(config, rawRequester.id);
     const summary = deriveRookieSummary(config, requester);
     const todayCurriculum = getCurrentCurriculum(config, requester);
 
