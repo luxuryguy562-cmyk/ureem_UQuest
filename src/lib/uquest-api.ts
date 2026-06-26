@@ -7,7 +7,10 @@ import type { FinalUQuestConfig, FinalUser } from "@/types/uquest";
 export type UQuestRequesterKind = "rookie" | "manager" | "admin";
 
 export async function getConfigAndRequester(request: Request, kind: UQuestRequesterKind) {
-  const config = await getMutableUQuestConfig();
+  // 루키 경로에서는 쿠키 userId로 per-user 데이터만 필터링해 로드한다.
+  const cookieUserId = readCookie(request, "uquest_user_id");
+  const isRookie = kind === "rookie";
+  const config = await getMutableUQuestConfig(cookieUserId ?? undefined, isRookie);
   const userId = getRequesterId(request, config, kind);
   const requester = getUser(config, userId);
 

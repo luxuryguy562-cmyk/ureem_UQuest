@@ -30,7 +30,7 @@ import type {
 
 type Supabase = NonNullable<ReturnType<typeof createServerSupabaseClient>>;
 
-export async function getUQuestAppConfig(): Promise<FinalUQuestConfig> {
+export async function getUQuestAppConfig(userId?: string, filterByUser?: boolean): Promise<FinalUQuestConfig> {
   const supabase = createServerSupabaseClient();
   const today = getOperationalToday();
 
@@ -38,7 +38,7 @@ export async function getUQuestAppConfig(): Promise<FinalUQuestConfig> {
     return { ...finalFallbackAppConfig, today };
   }
 
-  const config = await assembleConfigFromDb(supabase, today);
+  const config = await assembleConfigFromDb(supabase, today, userId, filterByUser);
 
   // 운영 데이터가 아직 없으면(시드 전) 폴백 목업으로 동작한다.
   if (config.users.length === 0 || config.curriculums.length === 0) {
@@ -48,8 +48,8 @@ export async function getUQuestAppConfig(): Promise<FinalUQuestConfig> {
   return config;
 }
 
-export async function getMutableUQuestConfig(): Promise<FinalUQuestConfig> {
-  return getUQuestAppConfig();
+export async function getMutableUQuestConfig(userId?: string, filterByUser?: boolean): Promise<FinalUQuestConfig> {
+  return getUQuestAppConfig(userId, filterByUser);
 }
 
 export async function saveMutableUQuestConfig(before: FinalUQuestConfig, next: FinalUQuestConfig): Promise<FinalUQuestConfig> {
@@ -105,7 +105,11 @@ export async function uploadAxEvidence(userId: string, file: File) {
 // 읽기: 테이블 → FinalUQuestConfig 조립
 // ===========================================================================
 
-async function assembleConfigFromDb(supabase: Supabase, today: string): Promise<FinalUQuestConfig> {
+async function assembleConfigFromDb(supabase: Supabase, today: string, userId?: string, filterByUser?: boolean): Promise<FinalUQuestConfig> {
+  // scoped=true: 특정 사용자의 행 전용 데이터만 필터링한다(루키 전용 경로).
+  const scoped = Boolean(filterByUser && userId);
+  const empty = { data: [] };
+
   const [
     storesRes,
     usersRes,
@@ -115,7 +119,6 @@ async function assembleConfigFromDb(supabase: Supabase, today: string): Promise<
     attendancesRes,
     learningRes,
     submissionsRes,
-    answersRes,
     axCategoriesRes,
     axSubmissionsRes,
     badgesRes,
@@ -127,25 +130,49 @@ async function assembleConfigFromDb(supabase: Supabase, today: string): Promise<
   ] = await Promise.all([
     supabase.from("stores").select("*"),
     supabase.from("users").select("*"),
-    supabase.from("user_badges").select("user_id, badges(code)"),
+    scoped
+      ? supabase.from("user_badges").select("user_id, badges(code)").eq("user_id", userId!)
+      : supabase.from("user_badges").select("user_id, badges(code)"),
     supabase.from("curriculums").select("*").order("day_number", { ascending: true }),
     supabase.from("quizzes").select("*").order("sort_order", { ascending: true }),
-    supabase.from("attendances").select("*"),
-    supabase.from("learning_completions").select("*"),
-    supabase.from("quiz_submissions").select("*"),
-    supabase.from("quiz_answers").select("*"),
+    scoped
+      ? supabase.from("attendances").select("*").eq("user_id", userId!)
+      : supabase.from("attendances").select("*"),
+    scoped
+      ? supabase.from("learning_completions").select("*").eq("user_id", userId!)
+      : supabase.from("learning_completions").select("*"),
+    scoped
+      ? supabase.from("quiz_submissions").select("*").eq("user_id", userId!)
+      : supabase.from("quiz_submissions").select("*"),
     supabase.from("ax_categories").select("*").order("sort_order", { ascending: true }),
-    supabase.from("ax_submissions").select("*"),
+    scoped
+      ? supabase.from("ax_submissions").select("*").eq("user_id", userId!)
+      : supabase.from("ax_submissions").select("*"),
     supabase.from("badges").select("*").order("sort_order", { ascending: true }),
-    supabase.from("point_histories").select("*"),
+    scoped
+      ? supabase.from("point_histories").select("*").eq("user_id", userId!)
+      : supabase.from("point_histories").select("*"),
     supabase.from("coupons").select("*").order("required_points", { ascending: true }),
-    supabase.from("coupon_requests").select("*"),
-    supabase.from("notifications").select("*"),
-    supabase.from("admin_audit_logs").select("*")
+    scoped
+      ? supabase.from("coupon_requests").select("*").eq("user_id", userId!)
+      : supabase.from("coupon_requests").select("*"),
+    // 루키 경로에서는 notifications/admin_audit_logs 불필요 → 스킵
+    scoped ? Promise.resolve(empty) : supabase.from("notifications").select("*"),
+    scoped ? Promise.resolve(empty) : supabase.from("admin_audit_logs").select("*")
   ]);
 
+  // quiz_answers는 quiz_submissions에 종속적이므로 별도로 조회한다.
+  // scoped일 때: 해당 사용자의 submission ID 목록으로만 필터링.
+  const submissionIds = scoped ? (submissionsRes.data ?? []).map((r: Row) => r.id as string) : null;
   // 보상 단위 설정은 단일 스냅샷(app_config_snapshots)에 저장한다.
-  const snapshotRes = await supabase.from("app_config_snapshots").select("payload").eq("id", "current").maybeSingle();
+  const [answersRes, snapshotRes] = await Promise.all([
+    scoped
+      ? (submissionIds!.length > 0
+          ? supabase.from("quiz_answers").select("*").in("submission_id", submissionIds!)
+          : Promise.resolve(empty))
+      : supabase.from("quiz_answers").select("*"),
+    supabase.from("app_config_snapshots").select("payload").eq("id", "current").maybeSingle()
+  ]);
   const rewardConfig = ((snapshotRes.data?.payload ?? null) as { rewardConfig?: FinalRewardConfig } | null)?.rewardConfig;
 
   const badgeCodesByUser = new Map<string, string[]>();

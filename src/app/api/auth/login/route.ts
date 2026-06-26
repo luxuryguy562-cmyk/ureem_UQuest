@@ -24,5 +24,10 @@ export async function POST(request: Request) {
     sameSite: "lax",
     path: "/"
   });
+  response.cookies.set("uquest_user_role", user.role, {
+    httpOnly: true,
+    sameSite: "lax",
+    path: "/"
+  });
   return response;
 }
