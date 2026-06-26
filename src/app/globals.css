@@ -3450,7 +3450,7 @@ body { background: #0e0a08; color: #e0c080; }
   border-top: 1px solid #3a1408;
   box-shadow: 0 -4px 28px rgba(220,60,20,.3);
 }
-.final-bottom-nav button { color: #4a1e10; }
+.final-bottom-nav button { color: #8a5a30; }
 .final-bottom-nav button.active {
   color: #e8a020;
   filter: drop-shadow(0 0 5px rgba(232,160,32,.8));
@@ -3742,3 +3742,20 @@ body { background: #0e0a08; color: #e0c080; }
 .coupon-card-edit button { border-color: #3a1408; background: #180a06; color: #8a4828; }
 .sheet-handle { background: #3a1408; }
 .sheet-title { color: #e0c080; }
+
+/* ── 가시성 보완 ── */
+
+/* 커리큘럼 잠금(오픈 예정) 텍스트 */
+.day-list button.locked strong,
+.day-list button.locked span,
+.day-list button.locked em { color: #6a3c1c; }
+
+/* 상점 "수료 후" 버튼 */
+.e5-coupon.off .buy { background: #2a1006; color: #8a5030; box-shadow: none; cursor: default; }
+
+/* MY 미획득 뱃지 */
+.badge-grid > div:not(.acquired) { background: #1c0e06; border-color: #4a2010; }
+.badge-grid > div:not(.acquired) img { filter: grayscale(1) brightness(.5); }
+.badge-grid > div:not(.acquired) span { color: #6a3c1c; }
+.recent-badge-strip > div:not(.next) { background: #1c0e06; border-color: #4a2010; }
+.e5-bg.locked img { filter: grayscale(1) brightness(.45); }
