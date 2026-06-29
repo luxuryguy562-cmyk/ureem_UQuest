@@ -886,6 +886,16 @@ function HomeView({
   const quizDoneToday = data.quizSubmissions.some((item) => item.userId === rookie.user.id && item.curriculumId === todayCurriculum.id);
   const axToday = data.axSubmissions.some((item) => item.userId === rookie.user.id && item.createdAt.startsWith(data.today));
   const notStarted = rookie.user.status === "active" && rookie.attendanceCount === 0 && rookie.learningCount === 0;
+  const [growthSheet, setGrowthSheet] = useState<"attendance" | "learning" | "quiz" | null>(null);
+  const attendancePct = Math.round((rookie.attendanceCount / 20) * 100);
+  const learningPct = Math.round((rookie.learningCount / 20) * 100);
+  const quizPct = rookie.quizAccuracyRate;
+  const myLearningIds = new Set(
+    data.learningCompletions.filter((lc) => lc.userId === rookie.user.id).map((lc) => lc.curriculumId)
+  );
+  const mySubmissions = data.quizSubmissions
+    .filter((s) => s.userId === rookie.user.id)
+    .sort((a, b) => a.submittedAt.localeCompare(b.submittedAt));
 
   return (
     <div className="e5-home">
@@ -928,16 +938,35 @@ function HomeView({
             </div>
           </div>
         </div>
-        <div className="e5-exp">
-          <div className="e5-exp-lab">
-            <span>캐릭터 성장</span>
-            <span>
-              Lv.{rookie.characterLevel} · {rookie.progressRate}%
-            </span>
-          </div>
-          <div className="e5-exp-bar">
-            <i style={{ width: `${rookie.progressRate}%` }} />
-          </div>
+        <div className="e5-growth-header">
+          <span>캐릭터 성장</span>
+          <span className="e5-growth-lv">Lv.{rookie.characterLevel}</span>
+        </div>
+        <div className="e5-growth-blocks">
+          <button className="e5-gblock" onClick={() => setGrowthSheet("attendance")} type="button">
+            <div className="e5-gblock-icon">🏃</div>
+            <div className="e5-gblock-label">출석</div>
+            <div className="e5-gblock-ring" style={{ background: `conic-gradient(#e8a020 ${attendancePct}%, #3a1408 0)` }}>
+              <span>{attendancePct}%</span>
+            </div>
+            <div className="e5-gblock-count">{rookie.attendanceCount} / 20</div>
+          </button>
+          <button className="e5-gblock" onClick={() => setGrowthSheet("learning")} type="button">
+            <div className="e5-gblock-icon">📖</div>
+            <div className="e5-gblock-label">학습</div>
+            <div className="e5-gblock-ring" style={{ background: `conic-gradient(#30b8e8 ${learningPct}%, #3a1408 0)` }}>
+              <span>{learningPct}%</span>
+            </div>
+            <div className="e5-gblock-count">{rookie.learningCount} / 20</div>
+          </button>
+          <button className="e5-gblock" onClick={() => setGrowthSheet("quiz")} type="button">
+            <div className="e5-gblock-icon">🧠</div>
+            <div className="e5-gblock-label">퀴즈</div>
+            <div className="e5-gblock-ring" style={{ background: `conic-gradient(#c870e8 ${quizPct}%, #3a1408 0)` }}>
+              <span>{quizPct}%</span>
+            </div>
+            <div className="e5-gblock-count">정답률</div>
+          </button>
         </div>
         <div className="e5-stats">
           <div className="e5-stat">
@@ -974,6 +1003,98 @@ function HomeView({
         <E5Mission action={!todayDone ? "출석 먼저" : learnedToday ? "퀴즈 풀기" : "학습 후 가능"} done={quizDoneToday} ghost={!todayDone || !learnedToday} icon="✏️" onClick={() => onGo("quiz")} reward="+300P / 문항" title="오늘의 퀴즈" />
         <E5Mission action="인증하기" done={axToday} icon="📸" onClick={() => onGo("ax")} reward="+500P" title="AX 인증하기" />
       </section>
+
+      {growthSheet !== null ? (
+        <div className="growth-sheet-overlay" onClick={() => setGrowthSheet(null)}>
+          <div className="growth-sheet" onClick={(e) => e.stopPropagation()}>
+            <div className="sheet-handle" />
+            {growthSheet === "attendance" ? (
+              <>
+                <div className="sheet-title">출석 현황</div>
+                <div className="growth-att-grid">
+                  {Array.from({ length: 20 }, (_, i) => {
+                    const done = i < myAttendances.length;
+                    return (
+                      <div key={i} className={`growth-att-slot${done ? " done" : ""}`}>
+                        {done ? "✓" : String(i + 1)}
+                      </div>
+                    );
+                  })}
+                </div>
+                <div className="growth-stat-rows">
+                  <div className="growth-stat-row">
+                    <span>완료</span>
+                    <span>{rookie.attendanceCount}회</span>
+                  </div>
+                  <div className="growth-stat-row">
+                    <span>남은 횟수</span>
+                    <span>{Math.max(0, 20 - rookie.attendanceCount)}회</span>
+                  </div>
+                  <div className="growth-stat-row">
+                    <span>오늘 출석</span>
+                    <span>{todayDone ? "✓ 완료" : "미완료"}</span>
+                  </div>
+                </div>
+              </>
+            ) : growthSheet === "learning" ? (
+              <>
+                <div className="sheet-title">학습 현황</div>
+                <div className="growth-learn-list">
+                  {data.curriculums.slice().sort((a, b) => a.dayNumber - b.dayNumber).map((cur) => {
+                    const done = myLearningIds.has(cur.id);
+                    const isCurrent = !done && cur.dayNumber === rookie.curriculumDay;
+                    return (
+                      <div key={cur.id} className={`growth-learn-row${done ? " done" : isCurrent ? " current" : " locked"}`}>
+                        <div className="growth-learn-day">Day {cur.dayNumber}</div>
+                        <div className="growth-learn-title">{cur.title}</div>
+                        <div className="growth-learn-badge">{done ? "✓" : isCurrent ? "→" : ""}</div>
+                      </div>
+                    );
+                  })}
+                </div>
+                <div className="growth-stat-rows">
+                  <div className="growth-stat-row">
+                    <span>완료</span>
+                    <span>{rookie.learningCount} / 20</span>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="sheet-title">퀴즈 현황</div>
+                <div className="growth-quiz-header">
+                  <img alt={`${rookie.quizTier} 티어`} className="growth-quiz-tier-img" src={tierAssets[rookie.quizTier]} />
+                  <div>
+                    <div className="growth-quiz-tier-name">{rookie.quizTier}</div>
+                    <div className="growth-quiz-accuracy">평균 정답률 {rookie.quizAccuracyRate}%</div>
+                  </div>
+                </div>
+                <div className="growth-quiz-list">
+                  {mySubmissions.length === 0 ? (
+                    <div className="growth-quiz-empty">아직 퀴즈를 풀지 않았어요</div>
+                  ) : mySubmissions.map((sub, idx) => {
+                    const cur = data.curriculums.find((c) => c.id === sub.curriculumId);
+                    const acc = sub.totalCount ? Math.round((sub.correctCount / sub.totalCount) * 100) : 0;
+                    return (
+                      <div key={sub.id} className="growth-quiz-row">
+                        <div className="growth-quiz-day">Day {cur?.dayNumber ?? idx + 1}</div>
+                        <div className="growth-quiz-body">
+                          <div className="growth-quiz-title">{cur?.title ?? "퀴즈"}</div>
+                          <div className="growth-quiz-bar-wrap">
+                            <div className="growth-quiz-bar"><i style={{ width: `${acc}%` }} /></div>
+                            <span>{acc}%</span>
+                          </div>
+                        </div>
+                        <div className="growth-quiz-score">{sub.correctCount}/{sub.totalCount}</div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
