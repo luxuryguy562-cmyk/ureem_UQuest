@@ -947,9 +947,7 @@ function HomeView({
             <i style={{ width: `${rookie.progressRate}%` }} />
           </div>
           <span className="e5-growth-hint">
-            {rookie.characterLevel < 5
-              ? `Lv.${rookie.characterLevel + 1}까지 ${rookie.characterLevel * 25 - rookie.progressRate + 25}% 남음`
-              : "MAX"}
+            {rookie.characterLevel < 5 ? `${rookie.progressRate}%` : "MAX"}
           </span>
         </div>
         <div className="e5-growth-blocks">
