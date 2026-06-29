@@ -3775,6 +3775,33 @@ body { background: #0e0a08; color: #e0c080; }
   color: #e8a020;
   font-size: 13px;
 }
+.e5-growth-total {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.e5-growth-total-bar {
+  flex: 1;
+  height: 7px;
+  background: #3a1408;
+  border-radius: 99px;
+  overflow: hidden;
+}
+.e5-growth-total-bar i {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #c8601a, #e8a020);
+  border-radius: 99px;
+  transition: width .4s ease;
+}
+.e5-growth-hint {
+  font-size: 10px;
+  color: #8a6040;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
 .e5-growth-blocks {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
