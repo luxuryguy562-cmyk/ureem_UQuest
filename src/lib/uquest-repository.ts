@@ -367,7 +367,7 @@ async function assembleConfigFromDb(supabase: Supabase, today: string, userId?: 
   return {
     source: "supabase",
     today,
-    activeUserId: users.find((u) => u.role === "rookie" && u.status === "active")?.id ?? "",
+    activeUserId: scoped ? (userId ?? "") : (users.find((u) => u.role === "rookie" && u.status === "active")?.id ?? ""),
     managerUserId: users.find((u) => u.role === "manager")?.id ?? "",
     adminUserId: users.find((u) => u.role === "admin")?.id ?? "",
     rewardConfig,
